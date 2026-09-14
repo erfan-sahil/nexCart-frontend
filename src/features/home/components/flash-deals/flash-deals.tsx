@@ -23,9 +23,9 @@ export function FlashDeals() {
           </div>
           <CountdownTimer target={flashDealEndsAt} />
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar lg:grid lg:grid-cols-6 lg:overflow-visible">
+        <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar sm:gap-3 lg:grid lg:grid-cols-6 lg:overflow-visible">
           {flashDealProducts.map((product) => (
-            <div key={product.id} className="min-w-[210px] lg:min-w-0">
+            <div key={product.id} className="w-36 shrink-0 sm:w-40 lg:w-auto">
               <ProductCard product={product} />
             </div>
           ))}
