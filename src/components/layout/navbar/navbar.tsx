@@ -8,7 +8,7 @@ import { TopBar } from "./top-bar";
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-white">
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
       <TopBar />
       <Container className="flex h-16 items-center gap-3 sm:gap-6">
         <MobileNav />

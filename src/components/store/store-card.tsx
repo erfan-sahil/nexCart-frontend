@@ -13,7 +13,7 @@ export function StoreCard({ store }: StoreCardProps) {
   return (
     <Link
       href={`/stores/${store.slug}`}
-      className="group overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-[0_8px_30px_rgba(10,10,10,0.06)]"
+      className="group overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-[0_8px_30px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
     >
       <div className="relative h-28 overflow-hidden bg-surface-muted sm:h-32">
         <Image
@@ -25,7 +25,7 @@ export function StoreCard({ store }: StoreCardProps) {
         />
       </div>
       <div className="relative px-4 pt-8 pb-4">
-        <div className="absolute -top-7 left-4 size-14 overflow-hidden rounded-2xl border-2 border-white bg-surface-muted shadow-sm">
+        <div className="absolute -top-7 left-4 size-14 overflow-hidden rounded-2xl border-2 border-card bg-surface-muted shadow-sm">
           <Image
             src={store.logo}
             alt={`${store.name} logo`}
@@ -36,7 +36,7 @@ export function StoreCard({ store }: StoreCardProps) {
         </div>
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="flex items-center gap-1 font-semibold text-ink">
+            <p className="flex items-center gap-1 font-semibold text-foreground">
               {store.name}
               {store.verified ? (
                 <BadgeCheck className="size-4 text-primary" />

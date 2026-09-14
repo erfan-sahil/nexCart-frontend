@@ -43,7 +43,7 @@ export function SectionHeader({
         <h2
           className={cn(
             "text-2xl font-semibold tracking-tight sm:text-3xl",
-            invert ? "text-white" : "text-ink",
+            invert ? "text-white" : "text-foreground",
           )}
         >
           {title}

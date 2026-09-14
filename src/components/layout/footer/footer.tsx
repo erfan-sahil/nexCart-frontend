@@ -74,7 +74,7 @@ export function Footer() {
     <footer className="mt-auto bg-surface-dark text-white">
       <Container className="grid gap-12 py-14 lg:grid-cols-[1.1fr_1.6fr] lg:gap-16">
         <div>
-          <Logo variant="light" />
+          <Logo variant="on-dark" />
           <p className="mt-4 max-w-sm text-sm leading-6 text-white/60">
             A multi-vendor marketplace for independent stores. Fast delivery,
             verified sellers, and deals that keep moving.

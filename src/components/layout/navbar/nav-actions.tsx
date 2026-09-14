@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Heart, ShoppingBag, UserRound } from "lucide-react";
 
+import { ThemeToggle } from "@/components/common";
+
 const actions = [
   { href: "/account", label: "Account", icon: UserRound },
   { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
@@ -10,6 +12,7 @@ const actions = [
 export function NavActions() {
   return (
     <div className="flex items-center gap-1 sm:gap-2">
+      <ThemeToggle />
       {actions.map(({ href, label, icon: Icon, ...rest }) => {
         const count = "count" in rest ? rest.count : undefined;
 
@@ -17,7 +20,7 @@ export function NavActions() {
           <Link
             key={href}
             href={href}
-            className="relative flex flex-col items-center rounded-lg px-2 py-1 text-ink transition-colors hover:text-primary"
+            className="relative flex flex-col items-center rounded-lg px-2 py-1 text-foreground transition-colors hover:text-primary"
           >
             <span className="relative">
               <Icon className="size-5" />

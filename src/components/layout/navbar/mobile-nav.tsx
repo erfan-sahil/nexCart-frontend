@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
-import { Logo } from "@/components/common";
+import { Logo, ThemeToggle } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
 
 import { SearchBar } from "./search-bar";
@@ -23,7 +23,7 @@ export function MobileNav() {
     <>
       <button
         type="button"
-        className="inline-flex size-10 items-center justify-center rounded-lg text-ink lg:hidden"
+        className="inline-flex size-10 items-center justify-center rounded-lg text-foreground lg:hidden"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
       >
@@ -38,12 +38,12 @@ export function MobileNav() {
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[min(100%,20rem)] flex-col bg-white shadow-xl">
+          <aside className="absolute inset-y-0 left-0 flex w-[min(100%,20rem)] flex-col bg-background shadow-xl">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <Logo />
               <button
                 type="button"
-                className="inline-flex size-9 items-center justify-center rounded-lg"
+                className="inline-flex size-9 items-center justify-center rounded-lg text-foreground"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
               >
@@ -83,6 +83,10 @@ export function MobileNav() {
                 <Link href="/help" onClick={() => setOpen(false)}>
                   Help
                 </Link>
+              </div>
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <p className="text-sm">Appearance</p>
+                <ThemeToggle showLabel={false} />
               </div>
             </div>
           </aside>

@@ -8,12 +8,12 @@ export function CategoryNav() {
   return (
     <nav
       aria-label="Product categories"
-      className="hidden border-t border-border bg-white lg:block"
+      className="hidden border-t border-border bg-background lg:block"
     >
       <Container className="flex h-11 items-center gap-6">
         <Link
           href="/categories"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-primary"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-primary"
         >
           <LayoutGrid className="size-4 text-primary" />
           All categories

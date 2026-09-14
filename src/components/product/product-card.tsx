@@ -21,7 +21,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-[0_8px_24px_rgba(10,10,10,0.06)]",
+        "group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-[0_8px_24px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]",
         compact && "w-36 shrink-0 sm:w-40",
       )}
     >
@@ -50,7 +50,7 @@ export function ProductCard({
         ) : null}
         <button
           type="button"
-          className="absolute right-2 bottom-2 inline-flex size-7 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition-colors hover:text-primary"
+          className="absolute right-2 bottom-2 inline-flex size-7 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:text-primary"
           aria-label={`Save ${product.name}`}
         >
           <Heart className="size-3.5" />
@@ -65,14 +65,14 @@ export function ProductCard({
           {product.store.name}
         </Link>
         <Link href={`/products/${product.slug}`} className="mt-0.5">
-          <h3 className="line-clamp-2 text-[13px] leading-snug font-medium text-ink transition-colors group-hover:text-primary">
+          <h3 className="line-clamp-2 text-[13px] leading-snug font-medium text-foreground transition-colors group-hover:text-primary">
             {product.name}
           </h3>
         </Link>
 
         <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
           <Star className="size-3 fill-primary text-primary" />
-          <span className="font-medium text-ink">{product.rating}</span>
+          <span className="font-medium text-foreground">{product.rating}</span>
           <span>({formatCount(product.reviewCount)})</span>
         </div>
 
