@@ -1,0 +1,265 @@
+import type { Product } from "@/types";
+
+const store = {
+  pixelab: {
+    id: "s1",
+    name: "Pixelab",
+    slug: "pixelab",
+    logo: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=80&q=80",
+    verified: true,
+  },
+  northline: {
+    id: "s2",
+    name: "Northline",
+    slug: "northline",
+    logo: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=80&q=80",
+    verified: true,
+  },
+  hearth: {
+    id: "s3",
+    name: "Hearth Co.",
+    slug: "hearth-co",
+    logo: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=80&q=80",
+    verified: true,
+  },
+  aura: {
+    id: "s4",
+    name: "Aura Beauty",
+    slug: "aura-beauty",
+    logo: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=80&q=80",
+    verified: false,
+  },
+  velocity: {
+    id: "s5",
+    name: "Velocity Gear",
+    slug: "velocity-gear",
+    logo: "https://images.unsplash.com/photo-1461897104016-0b3b00cc81ee?auto=format&fit=crop&w=80&q=80",
+    verified: true,
+  },
+  loft: {
+    id: "s6",
+    name: "Loft & Linen",
+    slug: "loft-linen",
+    logo: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=80&q=80",
+    verified: true,
+  },
+} as const;
+
+export const products: Product[] = [
+  {
+    id: "p1",
+    slug: "pulse-anc-headphones",
+    name: "Pulse ANC Wireless Headphones",
+    price: 129,
+    originalPrice: 199,
+    rating: 4.8,
+    reviewCount: 2140,
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
+    store: store.pixelab,
+    badge: "Top rated",
+    sold: 8420,
+  },
+  {
+    id: "p2",
+    slug: "nova-smartwatch",
+    name: "Nova Sport Smartwatch",
+    price: 179,
+    originalPrice: 249,
+    rating: 4.6,
+    reviewCount: 980,
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+    store: store.pixelab,
+    badge: "Hot",
+    sold: 5120,
+  },
+  {
+    id: "p3",
+    slug: "aero-run-sneakers",
+    name: "Aero Run Knit Sneakers",
+    price: 89,
+    originalPrice: 140,
+    rating: 4.7,
+    reviewCount: 1670,
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+    store: store.velocity,
+    sold: 3904,
+  },
+  {
+    id: "p4",
+    slug: "linen-throw-set",
+    name: "Washed Linen Throw Set",
+    price: 64,
+    originalPrice: 96,
+    rating: 4.9,
+    reviewCount: 540,
+    image:
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80",
+    store: store.loft,
+    badge: "New",
+    sold: 870,
+  },
+  {
+    id: "p5",
+    slug: "ember-leather-tote",
+    name: "Ember Leather Tote",
+    price: 118,
+    originalPrice: 165,
+    rating: 4.5,
+    reviewCount: 430,
+    image:
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=800&q=80",
+    store: store.northline,
+    sold: 1260,
+  },
+  {
+    id: "p6",
+    slug: "folio-mirrorless-camera",
+    name: "Folio Mirrorless Camera",
+    price: 649,
+    originalPrice: 799,
+    rating: 4.8,
+    reviewCount: 312,
+    image:
+      "https://images.unsplash.com/photo-1495707902641-75cac588d2e9?auto=format&fit=crop&w=800&q=80",
+    store: store.pixelab,
+    badge: "Editor pick",
+    sold: 640,
+  },
+  {
+    id: "p7",
+    slug: "arc-desk-lamp",
+    name: "Arc Brass Desk Lamp",
+    price: 72,
+    originalPrice: 110,
+    rating: 4.4,
+    reviewCount: 210,
+    image:
+      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=800&q=80",
+    store: store.hearth,
+    sold: 1540,
+  },
+  {
+    id: "p8",
+    slug: "glow-serum-kit",
+    name: "Glow Restore Serum Kit",
+    price: 42,
+    originalPrice: 68,
+    rating: 4.7,
+    reviewCount: 2890,
+    image:
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80",
+    store: store.aura,
+    badge: "Bestseller",
+    sold: 12100,
+  },
+  {
+    id: "p9",
+    slug: "carbon-keyboard",
+    name: "Carbon Low-Profile Keyboard",
+    price: 149,
+    originalPrice: 189,
+    rating: 4.6,
+    reviewCount: 760,
+    image:
+      "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=800&q=80",
+    store: store.pixelab,
+    sold: 2210,
+  },
+  {
+    id: "p10",
+    slug: "trail-daypack",
+    name: "Trail Compact Daypack",
+    price: 58,
+    originalPrice: 85,
+    rating: 4.5,
+    reviewCount: 640,
+    image:
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
+    store: store.velocity,
+    sold: 1980,
+  },
+  {
+    id: "p11",
+    slug: "ceramic-pour-set",
+    name: "Stoneware Pour-Over Set",
+    price: 54,
+    originalPrice: 78,
+    rating: 4.8,
+    reviewCount: 410,
+    image:
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
+    store: store.hearth,
+    badge: "New",
+    sold: 990,
+  },
+  {
+    id: "p12",
+    slug: "studio-monitors",
+    name: "Studio Compact Speakers",
+    price: 219,
+    originalPrice: 299,
+    rating: 4.7,
+    reviewCount: 505,
+    image:
+      "https://images.unsplash.com/photo-1558089687-f282ffcbc126?auto=format&fit=crop&w=800&q=80",
+    store: store.pixelab,
+    sold: 870,
+  },
+];
+
+export const flashDealProducts = products.slice(0, 6);
+export const topSellingProducts = [
+  products[0],
+  products[2],
+  products[7],
+  products[1],
+  products[5],
+  products[8],
+  products[4],
+  products[9],
+];
+export const trendingProducts = [
+  products[1],
+  products[5],
+  products[3],
+  products[11],
+  products[6],
+  products[10],
+  products[2],
+  products[0],
+];
+export const recommendedProducts = [
+  products[7],
+  products[3],
+  products[4],
+  products[10],
+  products[8],
+  products[9],
+  products[11],
+  products[6],
+];
+export const recentlyViewedProducts = [
+  products[0],
+  products[5],
+  products[2],
+  products[7],
+  products[4],
+  products[11],
+];
+export const newArrivalProducts = [
+  products[3],
+  products[10],
+  products[8],
+  products[11],
+  products[6],
+  products[9],
+  products[1],
+  products[4],
+];
+
+export const flashDealEndsAt = new Date(
+  Date.now() + 1000 * 60 * 60 * 11 + 1000 * 60 * 42,
+).toISOString();
