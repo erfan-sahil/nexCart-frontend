@@ -44,3 +44,16 @@ export type HeroSlide = {
   href: string;
   image: string;
 };
+
+export type PromoSlot = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+  href: string;
+  image: string;
+  productName: string;
+  price: number;
+  originalPrice?: number;
+};

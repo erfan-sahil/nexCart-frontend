@@ -6,15 +6,22 @@ import { ProductCard } from "./product-card";
 type ProductGridProps = {
   products: Product[];
   className?: string;
+  columns?: "default" | "promo";
 };
 
-export function ProductGrid({ products, className }: ProductGridProps) {
+const columnClass = {
+  default: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5",
+  promo: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+} as const;
+
+export function ProductGrid({
+  products,
+  className,
+  columns = "default",
+}: ProductGridProps) {
   return (
     <div
-      className={cn(
-        "grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5",
-        className,
-      )}
+      className={cn("grid gap-2.5 sm:gap-3", columnClass[columns], className)}
     >
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />

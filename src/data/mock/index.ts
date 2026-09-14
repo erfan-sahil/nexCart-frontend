@@ -1,4 +1,5 @@
 export { heroSlides } from "./banners";
+export { newArrivalsPromo, topSellingPromo } from "./promos";
 export { categories } from "./categories";
 export {
   flashDealEndsAt,

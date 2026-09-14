@@ -1,6 +1,6 @@
 import { Container, SectionHeader } from "@/components/common";
-import { ProductGrid } from "@/components/product";
-import { topSellingProducts } from "@/data/mock";
+import { ProductShowcase } from "@/components/product";
+import { topSellingProducts, topSellingPromo } from "@/data/mock";
 
 export function TopSellingProducts() {
   return (
@@ -12,7 +12,11 @@ export function TopSellingProducts() {
           description="What the marketplace cannot keep in stock."
           href="/products?sort=bestsellers"
         />
-        <ProductGrid products={topSellingProducts} />
+        <ProductShowcase
+          products={topSellingProducts}
+          promo={topSellingPromo}
+          promoPosition="start"
+        />
       </Container>
     </section>
   );

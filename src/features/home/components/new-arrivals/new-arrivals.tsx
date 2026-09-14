@@ -1,6 +1,6 @@
 import { Container, SectionHeader } from "@/components/common";
-import { ProductGrid } from "@/components/product";
-import { newArrivalProducts } from "@/data/mock";
+import { ProductShowcase } from "@/components/product";
+import { newArrivalProducts, newArrivalsPromo } from "@/data/mock";
 
 export function NewArrivals() {
   return (
@@ -12,7 +12,10 @@ export function NewArrivals() {
           description="Fresh inventory from vendors who listed this week."
           href="/new-arrivals"
         />
-        <ProductGrid products={newArrivalProducts} />
+        <ProductShowcase
+          products={newArrivalProducts}
+          promo={newArrivalsPromo}
+        />
       </Container>
     </section>
   );
