@@ -1,6 +1,11 @@
 export { heroSlides } from "./banners";
 export { newArrivalsPromo, topSellingPromo } from "./promos";
-export { categories } from "./categories";
+export {
+  categories,
+  getCatalogStats,
+  getCategoryBySlug,
+  getPopularAisles,
+} from "./categories";
 export {
   flashDealEndsAt,
   flashDealProducts,

@@ -57,6 +57,15 @@ export function MobileNav() {
                   Categories
                 </p>
                 <ul className="space-y-1">
+                  <li>
+                    <Link
+                      href="/categories"
+                      className="block rounded-lg px-2 py-2 text-sm font-medium hover:bg-brand-soft hover:text-primary"
+                      onClick={() => setOpen(false)}
+                    >
+                      All categories
+                    </Link>
+                  </li>
                   {CATEGORY_LINKS.map((item) => (
                     <li key={item.href}>
                       <Link

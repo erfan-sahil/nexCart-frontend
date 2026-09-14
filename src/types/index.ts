@@ -20,12 +20,28 @@ export type Product = {
   sold?: number;
 };
 
+export type Subcategory = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  productCount: number;
+  popular?: boolean;
+};
+
 export type Category = {
   id: string;
   name: string;
   slug: string;
   image: string;
   productCount: number;
+  description: string;
+  subcategories: Subcategory[];
+};
+
+export type PopularAisle = Subcategory & {
+  categorySlug: string;
+  categoryName: string;
 };
 
 export type Store = StoreSummary & {
