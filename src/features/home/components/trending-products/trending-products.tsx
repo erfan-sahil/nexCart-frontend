@@ -1,6 +1,5 @@
-import { ProductGrid } from "@/components/product/product-grid";
-import { Container } from "@/components/shared/container";
-import { SectionHeader } from "@/components/shared/section-header";
+import { Container, SectionHeader } from "@/components/common";
+import { ProductGrid } from "@/components/product";
 import { trendingProducts } from "@/data/mock";
 
 export function TrendingProducts() {

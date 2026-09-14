@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
-import { Logo } from "@/components/shared/logo";
+import { Logo } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
 
 import { SearchBar } from "./search-bar";

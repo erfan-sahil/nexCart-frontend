@@ -1,6 +1,5 @@
-import { CategoryCard } from "@/components/category/category-card";
-import { Container } from "@/components/shared/container";
-import { SectionHeader } from "@/components/shared/section-header";
+import { Container, SectionHeader } from "@/components/common";
+import { CategoryCard } from "@/components/category";
 import { categories } from "@/data/mock";
 
 export function FeaturedCategories() {

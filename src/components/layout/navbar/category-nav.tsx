@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LayoutGrid } from "lucide-react";
 
-import { Container } from "@/components/shared/container";
+import { Container } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
 
 export function CategoryNav() {

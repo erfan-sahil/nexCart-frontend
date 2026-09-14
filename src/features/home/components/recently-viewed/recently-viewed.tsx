@@ -1,6 +1,5 @@
-import { ProductCard } from "@/components/product/product-card";
-import { Container } from "@/components/shared/container";
-import { SectionHeader } from "@/components/shared/section-header";
+import { Container, SectionHeader } from "@/components/common";
+import { ProductCard } from "@/components/product";
 import { recentlyViewedProducts } from "@/data/mock";
 
 export function RecentlyViewed() {

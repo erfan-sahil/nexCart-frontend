@@ -1,6 +1,5 @@
-import { StoreCard } from "@/components/store/store-card";
-import { Container } from "@/components/shared/container";
-import { SectionHeader } from "@/components/shared/section-header";
+import { Container, SectionHeader } from "@/components/common";
+import { StoreCard } from "@/components/store";
 import { stores } from "@/data/mock";
 
 export function PopularStores() {

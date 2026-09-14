@@ -1,8 +1,7 @@
 import { Zap } from "lucide-react";
 
-import { ProductCard } from "@/components/product/product-card";
-import { Container } from "@/components/shared/container";
-import { CountdownTimer } from "@/components/shared/countdown-timer";
+import { Container, CountdownTimer } from "@/components/common";
+import { ProductCard } from "@/components/product";
 import { flashDealEndsAt, flashDealProducts } from "@/data/mock";
 
 export function FlashDeals() {

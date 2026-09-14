@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { Container } from "@/components/shared/container";
-import { Logo } from "@/components/shared/logo";
+import { Container, Logo } from "@/components/common";
 
 import { FooterLinks } from "./footer-links";
 import { NewsletterForm } from "./newsletter-form";

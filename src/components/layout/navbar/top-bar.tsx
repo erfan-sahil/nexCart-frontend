@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Container } from "@/components/shared/container";
+import { Container } from "@/components/common";
 
 export function TopBar() {
   return (

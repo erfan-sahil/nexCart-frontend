@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Container } from "@/components/shared/container";
+import { Container } from "@/components/common";
 import { heroSlides } from "@/data/mock";
 import { cn } from "@/lib/utils";
 
