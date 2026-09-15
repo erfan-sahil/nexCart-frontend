@@ -10,7 +10,7 @@ export function RecentlyViewed() {
           eyebrow="Pick up where you left"
           title="Recently viewed"
           description="Jump back into products you already opened."
-          href="/recently-viewed"
+          href="/products?collection=recently-viewed"
         />
         <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar sm:gap-3">
           {recentlyViewedProducts.map((product) => (

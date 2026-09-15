@@ -10,7 +10,7 @@ export function TrendingProducts() {
           eyebrow="Right now"
           title="Trending products"
           description="Rising fast across stores in the last 24 hours."
-          href="/products?sort=trending"
+          href="/products?collection=trending"
         />
         <ProductGrid products={trendingProducts} />
       </Container>

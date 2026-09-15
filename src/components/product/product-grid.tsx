@@ -6,12 +6,13 @@ import { ProductCard } from "./product-card";
 type ProductGridProps = {
   products: Product[];
   className?: string;
-  columns?: "default" | "promo";
+  columns?: "default" | "promo" | "catalog";
 };
 
 const columnClass = {
   default: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5",
   promo: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+  catalog: "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4",
 } as const;
 
 export function ProductGrid({

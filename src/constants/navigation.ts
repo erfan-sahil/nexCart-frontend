@@ -1,23 +1,31 @@
 export const CATEGORY_LINKS = [
-  { href: "/categories/electronics", label: "Electronics" },
-  { href: "/categories/fashion", label: "Fashion" },
-  { href: "/categories/home", label: "Home & Living" },
-  { href: "/categories/beauty", label: "Beauty" },
-  { href: "/categories/sports", label: "Sports" },
-  { href: "/categories/grocery", label: "Grocery" },
-  { href: "/categories/automotive", label: "Automotive" },
-  { href: "/categories/books", label: "Books" },
+  {
+    href: "/products?category=electronics",
+    slug: "electronics",
+    label: "Electronics",
+  },
+  { href: "/products?category=fashion", slug: "fashion", label: "Fashion" },
+  { href: "/products?category=home", slug: "home", label: "Home & Living" },
+  { href: "/products?category=beauty", slug: "beauty", label: "Beauty" },
+  { href: "/products?category=sports", slug: "sports", label: "Sports" },
+  { href: "/products?category=grocery", slug: "grocery", label: "Grocery" },
+  {
+    href: "/products?category=automotive",
+    slug: "automotive",
+    label: "Automotive",
+  },
+  { href: "/products?category=books", slug: "books", label: "Books" },
 ] as const;
 
 export const FOOTER_LINK_GROUPS = [
   {
     title: "Shop",
     links: [
-      { href: "/deals", label: "Flash Deals" },
+      { href: "/products?collection=flash-deals", label: "Flash Deals" },
       { href: "/products", label: "All Products" },
       { href: "/categories", label: "Categories" },
       { href: "/stores", label: "Stores" },
-      { href: "/new-arrivals", label: "New Arrivals" },
+      { href: "/products?collection=new-arrivals", label: "New Arrivals" },
     ],
   },
   {
@@ -26,7 +34,10 @@ export const FOOTER_LINK_GROUPS = [
       { href: "/account", label: "My Account" },
       { href: "/orders", label: "Order History" },
       { href: "/wishlist", label: "Wishlist" },
-      { href: "/recently-viewed", label: "Recently Viewed" },
+      {
+        href: "/products?collection=recently-viewed",
+        label: "Recently Viewed",
+      },
     ],
   },
   {

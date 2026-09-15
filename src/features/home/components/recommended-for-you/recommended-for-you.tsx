@@ -10,7 +10,7 @@ export function RecommendedForYou() {
           eyebrow="For you"
           title="Recommended for you"
           description="Picked from stores and categories you tend to open."
-          href="/products?sort=recommended"
+          href="/products?collection=recommended"
         />
         <ProductGrid products={recommendedProducts} />
       </Container>

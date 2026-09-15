@@ -1,4 +1,5 @@
-import { Zap } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Zap } from "lucide-react";
 
 import { Container, CountdownTimer } from "@/components/common";
 import { ProductCard } from "@/components/product";
@@ -21,7 +22,16 @@ export function FlashDeals() {
               Prices drop hard, then they are gone.
             </p>
           </div>
-          <CountdownTimer target={flashDealEndsAt} />
+          <div className="flex flex-col gap-3 sm:items-end">
+            <CountdownTimer target={flashDealEndsAt} />
+            <Link
+              href="/products?collection=flash-deals"
+              className="inline-flex items-center gap-1 text-sm font-medium text-white transition-colors hover:text-primary"
+            >
+              See all
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
         </div>
         <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar sm:gap-3 lg:grid lg:grid-cols-6 lg:overflow-visible">
           {flashDealProducts.map((product) => (

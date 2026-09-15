@@ -24,7 +24,7 @@ export function PopularAisles({ aisles }: PopularAislesProps) {
               key={aisle.id}
               subcategory={aisle}
               categoryName={aisle.categoryName}
-              href={`/categories/${aisle.categorySlug}#${aisle.slug}`}
+              href={`/products?category=${aisle.categorySlug}&subcategory=${aisle.slug}`}
               variant="compact"
             />
           ))}

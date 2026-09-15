@@ -18,6 +18,9 @@ export type Product = {
   store: StoreSummary;
   badge?: string;
   sold?: number;
+  categorySlug: string;
+  subcategorySlug: string;
+  listedAt: string;
 };
 
 export type Subcategory = {

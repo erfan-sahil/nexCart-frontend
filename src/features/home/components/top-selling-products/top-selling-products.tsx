@@ -10,7 +10,7 @@ export function TopSellingProducts() {
           eyebrow="Bestsellers"
           title="Top selling products"
           description="What the marketplace cannot keep in stock."
-          href="/products?sort=bestsellers"
+          href="/products?collection=bestsellers"
         />
         <ProductShowcase
           products={topSellingProducts}

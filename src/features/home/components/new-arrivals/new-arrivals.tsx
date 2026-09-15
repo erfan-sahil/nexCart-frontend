@@ -10,7 +10,7 @@ export function NewArrivals() {
           eyebrow="Just landed"
           title="New arrivals"
           description="Fresh inventory from vendors who listed this week."
-          href="/new-arrivals"
+          href="/products?collection=new-arrivals"
         />
         <ProductShowcase
           products={newArrivalProducts}

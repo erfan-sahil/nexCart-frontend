@@ -2,10 +2,15 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { categories, getCategoryBySlug } from "@/data/mock";
-import { CategoryDetailView } from "@/features/categories";
+import {
+  ProductsView,
+  parseProductSearchParams,
+  type ProductSearchParams,
+} from "@/features/products";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<ProductSearchParams>;
 };
 
 export function generateStaticParams() {
@@ -28,7 +33,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
 
@@ -36,5 +44,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  return <CategoryDetailView category={category} />;
+  const query = parseProductSearchParams(await searchParams, {
+    category: slug,
+  });
+
+  return <ProductsView query={query} />;
 }

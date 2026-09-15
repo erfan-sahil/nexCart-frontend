@@ -11,7 +11,7 @@ type CategoryCardProps = {
 export function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
-      href={`/categories/${category.slug}`}
+      href={`/products?category=${category.slug}`}
       className="group flex min-w-[140px] flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-[0_8px_30px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">

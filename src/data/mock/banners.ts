@@ -18,7 +18,7 @@ export const heroSlides: HeroSlide[] = [
     title: "Pro gear from specialist vendors, up to 40% off.",
     subtitle: "Headphones, cameras, and studio kits from verified tech stores.",
     ctaLabel: "Browse electronics",
-    href: "/categories/electronics",
+    href: "/products?category=electronics",
     image:
       "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1800&q=80",
   },
@@ -29,7 +29,7 @@ export const heroSlides: HeroSlide[] = [
     subtitle:
       "Limited runs, real makers, and styles you will not find in a big-box feed.",
     ctaLabel: "Explore fashion",
-    href: "/categories/fashion",
+    href: "/products?category=fashion",
     image:
       "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=80",
   },

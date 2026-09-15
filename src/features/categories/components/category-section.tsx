@@ -44,7 +44,7 @@ export function CategorySection({ category }: CategorySectionProps) {
           </div>
         </div>
         <Link
-          href={`/categories/${category.slug}`}
+          href={`/products?category=${category.slug}`}
           className="inline-flex shrink-0 items-center gap-1 pt-1 text-sm font-medium text-primary hover:text-brand-hover"
         >
           Shop all
@@ -56,7 +56,7 @@ export function CategorySection({ category }: CategorySectionProps) {
           <SubcategoryCard
             key={subcategory.id}
             subcategory={subcategory}
-            href={`/categories/${category.slug}#${subcategory.slug}`}
+            href={`/products?category=${category.slug}&subcategory=${subcategory.slug}`}
           />
         ))}
       </div>
