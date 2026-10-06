@@ -66,7 +66,7 @@ export function LoginForm() {
         <Button
           type="submit"
           size="lg"
-          className="auth-orange-button h-10 w-full"
+          className="auth-orange-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#2a1218] hover:text-[#ff7a7a]"
         >
           Sign in
         </Button>

@@ -190,12 +190,32 @@
   }
 
   .auth-orange-button {
+    height: 3rem;
+    border-radius: 9999px;
     background-color: #ff7a7a;
     color: #2a1218;
+    font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition:
+      background-color 500ms ease,
+      color 500ms ease;
   }
 
   .auth-orange-button:hover {
-    background-color: color-mix(in srgb, #ff7a7a 88%, #000);
+    background-color: #2a1218;
+    color: #ff7a7a;
+  }
+
+  .auth-dark-button {
+    background-color: #2a1218;
+    color: #fff;
+  }
+
+  .auth-dark-button:hover {
+    background-color: #ff7a7a;
+    color: #2a1218;
   }
 
   .auth-wave-back-fill {

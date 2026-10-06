@@ -94,7 +94,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           size="lg"
-          className="auth-orange-button h-10 w-full"
+          className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff7a7a] hover:text-[#2a1218]"
         >
           Create account
         </Button>
