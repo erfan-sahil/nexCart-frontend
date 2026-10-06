@@ -23,7 +23,7 @@ export function ProductShowcase({
     <aside className="relative min-h-64 lg:min-h-0">
       <PromoColumn
         promo={promo}
-        className="min-h-64 lg:absolute lg:inset-0 lg:min-h-0"
+        className="lg:absolute lg:inset-0 lg:min-h-0"
       />
     </aside>
   );
@@ -31,7 +31,7 @@ export function ProductShowcase({
   return (
     <div
       className={cn(
-        "grid gap-2.5 sm:gap-3 lg:items-stretch",
+        "grid gap-3 sm:gap-4 lg:items-stretch",
         promoPosition === "start"
           ? "lg:grid-cols-[18rem_minmax(0,1fr)] xl:grid-cols-[20rem_minmax(0,1fr)]"
           : "lg:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem]",

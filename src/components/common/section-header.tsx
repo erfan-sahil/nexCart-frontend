@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
 import { cn } from "@/lib/utils";
+
+import { SeeAllLink } from "./see-all-link";
 
 type SectionHeaderProps = {
   eyebrow?: string;
@@ -31,18 +30,13 @@ export function SectionHeader({
     >
       <div className="max-w-2xl">
         {eyebrow ? (
-          <p
-            className={cn(
-              "mb-1 text-xs font-semibold tracking-[0.18em] uppercase",
-              invert ? "text-primary" : "text-primary",
-            )}
-          >
+          <p className="mb-1 text-xs font-semibold tracking-[0.18em] text-primary uppercase">
             {eyebrow}
           </p>
         ) : null}
         <h2
           className={cn(
-            "text-2xl font-semibold tracking-tight sm:text-3xl",
+            "text-2xl sm:text-3xl",
             invert ? "text-white" : "text-foreground",
           )}
         >
@@ -59,20 +53,7 @@ export function SectionHeader({
           </p>
         ) : null}
       </div>
-      {href ? (
-        <Link
-          href={href}
-          className={cn(
-            "inline-flex items-center gap-1 text-sm font-medium transition-colors",
-            invert
-              ? "text-white hover:text-primary"
-              : "text-primary hover:text-brand-hover",
-          )}
-        >
-          {actionLabel}
-          <ArrowRight className="size-4" />
-        </Link>
-      ) : null}
+      {href ? <SeeAllLink href={href} label={actionLabel} /> : null}
     </div>
   );
 }

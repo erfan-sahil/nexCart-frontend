@@ -23,7 +23,7 @@ export function CategoriesHeader({
             <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
               Shop the marketplace
             </p>
-            <h1 className="mt-1.5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="mt-1.5 text-3xl text-foreground sm:text-4xl">
               All categories
             </h1>
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">

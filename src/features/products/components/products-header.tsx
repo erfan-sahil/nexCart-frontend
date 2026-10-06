@@ -81,7 +81,7 @@ export function ProductsHeader({
         <div className="mt-1.5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <h1
-              className={`text-3xl font-semibold tracking-tight sm:text-4xl ${
+              className={`text-3xl sm:text-4xl ${
                 category ? "text-white" : "text-foreground"
               }`}
             >
