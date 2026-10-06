@@ -22,7 +22,7 @@ export function TopBar() {
           </Link>
           <Link
             href="/sell"
-            className="font-medium text-primary hover:text-brand-muted"
+            className="font-medium text-primary hover:text-white"
           >
             Sell on NexCart
           </Link>
