@@ -31,7 +31,7 @@ export const FOOTER_LINK_GROUPS = [
   {
     title: "Account",
     links: [
-      { href: "/account", label: "My Account" },
+      { href: "/login", label: "Sign in" },
       { href: "/orders", label: "Order History" },
       { href: "/wishlist", label: "Wishlist" },
       {

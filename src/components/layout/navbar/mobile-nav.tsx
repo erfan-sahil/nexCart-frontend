@@ -80,7 +80,7 @@ export function MobileNav() {
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-2 border-t border-border pt-4 text-sm">
-                <Link href="/account" onClick={() => setOpen(false)}>
+                <Link href="/login" onClick={() => setOpen(false)}>
                   Account
                 </Link>
                 <Link href="/orders" onClick={() => setOpen(false)}>

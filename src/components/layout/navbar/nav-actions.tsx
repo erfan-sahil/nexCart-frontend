@@ -4,7 +4,7 @@ import { Heart, ShoppingBag, UserRound } from "lucide-react";
 import { ThemeToggle } from "@/components/common";
 
 const actions = [
-  { href: "/account", label: "Account", icon: UserRound },
+  { href: "/login", label: "Account", icon: UserRound },
   { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
   { href: "/cart", label: "Cart", icon: ShoppingBag, count: 3 },
 ] as const;

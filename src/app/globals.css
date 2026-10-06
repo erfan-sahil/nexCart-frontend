@@ -55,6 +55,32 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-auth-orb: auth-orb 16s ease-in-out infinite;
+  --animate-auth-orb-alt: auth-orb-alt 20s ease-in-out infinite;
+
+  @keyframes auth-orb {
+    0%,
+    100% {
+      translate: 0 0;
+      scale: 1;
+    }
+    50% {
+      translate: 28px 36px;
+      scale: 1.08;
+    }
+  }
+
+  @keyframes auth-orb-alt {
+    0%,
+    100% {
+      translate: 0 0;
+      scale: 1;
+    }
+    50% {
+      translate: -32px -24px;
+      scale: 1.06;
+    }
+  }
 }
 
 :root {
