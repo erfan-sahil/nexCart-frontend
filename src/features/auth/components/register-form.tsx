@@ -91,7 +91,11 @@ export function RegisterForm() {
           placeholder="Repeat your password"
           error={errors.confirmPassword}
         />
-        <Button type="submit" size="lg" className="h-10 w-full">
+        <Button
+          type="submit"
+          size="lg"
+          className="auth-orange-button h-10 w-full"
+        >
           Create account
         </Button>
       </form>

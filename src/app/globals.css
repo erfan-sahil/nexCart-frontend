@@ -176,14 +176,25 @@
 @layer utilities {
   .auth-wave-panel {
     background-color: #000;
-    --auth-wave-back: #ffb088;
-    --auth-wave-fill: var(--brand);
+    --auth-orange: #ff7a7a;
+    --auth-orange-hover: color-mix(in srgb, var(--auth-orange) 88%, #000);
+    --auth-wave-back: #ffd0ce;
+    --auth-wave-fill: var(--auth-orange);
   }
 
   .auth-wave-panel[data-tone="invert"] {
-    background-color: var(--brand);
+    background-color: var(--auth-orange);
     --auth-wave-back: #3f3f3f;
     --auth-wave-fill: #000;
+  }
+
+  .auth-orange-button {
+    background-color: #ff7a7a;
+    color: #2a1218;
+  }
+
+  .auth-orange-button:hover {
+    background-color: color-mix(in srgb, #ff7a7a 88%, #000);
   }
 
   .auth-wave-back-fill {

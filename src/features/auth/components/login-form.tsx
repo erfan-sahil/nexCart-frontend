@@ -61,7 +61,11 @@ export function LoginForm() {
           />
           Remember me
         </label>
-        <Button type="submit" size="lg" className="h-10 w-full">
+        <Button
+          type="submit"
+          size="lg"
+          className="auth-orange-button h-10 w-full"
+        >
           Sign in
         </Button>
       </form>

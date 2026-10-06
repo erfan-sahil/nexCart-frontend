@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ShieldCheck, Store, Truck } from "lucide-react";
 
 import { Logo } from "@/components/common";
+import { cn } from "@/lib/utils";
 
 const highlights = [
   {
@@ -36,7 +37,10 @@ export function AuthPanel() {
   return (
     <aside
       data-tone={inverted ? "invert" : "default"}
-      className="auth-wave-panel relative hidden overflow-hidden text-white lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-10"
+      className={cn(
+        "auth-wave-panel relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-10",
+        inverted ? "text-white" : "text-[#2a1218]",
+      )}
     >
       <div aria-hidden className="auth-wave-rise pointer-events-none">
         <svg
@@ -55,10 +59,19 @@ export function AuthPanel() {
         </svg>
         <div className="auth-wave-body" />
       </div>
-      <Logo variant="on-dark" priority className="relative" />
+      <Logo
+        variant={inverted ? "on-dark" : "on-light"}
+        priority
+        className="relative"
+      />
       <div className="relative max-w-md space-y-8">
         <div className="space-y-3">
-          <p className="text-sm font-medium tracking-wide text-white/70 uppercase">
+          <p
+            className={cn(
+              "text-sm font-medium tracking-wide uppercase",
+              inverted ? "text-white/70" : "text-[#2a1218]/75",
+            )}
+          >
             NexCart
           </p>
           <p className="text-4xl leading-tight font-semibold tracking-tight">
@@ -68,12 +81,22 @@ export function AuthPanel() {
         <ul className="space-y-5">
           {highlights.map(({ icon: Icon, title, description }) => (
             <li key={title} className="flex gap-3">
-              <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
+              <span
+                className={cn(
+                  "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
+                  inverted ? "bg-white/15" : "bg-[#2a1218]/10",
+                )}
+              >
                 <Icon className="size-4" />
               </span>
               <span>
                 <span className="block text-sm font-medium">{title}</span>
-                <span className="mt-1 block text-sm text-white/65">
+                <span
+                  className={cn(
+                    "mt-1 block text-sm",
+                    inverted ? "text-white/65" : "text-[#2a1218]/75",
+                  )}
+                >
                   {description}
                 </span>
               </span>
@@ -81,7 +104,12 @@ export function AuthPanel() {
           ))}
         </ul>
       </div>
-      <p className="relative text-sm text-white/50">
+      <p
+        className={cn(
+          "relative text-sm",
+          inverted ? "text-white/50" : "text-[#2a1218]/70",
+        )}
+      >
         Independent sellers. Everyday essentials. One checkout.
       </p>
     </aside>
