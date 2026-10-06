@@ -310,6 +310,17 @@
     letter-spacing: -0.03em;
   }
 
+  .hero-slide-progress {
+    animation: hero-slide-progress 6.5s linear forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide-progress {
+      animation: none;
+      transform: none;
+    }
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -322,6 +333,15 @@
 @keyframes auth-wave-rise {
   to {
     translate: 0 0;
+  }
+}
+
+@keyframes hero-slide-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
 

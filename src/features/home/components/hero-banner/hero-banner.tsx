@@ -8,8 +8,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { heroSlides } from "@/data/mock";
 import { cn } from "@/lib/utils";
 
+const SLIDE_MS = 6500;
+
 export function HeroBanner() {
   const [index, setIndex] = useState(0);
+  const [cycle, setCycle] = useState(0);
   const slide = heroSlides[index];
 
   useEffect(() => {
@@ -18,13 +21,14 @@ export function HeroBanner() {
 
     const id = window.setInterval(() => {
       setIndex((current) => (current + 1) % heroSlides.length);
-    }, 6500);
+    }, SLIDE_MS);
 
     return () => window.clearInterval(id);
-  }, []);
+  }, [cycle]);
 
   const goTo = (next: number) => {
     setIndex((next + heroSlides.length) % heroSlides.length);
+    setCycle((current) => current + 1);
   };
 
   return (
@@ -32,23 +36,25 @@ export function HeroBanner() {
       <div className="grid items-center lg:grid-cols-2">
         <div className="order-1 px-4 pt-5 sm:px-6 sm:pt-6 lg:order-2 lg:py-10 lg:pr-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] lg:pl-2">
           <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] bg-muted shadow-[0_24px_50px_-28px_rgba(42,18,24,0.45)] ring-1 ring-border sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(34rem,70vh)]">
-              {heroSlides.map((item, slideIndex) => (
-                <Image
-                  key={item.id}
-                  src={item.image}
-                  alt=""
-                  fill
-                  priority={slideIndex === 0}
-                  sizes="(min-width: 1024px) 42vw, 100vw"
-                  className={cn(
-                    "object-cover object-center transition-opacity duration-700",
-                    slideIndex === index
-                      ? "opacity-100"
-                      : "pointer-events-none opacity-0",
-                  )}
-                />
-              ))}
+            <div className="rounded-[2rem] bg-card p-2.5 shadow-[0_28px_60px_-32px_rgba(42,18,24,0.4)] ring-1 ring-border sm:p-3">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[1.45rem] bg-muted sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(32rem,68vh)]">
+                {heroSlides.map((item, slideIndex) => (
+                  <Image
+                    key={item.id}
+                    src={item.image}
+                    alt=""
+                    fill
+                    priority={slideIndex === 0}
+                    sizes="(min-width: 1024px) 42vw, 100vw"
+                    className={cn(
+                      "object-cover object-center transition-opacity duration-700",
+                      slideIndex === index
+                        ? "opacity-100"
+                        : "pointer-events-none opacity-0",
+                    )}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -79,7 +85,7 @@ export function HeroBanner() {
               </Link>
             </div>
 
-            <div className="mt-10 flex items-center gap-4">
+            <div className="mt-12 flex items-center gap-4 sm:mt-16">
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -98,13 +104,31 @@ export function HeroBanner() {
                   <ChevronRight className="size-5" />
                 </button>
               </div>
-              <p className="text-sm font-medium text-muted-foreground tabular-nums">
-                <span className="text-foreground">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="px-1">/</span>
-                {String(heroSlides.length).padStart(2, "0")}
-              </p>
+              <div className="flex items-center gap-2">
+                {heroSlides.map((item, slideIndex) => {
+                  const active = slideIndex === index;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      aria-label={`Show slide ${slideIndex + 1}`}
+                      aria-current={active ? "true" : undefined}
+                      onClick={() => goTo(slideIndex)}
+                      className={cn(
+                        "relative h-1.5 overflow-hidden rounded-full bg-border transition-[width] duration-300",
+                        active ? "w-12" : "w-4",
+                      )}
+                    >
+                      {active ? (
+                        <span
+                          key={`${item.id}-${cycle}`}
+                          className="hero-slide-progress absolute inset-0 origin-left bg-primary"
+                        />
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

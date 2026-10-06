@@ -11,8 +11,9 @@ export function FeaturedCategories() {
           title="Featured categories"
           description="Jump into the aisles shoppers open first."
           href="/categories"
+          actionVariant="spotlight"
         />
-        <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar sm:grid sm:grid-cols-4 sm:overflow-visible lg:grid-cols-8">
+        <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar sm:grid sm:grid-cols-4 sm:overflow-visible lg:grid-cols-8">
           {categories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
