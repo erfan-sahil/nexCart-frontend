@@ -55,32 +55,6 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --animate-auth-orb: auth-orb 16s ease-in-out infinite;
-  --animate-auth-orb-alt: auth-orb-alt 20s ease-in-out infinite;
-
-  @keyframes auth-orb {
-    0%,
-    100% {
-      translate: 0 0;
-      scale: 1;
-    }
-    50% {
-      translate: 28px 36px;
-      scale: 1.08;
-    }
-  }
-
-  @keyframes auth-orb-alt {
-    0%,
-    100% {
-      translate: 0 0;
-      scale: 1;
-    }
-    50% {
-      translate: -32px -24px;
-      scale: 1.06;
-    }
-  }
 }
 
 :root {
@@ -200,11 +174,90 @@
 }
 
 @layer utilities {
+  .auth-wave-panel {
+    background-color: #000;
+  }
+
+  .auth-wave-rise {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 145%;
+    translate: 0 100%;
+  }
+
+  .auth-wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 11rem;
+  }
+
+  .auth-wave-back {
+    top: -1.25rem;
+    height: 13rem;
+    opacity: 0.9;
+  }
+
+  .auth-wave-front {
+    top: 1.5rem;
+  }
+
+  .auth-wave-body {
+    position: absolute;
+    top: 6.5rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--brand);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .auth-wave-rise {
+      animation: auth-wave-rise 24s linear forwards;
+    }
+
+    .auth-wave-back {
+      animation: auth-wave-float 15s linear infinite;
+    }
+
+    .auth-wave-front {
+      animation: auth-wave-float 12s linear infinite reverse;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .auth-wave-panel {
+      background-color: var(--brand);
+    }
+
+    .auth-wave-rise {
+      display: none;
+    }
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@keyframes auth-wave-rise {
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes auth-wave-float {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
