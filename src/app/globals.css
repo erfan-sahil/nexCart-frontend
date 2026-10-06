@@ -241,8 +241,8 @@
   }
 
   .dark .auth-form-panel[data-tone="invert"] {
-    background-color: color-mix(in srgb, #ff7a7a 18%, #140c0c);
-    --input: color-mix(in srgb, #ff7a7a 55%, #3a2222);
+    background-color: color-mix(in oklch, #ff7a7a 28%, #1a1014);
+    --input: color-mix(in oklch, #ff7a7a 48%, #2c1a1e);
   }
 
   .auth-wave-rise {
