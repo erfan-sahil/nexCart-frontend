@@ -31,7 +31,9 @@ export function LoginForm() {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <h1 className="font-display text-4xl leading-none font-medium tracking-[-0.03em]">
+          Welcome back
+        </h1>
         <p className="text-sm text-muted-foreground">
           Sign in to track orders, save items, and check out faster.
         </p>

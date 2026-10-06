@@ -74,7 +74,7 @@ export function AuthPanel() {
           >
             NexCart
           </p>
-          <p className="text-4xl leading-tight font-semibold tracking-tight">
+          <p className="font-display text-5xl leading-[1.05] font-medium tracking-[-0.03em]">
             Shop from stores you can actually find.
           </p>
         </div>
@@ -90,7 +90,9 @@ export function AuthPanel() {
                 <Icon className="size-4" />
               </span>
               <span>
-                <span className="block text-sm font-medium">{title}</span>
+                <span className="font-display block text-lg leading-snug font-medium tracking-[-0.02em]">
+                  {title}
+                </span>
                 <span
                   className={cn(
                     "mt-1 block text-sm",
