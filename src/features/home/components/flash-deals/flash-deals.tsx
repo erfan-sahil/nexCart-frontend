@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Zap } from "lucide-react";
 
 import { Container, CountdownTimer } from "@/components/common";
-import { ProductCard } from "@/components/product";
+import { ProductGrid } from "@/components/product";
 import { flashDealEndsAt, flashDealProducts } from "@/data/mock";
 
 export function FlashDeals() {
@@ -33,13 +33,7 @@ export function FlashDeals() {
             </Link>
           </div>
         </div>
-        <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar sm:gap-3 lg:grid lg:grid-cols-6 lg:overflow-visible">
-          {flashDealProducts.map((product) => (
-            <div key={product.id} className="w-36 shrink-0 sm:w-40 lg:w-auto">
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+        <ProductGrid products={flashDealProducts} columns="flash" />
       </Container>
     </section>
   );

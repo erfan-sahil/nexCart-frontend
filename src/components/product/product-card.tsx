@@ -8,88 +8,105 @@ import type { Product } from "@/types";
 
 type ProductCardProps = {
   product: Product;
-  variant?: "default" | "compact";
+  className?: string;
 };
 
-export function ProductCard({
-  product,
-  variant = "default",
-}: ProductCardProps) {
+export function ProductCard({ product, className }: ProductCardProps) {
   const off = discountPercent(product.price, product.originalPrice);
-  const compact = variant === "compact";
 
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(42,18,24,0.08)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]",
-        compact && "w-36 shrink-0 sm:w-40",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card",
+        className,
       )}
     >
-      <div className="relative overflow-hidden bg-surface-muted">
+      <div className="relative bg-surface-muted">
         <Link
           href={`/products/${product.slug}`}
-          className="relative block aspect-square"
+          className="relative block aspect-square overflow-hidden"
         >
           <Image
             src={product.image}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 220px"
+            className="object-cover transition duration-500 group-hover:scale-105"
           />
         </Link>
-        {off > 0 ? (
-          <span className="pointer-events-none absolute top-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
-            -{off}%
-          </span>
-        ) : null}
-        {product.badge ? (
-          <span className="pointer-events-none absolute top-2 right-2 rounded-full bg-ink px-2 py-0.5 text-[10px] font-medium text-primary">
-            {product.badge}
-          </span>
-        ) : null}
+
+        <div className="pointer-events-none absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
+          {off > 0 ? (
+            <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
+              -{off}%
+            </span>
+          ) : null}
+          {product.badge ? (
+            <span className="rounded-full bg-card/95 px-2 py-0.5 text-[11px] font-medium text-foreground shadow-sm">
+              {product.badge}
+            </span>
+          ) : null}
+        </div>
+
         <button
           type="button"
-          className="absolute right-2 bottom-2 inline-flex size-7 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:text-primary"
+          className="absolute top-2.5 right-2.5 inline-flex size-8 items-center justify-center rounded-full bg-card/95 text-muted-foreground shadow-sm transition-colors hover:text-primary"
           aria-label={`Save ${product.name}`}
         >
-          <Heart className="size-3.5" />
+          <Heart className="size-4" />
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col p-2.5">
+      <div className="flex flex-1 flex-col gap-2 bg-card p-3 transition-colors duration-300 group-hover:bg-brand-soft">
         <Link
           href={`/stores/${product.store.slug}`}
-          className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase hover:text-primary"
+          className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-primary"
         >
-          {product.store.name}
+          <span className="relative size-5 shrink-0 overflow-hidden rounded-full bg-surface-muted ring-1 ring-border">
+            <Image
+              src={product.store.logo}
+              alt=""
+              fill
+              sizes="20px"
+              className="object-cover"
+            />
+          </span>
+          <span className="truncate">{product.store.name}</span>
         </Link>
-        <Link href={`/products/${product.slug}`} className="mt-0.5">
-          <h3 className="line-clamp-2 text-[13px] leading-snug font-medium text-foreground transition-colors group-hover:text-primary">
+
+        <Link href={`/products/${product.slug}`}>
+          <h3 className="line-clamp-2 min-h-10 font-display text-sm leading-5 font-semibold text-foreground transition-colors group-hover:text-primary">
             {product.name}
           </h3>
         </Link>
 
-        <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-          <Star className="size-3 fill-primary text-primary" />
-          <span className="font-medium text-foreground">{product.rating}</span>
-          <span>({formatCount(product.reviewCount)})</span>
+        <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <p className="inline-flex min-w-0 items-center gap-1">
+            <Star className="size-3.5 shrink-0 fill-primary text-primary" />
+            <span className="font-semibold text-foreground">
+              {product.rating}
+            </span>
+            <span>({formatCount(product.reviewCount)})</span>
+          </p>
+          {product.sold ? (
+            <p className="shrink-0">{formatCount(product.sold)} sold</p>
+          ) : null}
         </div>
 
-        <div className="mt-auto flex items-end justify-between gap-1.5 pt-2">
-          <div>
-            <p className="text-sm font-semibold text-primary">
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-border/80 pt-2.5">
+          <p className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+            <span className="text-base leading-none font-semibold tracking-tight text-foreground">
               {formatPrice(product.price)}
-            </p>
+            </span>
             {product.originalPrice ? (
-              <p className="text-[11px] text-muted-foreground line-through">
+              <span className="text-xs leading-none text-muted-foreground line-through">
                 {formatPrice(product.originalPrice)}
-              </p>
+              </span>
             ) : null}
-          </div>
+          </p>
           <button
             type="button"
-            className="inline-flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors duration-500 hover:bg-ink hover:text-primary"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors duration-300 hover:bg-ink hover:text-primary"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingBag className="size-3.5" />
