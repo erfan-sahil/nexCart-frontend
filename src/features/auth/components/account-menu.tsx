@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, Package, UserRound } from "lucide-react";
+import { ChevronDown, LogIn, LogOut, Package, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -74,7 +74,14 @@ export function AccountMenu() {
   }
 
   if (!profile.data) {
-    return <GuestAccountLink />;
+    return (
+      <Link
+        href="/login"
+        className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-3.5 text-sm font-semibold text-[#fff4f2] transition-colors hover:bg-ink hover:text-[#fff4f2] sm:h-10 sm:px-4"
+      >
+        Sign in
+      </Link>
+    );
   }
 
   return <SignedInMenu user={profile.data.user} />;
@@ -191,37 +198,71 @@ function SignedInMenu({ user }: { user: AuthUser }) {
   );
 }
 
-export function AccountNavLink({
+const sessionButtonClass =
+  "flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50";
+
+export function DrawerSessionButton({
   onNavigate,
-  className,
 }: {
   onNavigate?: () => void;
-  className?: string;
 }) {
   const status = useAuthStore((state) => state.status);
   const profile = useMe();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const signOut = useMutation({
+    mutationFn: logout,
+    onSettled: () => {
+      queryClient.removeQueries({ queryKey: meQueryKey });
+      queryClient.setQueryData(sessionQueryKey, null);
+      onNavigate?.();
+      router.push("/");
+      router.refresh();
+    },
+  });
 
   if (
     status === "loading" ||
     (status === "authenticated" && profile.isLoading)
   ) {
     return (
-      <span className={className ?? "text-muted-foreground"}>Account</span>
+      <span
+        aria-hidden
+        className="block h-11 w-full animate-pulse rounded-xl bg-muted"
+      />
     );
   }
 
   if (!profile.data) {
     return (
-      <Link href="/login" onClick={onNavigate} className={className}>
-        Account
+      <Link
+        href="/login"
+        onClick={onNavigate}
+        className={cn(
+          sessionButtonClass,
+          "bg-primary text-[#fff4f2] hover:bg-primary/80 hover:text-[#fff4f2]",
+        )}
+      >
+        <LogIn className="size-4" />
+        Sign in
       </Link>
     );
   }
 
   return (
-    <Link href="/account" onClick={onNavigate} className={className}>
-      {profile.data.user.firstName}
-    </Link>
+    <button
+      type="button"
+      className={cn(
+        sessionButtonClass,
+        "border border-border text-destructive hover:bg-destructive/10",
+      )}
+      disabled={signOut.isPending}
+      onClick={() => signOut.mutate()}
+    >
+      <LogOut className="size-4" />
+      {signOut.isPending ? "Signing out..." : "Log out"}
+    </button>
   );
 }
 
