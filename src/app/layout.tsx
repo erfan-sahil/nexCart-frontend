@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 
+import { QueryProvider } from "@/components/providers/query-provider";
+import { AuthProvider } from "@/features/auth/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { themeInitScript } from "@/lib/theme";
 
@@ -39,7 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <ThemeProvider>{children}</ThemeProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

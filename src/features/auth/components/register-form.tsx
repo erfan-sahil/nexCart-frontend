@@ -1,35 +1,77 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { ApiError } from "@/lib/api/errors";
 
+import { register } from "../api";
+import { splitApiError } from "../lib/api-errors";
 import {
   validateRegister,
   type FieldErrors,
   type RegisterValues,
 } from "../lib/validation";
+import { sessionQueryKey } from "../query";
+import { useAuthStore } from "../store";
 import { PasswordField, TextField } from "./text-field";
 
 const emptyErrors: FieldErrors<keyof RegisterValues> = {};
 
 export function RegisterForm() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [errors, setErrors] = useState(emptyErrors);
+  const [formError, setFormError] = useState<string>();
+
+  const createAccount = useMutation({
+    mutationFn: register,
+    onSuccess: (session) => {
+      useAuthStore.getState().setSession(session);
+      queryClient.setQueryData(sessionQueryKey, session);
+      router.push("/");
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        const next = splitApiError<keyof RegisterValues>(error);
+        setErrors(next.fields);
+        setFormError(next.form);
+        return;
+      }
+
+      setFormError("Something went wrong. Please try again.");
+    },
+  });
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const nextErrors = validateRegister({
+    const values: RegisterValues = {
       firstName: String(formData.get("firstName") ?? ""),
       lastName: String(formData.get("lastName") ?? ""),
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
       password: String(formData.get("password") ?? ""),
       confirmPassword: String(formData.get("confirmPassword") ?? ""),
-    });
+    };
+    const nextErrors = validateRegister(values);
 
     setErrors(nextErrors);
+    setFormError(undefined);
+
+    if (Object.keys(nextErrors).length > 0) return;
+
+    createAccount.mutate({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phone,
+      password: values.password,
+    });
   }
 
   return (
@@ -44,6 +86,11 @@ export function RegisterForm() {
       </div>
 
       <form className="space-y-5" onSubmit={onSubmit} noValidate>
+        {formError ? (
+          <p role="alert" className="text-sm text-destructive">
+            {formError}
+          </p>
+        ) : null}
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField
             name="firstName"
@@ -94,9 +141,10 @@ export function RegisterForm() {
         <Button
           type="submit"
           size="lg"
+          disabled={createAccount.isPending}
           className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff7a7a] hover:text-[#2a1218]"
         >
-          Create account
+          {createAccount.isPending ? "Creating account..." : "Create account"}
         </Button>
       </form>
 
