@@ -69,7 +69,7 @@ export function HeroBanner() {
               </Link>
               <Link
                 href="/stores"
-                className="inline-flex h-12 items-center rounded-full bg-ink px-6 text-sm font-semibold text-primary transition-colors duration-500 hover:bg-ink/90"
+                className="inline-flex h-12 items-center rounded-full border border-foreground/20 px-6 text-sm font-semibold text-foreground transition-colors duration-500 hover:border-primary hover:text-primary"
               >
                 Browse stores
               </Link>
