@@ -8,15 +8,57 @@ type CountdownTimerProps = {
   className?: string;
 };
 
-function Unit({ value, label }: { value: number; label: string }) {
+const units = [
+  { key: "hours", label: "Hrs" },
+  { key: "minutes", label: "Min" },
+  { key: "seconds", label: "Sec" },
+] as const;
+
+function Clock({
+  hours,
+  minutes,
+  seconds,
+  className,
+  pending = false,
+}: {
+  hours: number;
+  minutes: number;
+  seconds: number;
+  className?: string;
+  pending?: boolean;
+}) {
+  const values = { hours, minutes, seconds };
+
   return (
-    <div className="flex min-w-11 flex-col items-center rounded-full bg-primary px-2 py-1.5 text-primary-foreground">
-      <span className="font-mono text-sm leading-none font-semibold tabular-nums sm:text-base">
-        {String(value).padStart(2, "0")}
-      </span>
-      <span className="mt-0.5 text-[9px] tracking-wide uppercase opacity-80">
-        {label}
-      </span>
+    <div
+      className={cn(
+        "inline-flex items-stretch overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/15",
+        className,
+      )}
+      role="timer"
+      aria-hidden={pending || undefined}
+      aria-label={
+        pending
+          ? undefined
+          : `Ends in ${hours} hours ${minutes} minutes ${seconds} seconds`
+      }
+    >
+      {units.map((unit, index) => (
+        <div
+          key={unit.key}
+          className={cn(
+            "flex min-w-14 flex-col items-center px-3 py-2",
+            index > 0 && "border-l border-white/15",
+          )}
+        >
+          <span className="font-mono text-xl leading-none font-semibold text-primary tabular-nums">
+            {String(values[unit.key]).padStart(2, "0")}
+          </span>
+          <span className="mt-1 text-[10px] font-medium tracking-[0.14em] text-white/55 uppercase">
+            {unit.label}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -26,13 +68,7 @@ export function CountdownTimer({ target, className }: CountdownTimerProps) {
 
   if (!timeLeft) {
     return (
-      <div className={cn("flex items-center gap-1.5", className)} aria-hidden>
-        <Unit value={0} label="hrs" />
-        <span className="font-semibold text-white/60">:</span>
-        <Unit value={0} label="min" />
-        <span className="font-semibold text-white/60">:</span>
-        <Unit value={0} label="sec" />
-      </div>
+      <Clock hours={0} minutes={0} seconds={0} pending className={className} />
     );
   }
 
@@ -47,15 +83,11 @@ export function CountdownTimer({ target, className }: CountdownTimerProps) {
   }
 
   return (
-    <div className={cn("flex items-center gap-1.5", className)}>
-      <span className="mr-1 hidden text-sm text-white/70 sm:inline">
-        Ends in
-      </span>
-      <Unit value={hours} label="hrs" />
-      <span className="font-semibold text-white/60">:</span>
-      <Unit value={minutes} label="min" />
-      <span className="font-semibold text-white/60">:</span>
-      <Unit value={seconds} label="sec" />
-    </div>
+    <Clock
+      hours={hours}
+      minutes={minutes}
+      seconds={seconds}
+      className={className}
+    />
   );
 }

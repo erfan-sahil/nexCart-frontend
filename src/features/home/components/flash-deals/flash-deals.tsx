@@ -9,8 +9,8 @@ export function FlashDeals() {
   return (
     <section className="bg-surface-dark py-12 sm:py-16">
       <Container>
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
             <p className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.18em] text-primary uppercase">
               <Zap className="size-3.5 fill-primary" />
               Limited time
@@ -20,14 +20,16 @@ export function FlashDeals() {
               Prices drop hard, then they are gone.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:items-end">
+          <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
             <CountdownTimer target={flashDealEndsAt} />
             <Link
               href="/products?collection=flash-deals"
-              className="inline-flex h-9 items-center gap-1 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors duration-500 hover:bg-white hover:text-ink"
+              className="group inline-flex h-10 shrink-0 items-center gap-2.5 rounded-full border border-border bg-card py-1 pr-1 pl-3.5 text-sm font-semibold text-foreground transition-colors duration-300 hover:border-primary hover:bg-brand-soft"
             >
               See all
-              <ArrowRight className="size-4" />
+              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition duration-300 group-hover:translate-x-0.5 group-hover:bg-ink group-hover:text-primary">
+                <ArrowRight className="size-4" />
+              </span>
             </Link>
           </div>
         </div>
