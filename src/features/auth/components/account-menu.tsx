@@ -186,7 +186,13 @@ function SignedInMenu({ user }: { user: AuthUser }) {
   );
 }
 
-export function AccountNavLink({ onNavigate }: { onNavigate?: () => void }) {
+export function AccountNavLink({
+  onNavigate,
+  className,
+}: {
+  onNavigate?: () => void;
+  className?: string;
+}) {
   const status = useAuthStore((state) => state.status);
   const profile = useMe();
 
@@ -194,19 +200,21 @@ export function AccountNavLink({ onNavigate }: { onNavigate?: () => void }) {
     status === "loading" ||
     (status === "authenticated" && profile.isLoading)
   ) {
-    return <span className="text-muted-foreground">Account</span>;
+    return (
+      <span className={className ?? "text-muted-foreground"}>Account</span>
+    );
   }
 
   if (!profile.data) {
     return (
-      <Link href="/login" onClick={onNavigate}>
+      <Link href="/login" onClick={onNavigate} className={className}>
         Account
       </Link>
     );
   }
 
   return (
-    <Link href="/account" onClick={onNavigate}>
+    <Link href="/account" onClick={onNavigate} className={className}>
       {profile.data.user.firstName}
     </Link>
   );

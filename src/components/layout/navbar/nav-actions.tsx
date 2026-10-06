@@ -11,8 +11,10 @@ const actions = [
 
 export function NavActions() {
   return (
-    <div className="flex items-center gap-1 sm:gap-2">
-      <ThemeToggle />
+    <div className="flex items-center gap-0.5 sm:gap-1">
+      <div className="hidden sm:block">
+        <ThemeToggle />
+      </div>
       <AccountMenu />
       {actions.map(({ href, label, icon: Icon, ...rest }) => {
         const count = "count" in rest ? rest.count : undefined;

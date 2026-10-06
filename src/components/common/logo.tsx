@@ -11,8 +11,8 @@ type LogoProps = {
 };
 
 const MARKS = {
-  light: "/brand/nexcart-black-second.png",
-  dark: "/brand/nexcart-white-second.png",
+  light: "/brand/nexcart-black.png",
+  dark: "/brand/nexcart-white.png",
 } as const;
 
 function BrandMark({
@@ -28,8 +28,8 @@ function BrandMark({
     <Image
       src={src}
       alt=""
-      width={1672}
-      height={941}
+      width={2066}
+      height={761}
       className={cn("h-8 w-auto", className)}
       priority={priority}
     />

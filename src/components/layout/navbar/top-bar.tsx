@@ -6,12 +6,12 @@ import { AccountGreeting } from "@/features/auth/components/account-menu";
 export function TopBar() {
   return (
     <div className="bg-primary text-primary-foreground">
-      <Container className="flex h-9 items-center justify-between text-[11px] tracking-wide sm:text-xs">
-        <p className="truncate">
+      <Container className="flex h-8 items-center justify-between gap-3 text-[11px] tracking-wide sm:h-9 sm:text-xs">
+        <p className="min-w-0 truncate">
           Free shipping on orders over{" "}
           <span className="font-semibold">$50</span>
         </p>
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
           <Link
             href="/track-order"
             className="hidden hover:underline sm:inline"
