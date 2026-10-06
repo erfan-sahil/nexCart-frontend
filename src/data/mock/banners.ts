@@ -10,7 +10,7 @@ export const heroSlides: HeroSlide[] = [
     ctaLabel: "Shop today's deals",
     href: "/deals",
     image:
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1600&q=80",
   },
   {
     id: "h2",
@@ -20,7 +20,7 @@ export const heroSlides: HeroSlide[] = [
     ctaLabel: "Browse electronics",
     href: "/products?category=electronics",
     image:
-      "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=80",
   },
   {
     id: "h3",
@@ -31,6 +31,6 @@ export const heroSlides: HeroSlide[] = [
     ctaLabel: "Explore fashion",
     href: "/products?category=fashion",
     image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=80",
+      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1400&q=80",
   },
 ];
