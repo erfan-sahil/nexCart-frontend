@@ -48,7 +48,10 @@ export function AccountProfile() {
         <p className="mt-2 text-sm text-muted-foreground">
           The account request failed. Try again in a moment.
         </p>
-        <Button className="mt-6" onClick={() => profile.refetch()}>
+        <Button
+          className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-primary"
+          onClick={() => profile.refetch()}
+        >
           Retry
         </Button>
       </Container>
@@ -83,9 +86,7 @@ export function AccountProfile() {
           <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
             Your account
           </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-            {displayName(user)}
-          </h1>
+          <h1 className="mt-1 text-3xl">{displayName(user)}</h1>
         </div>
       </div>
       <dl className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -102,10 +103,18 @@ export function AccountProfile() {
         ))}
       </dl>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Button variant="outline" render={<Link href="/orders" />}>
+        <Button
+          variant="outline"
+          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          render={<Link href="/orders" />}
+        >
           View orders
         </Button>
-        <Button variant="outline" render={<Link href="/wishlist" />}>
+        <Button
+          variant="outline"
+          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          render={<Link href="/wishlist" />}
+        >
           Wishlist
         </Button>
       </div>

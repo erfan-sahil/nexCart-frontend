@@ -25,15 +25,22 @@ function CategoryNavLinks() {
   const allActive = pathname === "/categories";
 
   return (
-    <Container className="flex h-11 items-center gap-6">
+    <Container className="no-scrollbar flex h-12 items-center gap-1 overflow-x-auto">
       <Link
         href="/categories"
         className={cn(
-          "inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:text-primary",
-          allActive ? "text-primary" : "text-foreground",
+          "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold transition-colors",
+          allActive
+            ? "bg-primary text-primary-foreground"
+            : "text-foreground hover:bg-card hover:text-primary",
         )}
       >
-        <LayoutGrid className="size-4 text-primary" />
+        <LayoutGrid
+          className={cn(
+            "size-4",
+            allActive ? "text-primary-foreground" : "text-primary",
+          )}
+        />
         All categories
       </Link>
       {CATEGORY_LINKS.map((item) => {
@@ -44,8 +51,10 @@ function CategoryNavLinks() {
             key={item.slug}
             href={item.href}
             className={cn(
-              "text-sm transition-colors hover:text-primary",
-              active ? "font-medium text-primary" : "text-muted-foreground",
+              "rounded-full px-3 py-1 text-sm transition-colors",
+              active
+                ? "bg-primary font-medium text-primary-foreground"
+                : "text-muted-foreground hover:bg-card hover:text-primary",
             )}
           >
             {item.label}
@@ -60,11 +69,11 @@ export function CategoryNav() {
   return (
     <nav
       aria-label="Product categories"
-      className="hidden border-t border-border bg-background lg:block"
+      className="hidden border-t border-border bg-brand-soft/70 lg:block"
     >
       <Suspense
         fallback={
-          <Container className="flex h-11 items-center gap-6">
+          <Container className="flex h-12 items-center gap-1">
             <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
               <LayoutGrid className="size-4 text-primary" />
               All categories

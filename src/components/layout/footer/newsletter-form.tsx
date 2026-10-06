@@ -29,11 +29,11 @@ export function NewsletterForm() {
         type="email"
         required
         placeholder="Email address"
-        className="h-11 min-w-0 flex-1 rounded-full border border-white/15 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-primary"
+        className="h-11 min-w-0 flex-1 rounded-full border border-primary/40 bg-white/5 px-4 text-sm text-white outline-none placeholder:text-white/45 focus:border-primary"
       />
       <button
         type="submit"
-        className="h-11 shrink-0 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-brand-hover"
+        className="auth-orange-button h-11 shrink-0 px-5 text-sm"
       >
         Join
       </button>

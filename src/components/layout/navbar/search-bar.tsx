@@ -19,7 +19,7 @@ function SearchForm({
       <label htmlFor={inputId} className="sr-only">
         Search products and stores
       </label>
-      <div className="flex h-11 overflow-hidden rounded-full border border-border bg-surface-muted focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+      <div className="flex h-11 overflow-hidden rounded-full border border-primary/35 bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/25">
         <input
           id={inputId}
           key={defaultQuery}
@@ -31,7 +31,7 @@ function SearchForm({
         />
         <button
           type="submit"
-          className="m-1 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-brand-hover"
+          className="m-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-sm font-semibold text-primary-foreground transition-colors duration-500 hover:bg-ink hover:text-primary"
         >
           <Search className="size-4" />
           <span className="hidden sm:inline">Search</span>

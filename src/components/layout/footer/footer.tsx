@@ -71,7 +71,7 @@ const social = [
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-surface-dark text-white">
+    <footer className="mt-auto bg-ink text-white">
       <Container className="grid gap-12 py-14 lg:grid-cols-[1.1fr_1.6fr] lg:gap-16">
         <div>
           <Logo variant="on-dark" />

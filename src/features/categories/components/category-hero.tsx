@@ -30,7 +30,7 @@ export function CategoryHero({ category }: CategoryHeroProps) {
               { label: category.name },
             ]}
           />
-          <h1 className="mt-4 max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-4 max-w-xl text-3xl text-white sm:text-5xl">
             {category.name}
           </h1>
           <p className="mt-3 max-w-lg text-sm text-white/70 sm:text-base">

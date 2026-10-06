@@ -25,7 +25,7 @@ export function HeroBanner() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-surface-dark">
+    <section className="relative overflow-hidden bg-ink">
       <div className="relative min-h-[420px] sm:min-h-[500px] lg:min-h-[560px]">
         {heroSlides.map((slide, slideIndex) => (
           <div
@@ -45,27 +45,27 @@ export function HeroBanner() {
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/25" />
             <Container className="relative flex min-h-[420px] flex-col justify-center py-16 sm:min-h-[500px] lg:min-h-[560px]">
               <p className="text-xs font-semibold tracking-[0.22em] text-primary uppercase">
                 {slide.eyebrow}
               </p>
-              <h1 className="mt-3 max-w-xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="mt-3 max-w-xl text-4xl leading-[1.05] text-white sm:text-5xl lg:text-6xl">
                 {slide.title}
               </h1>
-              <p className="mt-4 max-w-lg text-base text-white/70 sm:text-lg">
+              <p className="mt-4 max-w-lg text-base text-white/75 sm:text-lg">
                 {slide.subtitle}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href={slide.href}
-                  className="inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-brand-hover"
+                  className="auth-orange-button inline-flex h-12 items-center px-6"
                 >
                   {slide.ctaLabel}
                 </Link>
                 <Link
                   href="/stores"
-                  className="inline-flex h-11 items-center rounded-full border border-white/20 px-6 text-sm font-medium text-white hover:border-primary hover:text-primary"
+                  className="inline-flex h-12 items-center rounded-full border border-primary/70 px-6 text-sm font-medium text-primary transition-colors duration-500 hover:border-primary hover:bg-primary hover:text-primary-foreground"
                 >
                   Browse stores
                 </Link>
@@ -98,7 +98,7 @@ export function HeroBanner() {
               type="button"
               aria-label="Previous slide"
               onClick={() => goTo(index - 1)}
-              className="inline-flex size-10 items-center justify-center rounded-full border border-white/20 bg-ink/40 text-white hover:border-primary hover:text-primary"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-primary/40 bg-ink/50 text-primary transition-colors duration-500 hover:bg-primary hover:text-primary-foreground"
             >
               <ChevronLeft className="size-5" />
             </button>
@@ -106,7 +106,7 @@ export function HeroBanner() {
               type="button"
               aria-label="Next slide"
               onClick={() => goTo(index + 1)}
-              className="inline-flex size-10 items-center justify-center rounded-full border border-white/20 bg-ink/40 text-white hover:border-primary hover:text-primary"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-primary/40 bg-ink/50 text-primary transition-colors duration-500 hover:bg-primary hover:text-primary-foreground"
             >
               <ChevronRight className="size-5" />
             </button>

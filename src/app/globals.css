@@ -60,25 +60,25 @@
 
 :root {
   /*
-   * Brand tokens — change --brand to retheme the entire site.
-   * Hover, active, and soft surfaces are derived from --brand.
+   * Same coral / rose pair as the sign-in panel.
+   * --brand is the coral fill; --brand-foreground is the rose ink on it.
    */
-  --brand: #fc5112;
-  --brand-foreground: #ffffff;
-  --brand-hover: color-mix(in srgb, var(--brand) 82%, #000000);
-  --brand-active: color-mix(in srgb, var(--brand) 68%, #000000);
-  --brand-soft: color-mix(in srgb, var(--brand) 10%, #ffffff);
-  --brand-muted: color-mix(in srgb, var(--brand) 18%, #ffffff);
+  --brand: #ff7a7a;
+  --brand-foreground: #2a1218;
+  --brand-hover: color-mix(in srgb, var(--brand) 78%, #2a1218);
+  --brand-active: #2a1218;
+  --brand-soft: color-mix(in srgb, var(--brand) 14%, #ffffff);
+  --brand-muted: color-mix(in srgb, var(--brand) 24%, #ffffff);
 
-  --ink: #0a0a0a;
-  --ink-secondary: #171717;
-  --surface: #ffffff;
-  --surface-muted: #f6f6f7;
-  --surface-dark: #0a0a0a;
+  --ink: #2a1218;
+  --ink-secondary: #3d1c24;
+  --surface: #fff8f7;
+  --surface-muted: #fff0ee;
+  --surface-dark: #2a1218;
 
   --background: var(--surface);
   --foreground: var(--ink);
-  --card: var(--surface);
+  --card: #ffffff;
   --card-foreground: var(--ink);
   --popover: var(--surface);
   --popover-foreground: var(--ink);
@@ -87,12 +87,12 @@
   --secondary: var(--surface-muted);
   --secondary-foreground: var(--ink);
   --muted: var(--surface-muted);
-  --muted-foreground: #737373;
+  --muted-foreground: #8d646b;
   --accent: var(--brand-soft);
   --accent-foreground: var(--brand);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #ececec;
-  --input: #e8e8e8;
+  --border: #f3d8d5;
+  --input: #f6d2ce;
   --ring: var(--brand);
   --chart-1: var(--brand);
   --chart-2: color-mix(in srgb, var(--brand) 70%, #000000);
@@ -112,49 +112,48 @@
 
 .dark {
   /*
-   * Warm charcoal matched to --brand (#fc5112).
-   * Elevation runs surface-dark → surface → surface-muted → card.
+   * Rose charcoal matched to the sign-in panel (#ff7a7a / #2a1218).
    */
-  --brand-hover: color-mix(in srgb, var(--brand) 86%, #ffffff);
-  --brand-active: color-mix(in srgb, var(--brand) 72%, #000000);
-  --brand-soft: color-mix(in srgb, var(--brand) 16%, #1a1613);
-  --brand-muted: color-mix(in srgb, var(--brand) 26%, #1a1613);
+  --brand-hover: color-mix(in srgb, var(--brand) 82%, #ffffff);
+  --brand-active: color-mix(in srgb, var(--brand) 70%, #000000);
+  --brand-soft: color-mix(in srgb, var(--brand) 18%, #1a1014);
+  --brand-muted: color-mix(in srgb, var(--brand) 28%, #1a1014);
 
-  --surface: #141210;
-  --surface-muted: #1e1b18;
-  --surface-dark: #0c0a09;
-  --ink: #0c0a09;
+  --surface: #1a1014;
+  --surface-muted: #24161a;
+  --surface-dark: #10080b;
+  --ink: #10080b;
 
   --background: var(--surface);
-  --foreground: #f6f3ef;
-  --card: #262320;
-  --card-foreground: #f6f3ef;
-  --popover: #2e2a26;
-  --popover-foreground: #f6f3ef;
+  --foreground: #fff4f2;
+  --card: #2c1a1e;
+  --card-foreground: #fff4f2;
+  --popover: #351f24;
+  --popover-foreground: #fff4f2;
   --primary: var(--brand);
   --primary-foreground: var(--brand-foreground);
-  --secondary: #322e2a;
-  --secondary-foreground: #f6f3ef;
-  --muted: #322e2a;
-  --muted-foreground: #b7aea6;
+  --secondary: #3a2228;
+  --secondary-foreground: #fff4f2;
+  --muted: #3a2228;
+  --muted-foreground: #d4b0b6;
   --accent: var(--brand-soft);
-  --accent-foreground: #ffc2a8;
+  --accent-foreground: #ffd0ce;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: color-mix(in srgb, #f6f3ef 12%, transparent);
-  --input: color-mix(in srgb, #f6f3ef 16%, transparent);
+  --border: color-mix(in srgb, #fff4f2 12%, transparent);
+  --input: color-mix(in srgb, #fff4f2 16%, transparent);
   --ring: var(--brand);
   --chart-1: var(--brand);
   --chart-2: color-mix(in srgb, var(--brand) 72%, #ffffff);
-  --chart-3: #8a8178;
-  --chart-4: #5c564f;
-  --chart-5: #3a342f;
-  --sidebar: #1e1b18;
-  --sidebar-foreground: #f6f3ef;
+  --chart-3: #c49aa2;
+  --chart-4: #8a616a;
+  --chart-5: #5c3d44;
+  --sidebar: #24161a;
+  --sidebar-foreground: #fff4f2;
   --sidebar-primary: var(--brand);
   --sidebar-primary-foreground: var(--brand-foreground);
   --sidebar-accent: var(--brand-soft);
-  --sidebar-accent-foreground: #f6f3ef;
-  --sidebar-border: color-mix(in srgb, #f6f3ef 12%, transparent);
+  --sidebar-accent-foreground: #fff4f2;
+  --sidebar-border: color-mix(in srgb, #fff4f2 12%, transparent);
   --sidebar-ring: var(--brand);
 }
 
@@ -303,6 +302,12 @@
     .auth-wave-rise {
       display: none;
     }
+  }
+
+  .market :is(h1, h2) {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
   }
 
   .no-scrollbar {

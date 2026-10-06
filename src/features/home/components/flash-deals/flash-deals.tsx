@@ -15,9 +15,7 @@ export function FlashDeals() {
               <Zap className="size-3.5 fill-primary" />
               Limited time
             </p>
-            <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              Flash deals
-            </h2>
+            <h2 className="text-2xl text-white sm:text-3xl">Flash deals</h2>
             <p className="mt-1.5 text-sm text-white/65 sm:text-base">
               Prices drop hard, then they are gone.
             </p>
@@ -26,7 +24,7 @@ export function FlashDeals() {
             <CountdownTimer target={flashDealEndsAt} />
             <Link
               href="/products?collection=flash-deals"
-              className="inline-flex items-center gap-1 text-sm font-medium text-white transition-colors hover:text-primary"
+              className="inline-flex h-9 items-center gap-1 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors duration-500 hover:bg-white hover:text-ink"
             >
               See all
               <ArrowRight className="size-4" />

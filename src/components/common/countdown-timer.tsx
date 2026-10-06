@@ -10,7 +10,7 @@ type CountdownTimerProps = {
 
 function Unit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="flex min-w-11 flex-col items-center rounded-md bg-primary px-2 py-1 text-primary-foreground">
+    <div className="flex min-w-11 flex-col items-center rounded-full bg-primary px-2 py-1.5 text-primary-foreground">
       <span className="font-mono text-sm leading-none font-semibold tabular-nums sm:text-base">
         {String(value).padStart(2, "0")}
       </span>

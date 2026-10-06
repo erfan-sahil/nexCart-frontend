@@ -42,7 +42,7 @@ export function SectionHeader({
         ) : null}
         <h2
           className={cn(
-            "text-2xl font-semibold tracking-tight sm:text-3xl",
+            "text-2xl sm:text-3xl",
             invert ? "text-white" : "text-foreground",
           )}
         >
@@ -63,10 +63,10 @@ export function SectionHeader({
         <Link
           href={href}
           className={cn(
-            "inline-flex items-center gap-1 text-sm font-medium transition-colors",
+            "inline-flex h-9 items-center gap-1 rounded-full px-4 text-sm font-medium transition-colors duration-500",
             invert
-              ? "text-white hover:text-primary"
-              : "text-primary hover:text-brand-hover",
+              ? "border border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
+              : "bg-primary text-primary-foreground hover:bg-ink hover:text-primary",
           )}
         >
           {actionLabel}

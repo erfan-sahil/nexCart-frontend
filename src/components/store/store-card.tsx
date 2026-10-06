@@ -13,7 +13,7 @@ export function StoreCard({ store }: StoreCardProps) {
   return (
     <Link
       href={`/stores/${store.slug}`}
-      className="group overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-[0_8px_30px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
+      className="group overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(42,18,24,0.08)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
     >
       <div className="relative h-28 overflow-hidden bg-surface-muted sm:h-32">
         <Image

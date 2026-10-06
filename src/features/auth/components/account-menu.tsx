@@ -221,7 +221,7 @@ export function AccountGreeting() {
   return (
     <Link
       href="/account"
-      className="hidden font-medium text-primary hover:text-white sm:inline"
+      className="hidden font-medium underline-offset-4 hover:underline sm:inline"
     >
       Hi, {user.firstName}
     </Link>

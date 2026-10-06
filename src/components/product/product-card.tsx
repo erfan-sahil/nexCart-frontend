@@ -21,7 +21,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-[0_8px_24px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(42,18,24,0.08)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]",
         compact && "w-36 shrink-0 sm:w-40",
       )}
     >
@@ -39,12 +39,12 @@ export function ProductCard({
           />
         </Link>
         {off > 0 ? (
-          <span className="pointer-events-none absolute top-2 left-2 rounded-full bg-primary px-1.5 py-px text-[10px] font-semibold text-primary-foreground">
+          <span className="pointer-events-none absolute top-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
             -{off}%
           </span>
         ) : null}
         {product.badge ? (
-          <span className="pointer-events-none absolute top-2 right-2 rounded-full bg-ink/80 px-1.5 py-px text-[10px] font-medium text-white">
+          <span className="pointer-events-none absolute top-2 right-2 rounded-full bg-ink px-2 py-0.5 text-[10px] font-medium text-primary">
             {product.badge}
           </span>
         ) : null}
@@ -89,7 +89,7 @@ export function ProductCard({
           </div>
           <button
             type="button"
-            className="inline-flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-brand-hover"
+            className="inline-flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors duration-500 hover:bg-ink hover:text-primary"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingBag className="size-3.5" />
