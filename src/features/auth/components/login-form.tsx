@@ -74,7 +74,7 @@ export function LoginForm() {
         New to NexCart?{" "}
         <Link
           href="/register"
-          className="font-medium text-primary hover:underline"
+          className="font-medium text-[#ff7a7a] hover:underline"
         >
           Create an account
         </Link>

@@ -205,12 +205,23 @@
     fill: var(--auth-wave-fill);
   }
 
+  .auth-form-panel {
+    --input: color-mix(in srgb, #ff7a7a 42%, #ffffff);
+    --ring: #ff7a7a;
+  }
+
   .auth-form-panel[data-tone="invert"] {
-    background-color: #fff1ea;
+    background-color: color-mix(in srgb, #ff7a7a 16%, #ffffff);
+    --input: color-mix(in srgb, #ff7a7a 70%, #ffffff);
+  }
+
+  .dark .auth-form-panel {
+    --input: color-mix(in srgb, #ff7a7a 46%, #2a2424);
   }
 
   .dark .auth-form-panel[data-tone="invert"] {
-    background-color: #2a1c16;
+    background-color: color-mix(in srgb, #ff7a7a 18%, #140c0c);
+    --input: color-mix(in srgb, #ff7a7a 55%, #3a2222);
   }
 
   .auth-wave-rise {

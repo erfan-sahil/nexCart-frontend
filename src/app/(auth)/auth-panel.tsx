@@ -39,7 +39,7 @@ export function AuthPanel() {
       data-tone={inverted ? "invert" : "default"}
       className={cn(
         "auth-wave-panel relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between lg:px-12 lg:py-10",
-        inverted ? "text-white" : "text-[#2a1218]",
+        inverted ? "text-[var(--auth-orange)]" : "text-black",
       )}
     >
       <div aria-hidden className="auth-wave-rise pointer-events-none">
@@ -69,7 +69,7 @@ export function AuthPanel() {
           <p
             className={cn(
               "text-sm font-medium tracking-wide uppercase",
-              inverted ? "text-white/70" : "text-[#2a1218]/75",
+              inverted ? "opacity-75" : "text-black/70",
             )}
           >
             NexCart
@@ -84,7 +84,7 @@ export function AuthPanel() {
               <span
                 className={cn(
                   "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
-                  inverted ? "bg-white/15" : "bg-[#2a1218]/10",
+                  inverted ? "bg-[var(--auth-orange)]/15" : "bg-black/10",
                 )}
               >
                 <Icon className="size-4" />
@@ -94,7 +94,7 @@ export function AuthPanel() {
                 <span
                   className={cn(
                     "mt-1 block text-sm",
-                    inverted ? "text-white/65" : "text-[#2a1218]/75",
+                    inverted ? "opacity-75" : "text-black/70",
                   )}
                 >
                   {description}
@@ -107,7 +107,7 @@ export function AuthPanel() {
       <p
         className={cn(
           "relative text-sm",
-          inverted ? "text-white/50" : "text-[#2a1218]/70",
+          inverted ? "opacity-70" : "text-black/65",
         )}
       >
         Independent sellers. Everyday essentials. One checkout.
