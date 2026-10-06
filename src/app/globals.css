@@ -176,6 +176,30 @@
 @layer utilities {
   .auth-wave-panel {
     background-color: #000;
+    --auth-wave-back: #ffb088;
+    --auth-wave-fill: var(--brand);
+  }
+
+  .auth-wave-panel[data-tone="invert"] {
+    background-color: var(--brand);
+    --auth-wave-back: #3f3f3f;
+    --auth-wave-fill: #000;
+  }
+
+  .auth-wave-back-fill {
+    fill: var(--auth-wave-back);
+  }
+
+  .auth-wave-front-fill {
+    fill: var(--auth-wave-fill);
+  }
+
+  .auth-form-panel[data-tone="invert"] {
+    background-color: #fff1ea;
+  }
+
+  .dark .auth-form-panel[data-tone="invert"] {
+    background-color: #2a1c16;
   }
 
   .auth-wave-rise {
@@ -211,7 +235,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--brand);
+    background-color: var(--auth-wave-fill);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -230,7 +254,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .auth-wave-panel {
-      background-color: var(--brand);
+      background-color: var(--auth-wave-fill);
     }
 
     .auth-wave-rise {
