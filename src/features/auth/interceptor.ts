@@ -11,7 +11,12 @@ type RetryConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
 };
 
-const skipRefresh = ["/auth/login", "/auth/register", "/auth/refresh"];
+const skipRefresh = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/logout",
+];
 
 let installed = false;
 let queryClient: QueryClient | null = null;

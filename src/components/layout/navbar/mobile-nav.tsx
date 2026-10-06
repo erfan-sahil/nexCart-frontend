@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 
 import { Logo, ThemeToggle } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
+import { AccountNavLink } from "@/features/auth/components/account-menu";
 
 import { SearchBar } from "./search-bar";
 
@@ -80,9 +81,7 @@ export function MobileNav() {
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-2 border-t border-border pt-4 text-sm">
-                <Link href="/login" onClick={() => setOpen(false)}>
-                  Account
-                </Link>
+                <AccountNavLink onNavigate={() => setOpen(false)} />
                 <Link href="/orders" onClick={() => setOpen(false)}>
                   Orders
                 </Link>

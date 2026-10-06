@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 
 import { ThemeToggle } from "@/components/common";
+import { AccountMenu } from "@/features/auth/components/account-menu";
 
 const actions = [
-  { href: "/login", label: "Account", icon: UserRound },
   { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
   { href: "/cart", label: "Cart", icon: ShoppingBag, count: 3 },
 ] as const;
@@ -13,6 +13,7 @@ export function NavActions() {
   return (
     <div className="flex items-center gap-1 sm:gap-2">
       <ThemeToggle />
+      <AccountMenu />
       {actions.map(({ href, label, icon: Icon, ...rest }) => {
         const count = "count" in rest ? rest.count : undefined;
 

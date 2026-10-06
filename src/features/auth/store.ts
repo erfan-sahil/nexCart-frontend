@@ -12,6 +12,7 @@ type AuthState = {
   status: AuthStatus;
   epoch: number;
   setSession: (session: AuthSession) => void;
+  setUser: (user: AuthUser, sessionId?: string) => void;
   clearSession: () => void;
 };
 
@@ -30,6 +31,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       expiresAt: Date.now() + session.expiresIn * 1000,
       status: "authenticated",
       epoch: state.epoch + 1,
+    })),
+  setUser: (user, sessionId) =>
+    set((state) => ({
+      user,
+      sessionId: sessionId ?? state.sessionId,
     })),
   clearSession: () =>
     set((state) => ({

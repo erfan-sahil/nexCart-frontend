@@ -3,7 +3,12 @@ import { ApiError, toApiError } from "@/lib/api/errors";
 import type { ApiSuccess } from "@/lib/api/types";
 
 import { sessionFromStore, useAuthStore } from "./store";
-import type { AuthSession, LoginPayload, RegisterPayload } from "./types";
+import type {
+  AuthSession,
+  LoginPayload,
+  MeProfile,
+  RegisterPayload,
+} from "./types";
 
 async function postSession(
   path: string,
@@ -69,6 +74,31 @@ export function refreshSession() {
   }
 
   return refreshRequest;
+}
+
+export async function getMe() {
+  try {
+    const { data } = await api.get<ApiSuccess<MeProfile>>("/auth/me");
+    const profile = data.data;
+    useAuthStore.getState().setUser(profile.user, profile.sessionId);
+    return profile;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export async function logout() {
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    const apiError = toApiError(error);
+    useAuthStore.getState().clearSession();
+
+    if (apiError.status !== 401) throw apiError;
+    return;
+  }
+
+  useAuthStore.getState().clearSession();
 }
 
 export async function restoreSession() {

@@ -100,7 +100,7 @@ export function LoginForm() {
           <input
             type="checkbox"
             name="remember"
-            className="size-4 rounded border-input accent-primary"
+            className="size-4 rounded border-[#ff7a7a] accent-[#ff7a7a]"
           />
           Remember me
         </label>

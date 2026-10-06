@@ -25,6 +25,11 @@ export type AuthSession = {
   expiresIn: number;
 };
 
+export type MeProfile = {
+  user: AuthUser;
+  sessionId: string;
+};
+
 export type LoginPayload = {
   email: string;
   password: string;

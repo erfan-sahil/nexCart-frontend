@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/common";
+import { AccountGreeting } from "@/features/auth/components/account-menu";
 
 export function TopBar() {
   return (
@@ -20,6 +21,7 @@ export function TopBar() {
           <Link href="/help" className="hidden hover:text-primary sm:inline">
             Help
           </Link>
+          <AccountGreeting />
           <Link
             href="/sell"
             className="font-medium text-primary hover:text-white"
