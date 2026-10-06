@@ -100,7 +100,7 @@ export function LoginForm() {
           <input
             type="checkbox"
             name="remember"
-            className="size-4 rounded border-[#ff7a7a] accent-[#ff7a7a]"
+            className="size-4 rounded border-[#ff4d4d] accent-[#ff4d4d]"
           />
           Remember me
         </label>
@@ -108,7 +108,7 @@ export function LoginForm() {
           type="submit"
           size="lg"
           disabled={signIn.isPending}
-          className="auth-orange-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#2a1218] hover:text-[#ff7a7a]"
+          className="auth-orange-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#2a1218] hover:text-[#ff4d4d]"
         >
           {signIn.isPending ? "Signing in..." : "Sign in"}
         </Button>
@@ -118,7 +118,7 @@ export function LoginForm() {
         New to NexCart?{" "}
         <Link
           href="/register"
-          className="font-medium text-[#ff7a7a] hover:underline"
+          className="font-medium text-[#ff4d4d] hover:underline"
         >
           Create an account
         </Link>

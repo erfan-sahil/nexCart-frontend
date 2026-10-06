@@ -17,7 +17,7 @@ import { useMe } from "../use-me";
 import { UserAvatar } from "./user-avatar";
 
 const accountButtonClass =
-  "inline-flex size-10 items-center justify-center gap-2 rounded-full text-foreground transition-colors hover:bg-brand-soft hover:text-primary lg:h-10 lg:w-auto lg:bg-ink lg:px-4 lg:font-semibold lg:text-primary lg:hover:bg-ink/90 lg:hover:text-primary";
+  "inline-flex size-10 items-center justify-center gap-2 rounded-full text-foreground transition-colors duration-300 hover:bg-brand-soft hover:text-primary lg:h-10 lg:w-auto lg:bg-ink lg:px-4 lg:font-semibold lg:text-[#fff4f2] lg:hover:bg-[color-mix(in_srgb,var(--brand)_55%,var(--ink))] lg:hover:text-[#fff4f2]";
 
 function AccountPlaceholder() {
   return (

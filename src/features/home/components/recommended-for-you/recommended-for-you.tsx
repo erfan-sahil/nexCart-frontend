@@ -4,7 +4,7 @@ import { recommendedProducts } from "@/data/mock";
 
 export function RecommendedForYou() {
   return (
-    <section className="bg-brand-soft/60 py-12 sm:py-16 dark:bg-brand-soft">
+    <section className="bg-brand-soft/60 py-12 sm:py-16 dark:bg-surface-muted">
       <Container>
         <SectionHeader
           eyebrow="For you"

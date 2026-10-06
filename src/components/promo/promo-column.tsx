@@ -35,7 +35,7 @@ export function PromoColumn({ promo, className }: PromoColumnProps) {
             {promo.eyebrow}
           </span>
           {off > 0 ? (
-            <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground">
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-[#fff4f2]">
               -{off}%
             </span>
           ) : null}
@@ -68,7 +68,7 @@ export function PromoColumn({ promo, className }: PromoColumnProps) {
           </p>
         </div>
 
-        <span className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors duration-300 group-hover:bg-brand-hover">
+        <span className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-[#fff4f2] transition-colors duration-300 group-hover:bg-brand-hover">
           {promo.ctaLabel}
         </span>
       </div>
