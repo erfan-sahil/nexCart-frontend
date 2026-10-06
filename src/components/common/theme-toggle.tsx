@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/components/providers/theme-provider";
+import { cn } from "@/lib/utils";
 
 type ThemeToggleProps = {
   showLabel?: boolean;
@@ -20,7 +21,12 @@ export function ThemeToggle({ showLabel = true }: ThemeToggleProps) {
       }}
       aria-label="Toggle color theme"
       title="Toggle color theme"
-      className="relative flex cursor-pointer flex-col items-center rounded-lg px-2 py-1 text-foreground transition-colors hover:text-primary"
+      className={cn(
+        "relative cursor-pointer text-foreground transition-colors hover:text-primary",
+        showLabel
+          ? "flex flex-col items-center rounded-lg px-2 py-1"
+          : "inline-flex size-10 items-center justify-center rounded-full hover:bg-brand-soft",
+      )}
     >
       <Sun className="size-5 dark:hidden" />
       <Moon className="hidden size-5 dark:block" />

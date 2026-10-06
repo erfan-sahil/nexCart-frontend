@@ -4,7 +4,9 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Package, UserRound } from "lucide-react";
+import { ChevronDown, LogOut, Package, UserRound } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 import { logout } from "../api";
 import { displayName, roleLabel } from "../lib/profile";
@@ -14,11 +16,14 @@ import type { AuthUser } from "../types";
 import { useMe } from "../use-me";
 import { UserAvatar } from "./user-avatar";
 
+const accountButtonClass =
+  "inline-flex size-10 items-center justify-center gap-2 rounded-full text-foreground transition-colors hover:bg-brand-soft hover:text-primary lg:h-10 lg:w-auto lg:bg-ink lg:px-4 lg:font-semibold lg:text-primary lg:hover:bg-ink/90 lg:hover:text-primary";
+
 function AccountPlaceholder() {
   return (
-    <div className="flex flex-col items-center px-2 py-1" aria-hidden>
-      <span className="size-5 animate-pulse rounded-full bg-muted" />
-      <span className="mt-1 hidden h-3 w-10 animate-pulse rounded bg-muted lg:block" />
+    <div aria-hidden>
+      <span className="block size-10 animate-pulse rounded-full bg-muted lg:hidden" />
+      <span className="hidden h-10 w-[7.25rem] animate-pulse rounded-full bg-muted lg:block" />
     </div>
   );
 }
@@ -26,25 +31,23 @@ function AccountPlaceholder() {
 function GuestAccountLink({
   className,
   onNavigate,
-  label = "Account",
+  href = "/login",
+  label = "Sign in",
 }: {
   className?: string;
   onNavigate?: () => void;
+  href?: string;
   label?: string;
 }) {
   return (
     <Link
-      href="/login"
+      href={href}
       onClick={onNavigate}
-      className={
-        className ??
-        "relative flex flex-col items-center rounded-lg px-2 py-1 text-foreground transition-colors hover:text-primary"
-      }
+      aria-label={label}
+      className={className ?? accountButtonClass}
     >
-      <UserRound className="size-5" />
-      <span className="mt-0.5 hidden text-[11px] font-medium lg:block">
-        {label}
-      </span>
+      <UserRound className="size-5 lg:size-4" />
+      <span className="hidden text-sm lg:inline">{label}</span>
     </Link>
   );
 }
@@ -62,15 +65,11 @@ export function AccountMenu() {
 
   if (status === "authenticated" && profile.isError) {
     return (
-      <Link
+      <GuestAccountLink
         href="/account"
-        className="relative flex flex-col items-center rounded-lg px-2 py-1 text-foreground transition-colors hover:text-primary"
-      >
-        <UserRound className="size-5" />
-        <span className="mt-0.5 hidden text-[11px] font-medium lg:block">
-          Account
-        </span>
-      </Link>
+        label="Account"
+        className={accountButtonClass}
+      />
     );
   }
 
@@ -125,16 +124,22 @@ function SignedInMenu({ user }: { user: AuthUser }) {
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        className="flex items-center gap-2 rounded-lg px-2 py-1 text-foreground transition-colors hover:text-primary"
+        className="inline-flex size-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-brand-soft hover:text-primary lg:h-10 lg:w-auto lg:gap-2 lg:border lg:border-border lg:bg-card lg:pr-3 lg:pl-1 lg:hover:border-primary/40"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen((current) => !current)}
       >
-        <UserAvatar user={user} className="size-7 text-[10px]" />
-        <span className="hidden max-w-24 truncate text-[11px] font-medium lg:block">
+        <UserAvatar user={user} className="size-8 text-[10px] lg:size-8" />
+        <span className="hidden max-w-28 truncate text-sm font-medium lg:inline">
           {user.firstName}
         </span>
+        <ChevronDown
+          className={cn(
+            "hidden size-4 text-muted-foreground transition-transform lg:block",
+            open && "rotate-180",
+          )}
+        />
       </button>
       {open ? (
         <div
