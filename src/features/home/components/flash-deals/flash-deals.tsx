@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ArrowRight, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
-import { Container, CountdownTimer } from "@/components/common";
+import { Container, CountdownTimer, SeeAllLink } from "@/components/common";
 import { ProductGrid } from "@/components/product";
 import { flashDealEndsAt, flashDealProducts } from "@/data/mock";
 
@@ -22,15 +21,7 @@ export function FlashDeals() {
           </div>
           <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
             <CountdownTimer target={flashDealEndsAt} />
-            <Link
-              href="/products?collection=flash-deals"
-              className="group inline-flex h-10 shrink-0 items-center gap-2.5 rounded-full border border-border bg-card py-1 pr-1 pl-3.5 text-sm font-semibold text-foreground transition-colors duration-300 hover:border-primary hover:bg-brand-soft"
-            >
-              See all
-              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition duration-300 group-hover:translate-x-0.5 group-hover:bg-ink group-hover:text-primary">
-                <ArrowRight className="size-4" />
-              </span>
-            </Link>
+            <SeeAllLink href="/products?collection=flash-deals" />
           </div>
         </div>
         <ProductGrid products={flashDealProducts} columns="flash" />

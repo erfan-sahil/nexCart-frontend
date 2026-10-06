@@ -16,51 +16,59 @@ export function PromoColumn({ promo, className }: PromoColumnProps) {
   return (
     <Link
       href={promo.href}
-      aria-label={`Sponsored: ${promo.title}`}
+      aria-label={`${promo.eyebrow}: ${promo.title}`}
       className={cn(
-        "group relative isolate flex h-full min-h-64 w-full flex-col overflow-hidden rounded-xl",
+        "group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-card",
         className,
       )}
     >
-      <Image
-        src={promo.image}
-        alt=""
-        fill
-        sizes="(max-width: 1024px) 100vw, 288px"
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
-      <div className="relative z-10 mt-auto flex w-full flex-col justify-end p-4">
-        <span className="absolute top-3 left-3 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white/85 uppercase">
-          {promo.eyebrow}
-        </span>
-        <h3 className="text-lg leading-tight font-semibold text-white">
-          {promo.title}
-        </h3>
-        <p className="mt-1 text-xs leading-relaxed text-white/70">
-          {promo.subtitle}
-        </p>
-        <div className="mt-3 rounded-lg bg-white/10 p-2.5 backdrop-blur-sm">
-          <p className="line-clamp-1 text-xs font-medium text-white">
+      <div className="relative min-h-64 flex-1 overflow-hidden bg-surface-muted">
+        <Image
+          src={promo.image}
+          alt=""
+          fill
+          sizes="(max-width: 1024px) 100vw, 320px"
+          className="object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+          <span className="rounded-full bg-card/95 px-2.5 py-1 text-[11px] font-medium text-foreground shadow-sm">
+            {promo.eyebrow}
+          </span>
+          {off > 0 ? (
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground">
+              -{off}%
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 bg-card p-4 transition-colors duration-300 group-hover:bg-brand-soft">
+        <div>
+          <h3 className="font-display text-2xl leading-tight font-semibold text-foreground">
+            {promo.title}
+          </h3>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+            {promo.subtitle}
+          </p>
+        </div>
+
+        <div className="border-t border-border pt-3">
+          <p className="truncate text-sm font-medium text-foreground">
             {promo.productName}
           </p>
-          <div className="mt-1 flex items-center gap-1.5">
-            <span className="text-sm font-semibold text-primary">
+          <p className="mt-1.5 flex items-baseline gap-2">
+            <span className="text-lg leading-none font-semibold tracking-tight text-foreground">
               {formatPrice(promo.price)}
             </span>
             {promo.originalPrice ? (
-              <span className="text-[11px] text-white/50 line-through">
+              <span className="text-xs leading-none text-muted-foreground line-through">
                 {formatPrice(promo.originalPrice)}
               </span>
             ) : null}
-            {off > 0 ? (
-              <span className="text-[11px] font-medium text-primary">
-                -{off}%
-              </span>
-            ) : null}
-          </div>
+          </p>
         </div>
-        <span className="mt-3 inline-flex h-8 w-fit items-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors duration-500 group-hover:bg-ink group-hover:text-primary">
+
+        <span className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors duration-300 group-hover:bg-brand-hover">
           {promo.ctaLabel}
         </span>
       </div>

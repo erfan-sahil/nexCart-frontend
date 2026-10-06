@@ -23,7 +23,7 @@ export function ProductShowcase({
     <aside className="relative min-h-64 lg:min-h-0">
       <PromoColumn
         promo={promo}
-        className="min-h-64 lg:absolute lg:inset-0 lg:min-h-0"
+        className="lg:absolute lg:inset-0 lg:min-h-0"
       />
     </aside>
   );
