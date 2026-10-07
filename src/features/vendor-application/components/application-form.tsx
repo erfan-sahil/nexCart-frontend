@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,7 +13,6 @@ import {
 } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,10 @@ import {
 } from "../lib/form";
 import { vendorApplicationQueryKey } from "../query";
 import type { SellingCategory, VendorApplication } from "../types";
+import { DateOfBirthField, parseDateOnly } from "./date-of-birth-field";
 import { Choice, Field, TextInput } from "./fields";
+import { ApplicationFileUpload, DocumentImagesUpload } from "./file-upload";
+import { SelfieCapture } from "./selfie-capture";
 
 const FORM_FIELD_PATHS: Record<string, FieldPath<FormValues>> = {
   "business.tradeLicense.number": "business.tradeLicenseNumber",
@@ -227,7 +230,7 @@ export function ApplicationForm({
                   type="button"
                   onClick={() => setStep(index)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-full px-3 py-2 text-left text-sm transition-colors",
+                    "flex w-full cursor-pointer items-center gap-3 rounded-full px-3 py-2 text-left text-sm transition-colors",
                     active
                       ? "bg-brand-soft font-medium text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -327,6 +330,7 @@ export function ApplicationForm({
 
 function PersonalStep() {
   const {
+    control,
     register,
     formState: { errors },
   } = useFormContext<FormValues>();
@@ -360,11 +364,16 @@ function PersonalStep() {
           error={errors.personal?.phone?.message}
           {...register("personal.phone")}
         />
-        <TextInput
-          label="Date of birth"
-          type="date"
-          error={errors.personal?.dateOfBirth?.message}
-          {...register("personal.dateOfBirth")}
+        <Controller
+          name="personal.dateOfBirth"
+          control={control}
+          render={({ field }) => (
+            <DateOfBirthField
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.personal?.dateOfBirth?.message}
+            />
+          )}
         />
       </div>
       <AddressFields prefix="personal.address" />
@@ -376,7 +385,6 @@ function IdentityStep() {
   const {
     control,
     register,
-    getValues,
     setValue,
     formState: { errors },
   } = useFormContext<FormValues>();
@@ -422,74 +430,25 @@ function IdentityStep() {
         error={errors.identity?.documentNumber?.message}
         {...register("identity.documentNumber")}
       />
-      <Field
-        label="Document image links"
-        hint="Paste a public https link for each photo. Up to 4."
+      <DocumentImagesUpload
+        values={documentImages}
         error={imageError}
-      >
-        <div className="space-y-2">
-          {documentImages.map((_, index) => (
-            <div key={index} className="flex gap-2">
-              <Controller
-                name={`identity.documentImages.${index}`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    placeholder="https://"
-                    aria-invalid={Boolean(imageError)}
-                    className="h-10"
-                    name={field.name}
-                    ref={field.ref}
-                    value={field.value}
-                    onBlur={field.onBlur}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              {documentImages.length > 1 ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-10 rounded-lg"
-                  onClick={() =>
-                    setValue(
-                      "identity.documentImages",
-                      getValues("identity.documentImages").filter(
-                        (_, imageIndex) => imageIndex !== index,
-                      ),
-                      { shouldDirty: true },
-                    )
-                  }
-                >
-                  Remove
-                </Button>
-              ) : null}
-            </div>
-          ))}
-          {documentImages.length < 4 ? (
-            <Button
-              type="button"
-              variant="outline"
-              className="h-10 rounded-full"
-              onClick={() =>
-                setValue(
-                  "identity.documentImages",
-                  [...getValues("identity.documentImages"), ""],
-                  { shouldDirty: true },
-                )
-              }
-            >
-              Add another image
-            </Button>
-          ) : null}
-        </div>
-      </Field>
-      <TextInput
-        label="Selfie link"
-        hint="Optional."
-        placeholder="https://"
-        error={errors.identity?.selfieUrl?.message}
-        {...register("identity.selfieUrl")}
+        onChange={(next) =>
+          setValue("identity.documentImages", next.length > 0 ? next : [""], {
+            shouldDirty: true,
+          })
+        }
+      />
+      <Controller
+        name="identity.selfieUrl"
+        control={control}
+        render={({ field }) => (
+          <SelfieCapture
+            value={field.value}
+            onChange={field.onChange}
+            error={errors.identity?.selfieUrl?.message}
+          />
+        )}
       />
     </div>
   );
@@ -570,12 +529,17 @@ function BusinessStep() {
           error={errorMessage(errors.business?.tradeLicenseNumber)}
           {...register("business.tradeLicenseNumber")}
         />
-        <TextInput
-          label="Trade license document"
-          hint="Optional https link."
-          placeholder="https://"
-          error={errorMessage(errors.business?.tradeLicenseUrl)}
-          {...register("business.tradeLicenseUrl")}
+        <Controller
+          name="business.tradeLicenseUrl"
+          control={control}
+          render={({ field }) => (
+            <ApplicationFileUpload
+              label="Trade license document"
+              value={field.value}
+              onChange={field.onChange}
+              error={errorMessage(errors.business?.tradeLicenseUrl)}
+            />
+          )}
         />
         <TextInput
           label="Tax ID"
@@ -583,12 +547,17 @@ function BusinessStep() {
           error={errorMessage(errors.business?.taxId)}
           {...register("business.taxId")}
         />
-        <TextInput
-          label="Tax document"
-          hint="Optional https link."
-          placeholder="https://"
-          error={errorMessage(errors.business?.taxDocumentUrl)}
-          {...register("business.taxDocumentUrl")}
+        <Controller
+          name="business.taxDocumentUrl"
+          control={control}
+          render={({ field }) => (
+            <ApplicationFileUpload
+              label="Tax document"
+              value={field.value}
+              onChange={field.onChange}
+              error={errorMessage(errors.business?.taxDocumentUrl)}
+            />
+          )}
         />
       </div>
     </div>
@@ -698,7 +667,10 @@ function ReviewStep({ categoryNames }: { categoryNames: Map<string, string> }) {
     ["Name", personal?.fullName],
     ["Email", personal?.email],
     ["Phone", personal?.phone],
-    ["Date of birth", personal?.dateOfBirth],
+    [
+      "Date of birth",
+      personal?.dateOfBirth ? formatBirthDate(personal.dateOfBirth) : "",
+    ],
     [
       "Document",
       identity?.documentType === "nid"
@@ -732,9 +704,28 @@ function ReviewStep({ categoryNames }: { categoryNames: Map<string, string> }) {
           </div>
         ))}
       </dl>
+      {identity?.selfieUrl ? (
+        <div className="rounded-2xl bg-background px-4 py-3">
+          <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            Selfie
+          </p>
+          {/* Uploaded selfies are served from the API origin. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={identity.selfieUrl}
+            alt="Selfie"
+            className="mt-2 size-24 rounded-2xl object-cover"
+          />
+        </div>
+      ) : null}
       <p className="text-sm text-muted-foreground">{selling?.description}</p>
     </div>
   );
+}
+
+function formatBirthDate(value: string) {
+  const date = parseDateOnly(value);
+  return date ? format(date, "PPP") : value;
 }
 
 function AddressFields({
