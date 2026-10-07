@@ -113,7 +113,7 @@ export function ApplicationForm({
     },
   });
 
-  function applyErrors(next: FieldErrors, formMessage?: string) {
+  function applyErrors(next: FieldErrors, formMessage?: string, jump = true) {
     clearErrors();
 
     for (const [path, message] of Object.entries(next)) {
@@ -123,7 +123,7 @@ export function ApplicationForm({
     if (formMessage) setError("root", { type: "server", message: formMessage });
 
     const first = Object.keys(next)[0];
-    if (first) setStep(stepForPath(first));
+    if (jump && first) setStep(stepForPath(first));
   }
 
   function showApiError(error: unknown) {
@@ -145,27 +145,37 @@ export function ApplicationForm({
     applyErrors(next, error.message);
   }
 
-  async function persistDraft() {
+  async function persistDraft(jumpToError = true) {
     const { payload, errors: nextErrors } = draftPayload(getValues());
+    const hasErrors = Object.keys(nextErrors).length > 0;
     setSaved(false);
 
-    if (Object.keys(nextErrors).length > 0) {
-      applyErrors(nextErrors, "Fix the highlighted fields before saving.");
-      return false;
-    }
-
     if (Object.keys(payload).length === 0) {
-      clearErrors();
-      setError("root", {
-        type: "server",
-        message: "Add a few details before saving a draft.",
-      });
+      if (hasErrors) {
+        applyErrors(nextErrors, "Fix the highlighted fields before saving.");
+      } else {
+        clearErrors();
+        setError("root", {
+          type: "server",
+          message: "Add a few details before saving a draft.",
+        });
+      }
       return false;
     }
 
     try {
       await save.mutateAsync(payload);
-      clearErrors();
+
+      if (hasErrors) {
+        applyErrors(
+          nextErrors,
+          "Draft saved. Fix the highlighted fields.",
+          jumpToError,
+        );
+      } else {
+        clearErrors();
+      }
+
       return true;
     } catch (error) {
       showApiError(error);
@@ -183,7 +193,7 @@ export function ApplicationForm({
       }
     }
 
-    const ok = await persistDraft();
+    const ok = await persistDraft(false);
 
     if (ok && step < 4) setStep(step + 1);
   }
@@ -577,12 +587,29 @@ function SellingStep({
 }) {
   const {
     control,
+    getValues,
     register,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useFormContext<FormValues>();
   const categoryIds = useWatch({ control, name: "selling.categoryIds" }) ?? [];
   const categoryError = errorMessage(errors.selling?.categoryIds);
+
+  function toggleCategory(id: string) {
+    const current = getValues("selling.categoryIds") ?? [];
+    const next = current.includes(id)
+      ? current.filter((categoryId) => categoryId !== id)
+      : [...current, id];
+
+    if (next.length > 20) return;
+
+    setValue("selling.categoryIds", next, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    clearErrors("selling.categoryIds");
+  }
 
   return (
     <div className="space-y-5">
@@ -615,19 +642,12 @@ function SellingStep({
                   key={category.id}
                   type="button"
                   aria-pressed={selected}
-                  onClick={() => {
-                    const next = selected
-                      ? categoryIds.filter((id) => id !== category.id)
-                      : [...categoryIds, category.id];
-
-                    if (next.length > 20) return;
-
-                    setValue("selling.categoryIds", next, {
-                      shouldDirty: true,
-                    });
+                  onClick={(event) => {
+                    if (event.detail > 1) return;
+                    toggleCategory(category.id);
                   }}
                   className={cn(
-                    "rounded-full border px-3 py-1.5 text-sm transition-colors",
+                    "cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors",
                     selected
                       ? "border-primary bg-primary text-[#fff4f2]"
                       : "border-border hover:border-primary/50",
