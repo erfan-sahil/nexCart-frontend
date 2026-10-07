@@ -1,31 +1,33 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/errors";
 
 import { login } from "../api";
 import { splitApiError } from "../lib/api-errors";
-import {
-  validateLogin,
-  type FieldErrors,
-  type LoginValues,
-} from "../lib/validation";
+import { fieldErrorResolver } from "../lib/resolver";
+import { validateLogin, type LoginValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
 import { PasswordField, TextField } from "./text-field";
 
-const emptyErrors: FieldErrors<keyof LoginValues> = {};
-
 export function LoginForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [errors, setErrors] = useState(emptyErrors);
-  const [formError, setFormError] = useState<string>();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    defaultValues: { email: "", password: "" },
+    resolver: fieldErrorResolver(validateLogin),
+  });
 
   const signIn = useMutation({
     mutationFn: login,
@@ -38,31 +40,18 @@ export function LoginForm() {
     onError: (error) => {
       if (error instanceof ApiError) {
         const next = splitApiError<keyof LoginValues>(error);
-        setErrors(next.fields);
-        setFormError(next.form);
+
+        for (const [field, message] of Object.entries(next.fields)) {
+          if (message) setError(field as keyof LoginValues, { message });
+        }
+
+        if (next.form) setError("root", { message: next.form });
         return;
       }
 
-      setFormError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     },
   });
-
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const values: LoginValues = {
-      email: String(formData.get("email") ?? ""),
-      password: String(formData.get("password") ?? ""),
-    };
-    const nextErrors = validateLogin(values);
-
-    setErrors(nextErrors);
-    setFormError(undefined);
-
-    if (Object.keys(nextErrors).length > 0) return;
-
-    signIn.mutate(values);
-  }
 
   return (
     <div className="space-y-8">
@@ -75,31 +64,34 @@ export function LoginForm() {
         </p>
       </div>
 
-      <form className="space-y-5" onSubmit={onSubmit} noValidate>
-        {formError ? (
+      <form
+        className="space-y-5"
+        noValidate
+        onSubmit={handleSubmit((values) => signIn.mutate(values))}
+      >
+        {errors.root?.message ? (
           <p role="alert" className="text-sm text-destructive">
-            {formError}
+            {errors.root.message}
           </p>
         ) : null}
         <TextField
-          name="email"
           type="email"
           label="Email"
           autoComplete="email"
           placeholder="you@example.com"
-          error={errors.email}
+          error={errors.email?.message}
+          {...register("email")}
         />
         <PasswordField
-          name="password"
           label="Password"
           autoComplete="current-password"
           placeholder="Your password"
-          error={errors.password}
+          error={errors.password?.message}
+          {...register("password")}
         />
         <label className="flex items-center gap-2 text-sm text-muted-foreground">
           <input
             type="checkbox"
-            name="remember"
             className="size-4 rounded border-[#ff4d4d] accent-[#ff4d4d]"
           />
           Remember me
