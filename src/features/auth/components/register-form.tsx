@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/errors";
@@ -14,6 +14,7 @@ import { fieldErrorResolver } from "../lib/resolver";
 import { validateRegister, type RegisterValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
+import { PhoneField } from "./phone-field";
 import { PasswordField, TextField } from "./text-field";
 
 export function RegisterForm() {
@@ -21,6 +22,7 @@ export function RegisterForm() {
   const queryClient = useQueryClient();
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -113,14 +115,17 @@ export function RegisterForm() {
           error={errors.email?.message}
           {...register("email")}
         />
-        <TextField
-          type="tel"
-          label="Phone"
-          autoComplete="tel"
-          placeholder="+8801712345678"
-          hint="Optional. Use international format."
-          error={errors.phone?.message}
-          {...register("phone")}
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <PhoneField
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.phone?.message}
+            />
+          )}
         />
         <PasswordField
           label="Password"

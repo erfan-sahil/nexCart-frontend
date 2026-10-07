@@ -72,7 +72,7 @@ export function validateRegister(
   if (lastName) errors.lastName = lastName;
   if (email) errors.email = email;
   if (phone && !PHONE_PATTERN.test(phone)) {
-    errors.phone = "Use international format, for example +8801712345678";
+    errors.phone = "Enter a valid phone number for the selected country";
   }
   if (password) errors.password = password;
   if (values.confirmPassword !== values.password) {
