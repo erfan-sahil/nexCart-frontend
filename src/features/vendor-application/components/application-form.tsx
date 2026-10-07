@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch,
+  type FieldPath,
+} from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +30,30 @@ import { vendorApplicationQueryKey } from "../query";
 import type { SellingCategory, VendorApplication } from "../types";
 import { Choice, Field, TextInput } from "./fields";
 
+const FORM_FIELD_PATHS: Record<string, FieldPath<FormValues>> = {
+  "business.tradeLicense.number": "business.tradeLicenseNumber",
+  "business.tradeLicense.documentUrl": "business.tradeLicenseUrl",
+  "business.tax.taxId": "business.taxId",
+  "business.tax.documentUrl": "business.taxDocumentUrl",
+};
+
+function toFieldPath(path: string) {
+  return FORM_FIELD_PATHS[path] ?? (path as FieldPath<FormValues>);
+}
+
+function errorMessage(error: unknown) {
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+
+  return undefined;
+}
+
 type ApplicationFormProps = {
   initial: FormValues;
   reviewNote: string;
@@ -30,10 +63,6 @@ type ApplicationFormProps = {
   onRetryCategories: () => void;
   onSubmitted: (application: VendorApplication) => void;
 };
-
-function errorFor(errors: FieldErrors, path: string) {
-  return errors[path];
-}
 
 export function ApplicationForm({
   initial,
@@ -46,10 +75,15 @@ export function ApplicationForm({
 }: ApplicationFormProps) {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(0);
-  const [values, setValues] = useState(initial);
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string>();
   const [saved, setSaved] = useState(false);
+  const form = useForm<FormValues>({ defaultValues: initial });
+  const {
+    clearErrors,
+    getValues,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = form;
 
   const save = useMutation({
     mutationFn: saveMyApplication,
@@ -61,7 +95,7 @@ export function ApplicationForm({
 
   const submit = useMutation({
     mutationFn: async () => {
-      const { payload, errors: nextErrors } = submitPayload(values);
+      const { payload, errors: nextErrors } = submitPayload(getValues());
 
       if (Object.keys(nextErrors).length > 0) {
         throw Object.assign(new Error("invalid"), { fieldErrors: nextErrors });
@@ -76,9 +110,26 @@ export function ApplicationForm({
     },
   });
 
+  function applyErrors(next: FieldErrors, formMessage?: string) {
+    clearErrors();
+
+    for (const [path, message] of Object.entries(next)) {
+      setError(toFieldPath(path), { type: "validate", message });
+    }
+
+    if (formMessage) setError("root", { type: "server", message: formMessage });
+
+    const first = Object.keys(next)[0];
+    if (first) setStep(stepForPath(first));
+  }
+
   function showApiError(error: unknown) {
     if (!(error instanceof ApiError)) {
-      setFormError("Something went wrong. Please try again.");
+      clearErrors();
+      setError("root", {
+        type: "server",
+        message: "Something went wrong. Please try again.",
+      });
       return;
     }
 
@@ -88,34 +139,30 @@ export function ApplicationForm({
       if (issue.path && issue.path !== "root") next[issue.path] = issue.message;
     }
 
-    setErrors(next);
-    setFormError(error.message);
-
-    const first = Object.keys(next)[0];
-
-    if (first) setStep(stepForPath(first));
+    applyErrors(next, error.message);
   }
 
   async function persistDraft() {
-    const { payload, errors: nextErrors } = draftPayload(values);
-    setErrors(nextErrors);
+    const { payload, errors: nextErrors } = draftPayload(getValues());
     setSaved(false);
 
     if (Object.keys(nextErrors).length > 0) {
-      setFormError("Fix the highlighted fields before saving.");
-      const first = Object.keys(nextErrors)[0];
-      if (first) setStep(stepForPath(first));
+      applyErrors(nextErrors, "Fix the highlighted fields before saving.");
       return false;
     }
 
     if (Object.keys(payload).length === 0) {
-      setFormError("Add a few details before saving a draft.");
+      clearErrors();
+      setError("root", {
+        type: "server",
+        message: "Add a few details before saving a draft.",
+      });
       return false;
     }
 
     try {
       await save.mutateAsync(payload);
-      setFormError(undefined);
+      clearErrors();
       return true;
     } catch (error) {
       showApiError(error);
@@ -125,11 +172,10 @@ export function ApplicationForm({
 
   async function continueStep() {
     if (step < 4) {
-      const nextErrors = validateStep(values, step);
-      setErrors(nextErrors);
+      const nextErrors = validateStep(getValues(), step);
 
       if (Object.keys(nextErrors).length > 0) {
-        setFormError("Complete this step before continuing.");
+        applyErrors(nextErrors, "Complete this step before continuing.");
         return;
       }
     }
@@ -139,15 +185,12 @@ export function ApplicationForm({
     if (ok && step < 4) setStep(step + 1);
   }
 
-  async function onSubmit() {
-    const nextErrors = validateStep(values, 4);
-    setErrors(nextErrors);
+  async function submitApplication() {
+    const nextErrors = validateStep(getValues(), 4);
     setSaved(false);
 
     if (Object.keys(nextErrors).length > 0) {
-      setFormError("Complete every section before submitting.");
-      const first = Object.keys(nextErrors)[0];
-      if (first) setStep(stepForPath(first));
+      applyErrors(nextErrors, "Complete every section before submitting.");
       return;
     }
 
@@ -155,11 +198,10 @@ export function ApplicationForm({
       await submit.mutateAsync();
     } catch (error) {
       if (error instanceof Error && "fieldErrors" in error) {
-        const fieldErrors = error.fieldErrors as FieldErrors;
-        setErrors(fieldErrors);
-        setFormError("Complete every section before submitting.");
-        const first = Object.keys(fieldErrors)[0];
-        if (first) setStep(stepForPath(first));
+        applyErrors(
+          error.fieldErrors as FieldErrors,
+          "Complete every section before submitting.",
+        );
         return;
       }
 
@@ -173,165 +215,121 @@ export function ApplicationForm({
   );
 
   return (
-    <div className="mt-8 grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
-      <ol className="flex gap-2 overflow-x-auto lg:sticky lg:top-28 lg:flex-col lg:gap-1">
-        {STEPS.map((item, index) => {
-          const active = index === step;
+    <FormProvider {...form}>
+      <div className="mt-8 grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
+        <ol className="flex gap-2 overflow-x-auto lg:sticky lg:top-28 lg:flex-col lg:gap-1">
+          {STEPS.map((item, index) => {
+            const active = index === step;
 
-          return (
-            <li key={item.id}>
-              <button
-                type="button"
-                onClick={() => setStep(index)}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-full px-3 py-2 text-left text-sm transition-colors",
-                  active
-                    ? "bg-brand-soft font-medium text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-                aria-current={active ? "step" : undefined}
-              >
-                <span
+            return (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => setStep(index)}
                   className={cn(
-                    "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs",
+                    "flex w-full items-center gap-3 rounded-full px-3 py-2 text-left text-sm transition-colors",
                     active
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground",
+                      ? "bg-brand-soft font-medium text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
+                  aria-current={active ? "step" : undefined}
                 >
-                  {index + 1}
-                </span>
-                {item.label}
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+                  <span
+                    className={cn(
+                      "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {index + 1}
+                  </span>
+                  {item.label}
+                </button>
+              </li>
+            );
+          })}
+        </ol>
 
-      <form
-        className="rounded-3xl border border-border bg-card p-5 sm:p-8"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (step === 4) void onSubmit();
-          else void continueStep();
-        }}
-        noValidate
-      >
-        {reviewNote ? (
-          <p className="mb-6 rounded-2xl bg-brand-soft px-4 py-3 text-sm">
-            {reviewNote}
-          </p>
-        ) : null}
-        {formError ? (
-          <p role="alert" className="mb-6 text-sm text-destructive">
-            {formError}
-          </p>
-        ) : null}
-        {saved ? (
-          <p className="mb-6 text-sm text-muted-foreground">Draft saved.</p>
-        ) : null}
+        <form
+          className="rounded-3xl border border-border bg-card p-5 sm:p-8"
+          onSubmit={handleSubmit(() => {
+            if (step === 4) void submitApplication();
+            else void continueStep();
+          })}
+          noValidate
+        >
+          {reviewNote ? (
+            <p className="mb-6 rounded-2xl bg-brand-soft px-4 py-3 text-sm">
+              {reviewNote}
+            </p>
+          ) : null}
+          {errors.root?.message ? (
+            <p role="alert" className="mb-6 text-sm text-destructive">
+              {errors.root.message}
+            </p>
+          ) : null}
+          {saved ? (
+            <p className="mb-6 text-sm text-muted-foreground">Draft saved.</p>
+          ) : null}
 
-        {step === 0 ? (
-          <PersonalStep
-            values={values}
-            errors={errors}
-            onChange={(personal) =>
-              setValues((current) => ({ ...current, personal }))
-            }
-          />
-        ) : null}
-        {step === 1 ? (
-          <IdentityStep
-            values={values}
-            errors={errors}
-            onChange={(identity) =>
-              setValues((current) => ({ ...current, identity }))
-            }
-          />
-        ) : null}
-        {step === 2 ? (
-          <BusinessStep
-            values={values}
-            errors={errors}
-            onChange={(business) =>
-              setValues((current) => ({ ...current, business }))
-            }
-            onUsePersonalAddress={() =>
-              setValues((current) => ({
-                ...current,
-                business: {
-                  ...current.business,
-                  address: { ...current.personal.address },
-                },
-              }))
-            }
-          />
-        ) : null}
-        {step === 3 ? (
-          <SellingStep
-            values={values}
-            errors={errors}
-            categories={categories}
-            loading={categoriesLoading}
-            failed={categoriesError}
-            onRetry={onRetryCategories}
-            onChange={(selling) =>
-              setValues((current) => ({ ...current, selling }))
-            }
-          />
-        ) : null}
-        {step === 4 ? (
-          <ReviewStep values={values} categoryNames={categoryNames} />
-        ) : null}
+          {step === 0 ? <PersonalStep /> : null}
+          {step === 1 ? <IdentityStep /> : null}
+          {step === 2 ? <BusinessStep /> : null}
+          {step === 3 ? (
+            <SellingStep
+              categories={categories}
+              loading={categoriesLoading}
+              failed={categoriesError}
+              onRetry={onRetryCategories}
+            />
+          ) : null}
+          {step === 4 ? <ReviewStep categoryNames={categoryNames} /> : null}
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          {step > 0 ? (
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            {step > 0 ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 rounded-full px-5"
+                disabled={pending}
+                onClick={() => setStep((current) => current - 1)}
+              >
+                Back
+              </Button>
+            ) : null}
             <Button
               type="button"
               variant="outline"
               className="h-11 rounded-full px-5"
               disabled={pending}
-              onClick={() => setStep((current) => current - 1)}
+              onClick={() => void persistDraft()}
             >
-              Back
+              {save.isPending ? "Saving..." : "Save draft"}
             </Button>
-          ) : null}
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-full px-5"
-            disabled={pending}
-            onClick={() => void persistDraft()}
-          >
-            {save.isPending ? "Saving..." : "Save draft"}
-          </Button>
-          <Button
-            type="submit"
-            className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-primary"
-            disabled={pending}
-          >
-            {step === 4
-              ? submit.isPending
-                ? "Submitting..."
-                : "Submit application"
-              : "Continue"}
-          </Button>
-        </div>
-      </form>
-    </div>
+            <Button
+              type="submit"
+              className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-primary"
+              disabled={pending}
+            >
+              {step === 4
+                ? submit.isPending
+                  ? "Submitting..."
+                  : "Submit application"
+                : "Continue"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </FormProvider>
   );
 }
 
-function PersonalStep({
-  values,
-  errors,
-  onChange,
-}: {
-  values: FormValues;
-  errors: FieldErrors;
-  onChange: (personal: FormValues["personal"]) => void;
-}) {
-  const personal = values.personal;
+function PersonalStep() {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
 
   return (
     <div className="space-y-5">
@@ -343,17 +341,15 @@ function PersonalStep({
         <TextInput
           label="Full name"
           autoComplete="name"
-          value={personal.fullName}
-          error={errorFor(errors, "personal.fullName")}
-          onChange={(fullName) => onChange({ ...personal, fullName })}
+          error={errors.personal?.fullName?.message}
+          {...register("personal.fullName")}
         />
         <TextInput
           label="Email"
           type="email"
           autoComplete="email"
-          value={personal.email}
-          error={errorFor(errors, "personal.email")}
-          onChange={(email) => onChange({ ...personal, email })}
+          error={errors.personal?.email?.message}
+          {...register("personal.email")}
         />
         <TextInput
           label="Phone"
@@ -361,38 +357,33 @@ function PersonalStep({
           autoComplete="tel"
           placeholder="+8801712345678"
           hint="Include the country code."
-          value={personal.phone}
-          error={errorFor(errors, "personal.phone")}
-          onChange={(phone) => onChange({ ...personal, phone })}
+          error={errors.personal?.phone?.message}
+          {...register("personal.phone")}
         />
         <TextInput
           label="Date of birth"
           type="date"
-          value={personal.dateOfBirth}
-          error={errorFor(errors, "personal.dateOfBirth")}
-          onChange={(dateOfBirth) => onChange({ ...personal, dateOfBirth })}
+          error={errors.personal?.dateOfBirth?.message}
+          {...register("personal.dateOfBirth")}
         />
       </div>
-      <AddressFields
-        prefix="personal.address"
-        address={personal.address}
-        errors={errors}
-        onChange={(address) => onChange({ ...personal, address })}
-      />
+      <AddressFields prefix="personal.address" />
     </div>
   );
 }
 
-function IdentityStep({
-  values,
-  errors,
-  onChange,
-}: {
-  values: FormValues;
-  errors: FieldErrors;
-  onChange: (identity: FormValues["identity"]) => void;
-}) {
-  const identity = values.identity;
+function IdentityStep() {
+  const {
+    control,
+    register,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<FormValues>();
+  const documentType = useWatch({ control, name: "identity.documentType" });
+  const documentImages =
+    useWatch({ control, name: "identity.documentImages" }) ?? [];
+  const imageError = errorMessage(errors.identity?.documentImages);
 
   return (
     <div className="space-y-5">
@@ -405,57 +396,69 @@ function IdentityStep({
         <div className="grid gap-3 sm:grid-cols-2">
           <Choice
             label="National ID"
-            selected={identity.documentType === "nid"}
-            onSelect={() => onChange({ ...identity, documentType: "nid" })}
+            selected={documentType === "nid"}
+            onSelect={() =>
+              setValue("identity.documentType", "nid", { shouldDirty: true })
+            }
           />
           <Choice
             label="Passport"
-            selected={identity.documentType === "passport"}
-            onSelect={() => onChange({ ...identity, documentType: "passport" })}
+            selected={documentType === "passport"}
+            onSelect={() =>
+              setValue("identity.documentType", "passport", {
+                shouldDirty: true,
+              })
+            }
           />
         </div>
-        {errorFor(errors, "identity.documentType") ? (
+        {errors.identity?.documentType?.message ? (
           <p className="text-sm text-destructive">
-            {errorFor(errors, "identity.documentType")}
+            {errors.identity.documentType.message}
           </p>
         ) : null}
       </fieldset>
       <TextInput
         label="Document number"
-        value={identity.documentNumber}
-        error={errorFor(errors, "identity.documentNumber")}
-        onChange={(documentNumber) => onChange({ ...identity, documentNumber })}
+        error={errors.identity?.documentNumber?.message}
+        {...register("identity.documentNumber")}
       />
       <Field
         label="Document image links"
         hint="Paste a public https link for each photo. Up to 4."
-        error={errorFor(errors, "identity.documentImages")}
+        error={imageError}
       >
         <div className="space-y-2">
-          {identity.documentImages.map((image, index) => (
+          {documentImages.map((_, index) => (
             <div key={index} className="flex gap-2">
-              <input
-                value={image}
-                placeholder="https://"
-                className="h-10 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-                onChange={(event) => {
-                  const documentImages = [...identity.documentImages];
-                  documentImages[index] = event.target.value;
-                  onChange({ ...identity, documentImages });
-                }}
+              <Controller
+                name={`identity.documentImages.${index}`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    placeholder="https://"
+                    aria-invalid={Boolean(imageError)}
+                    className="h-10"
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                  />
+                )}
               />
-              {identity.documentImages.length > 1 ? (
+              {documentImages.length > 1 ? (
                 <Button
                   type="button"
                   variant="outline"
                   className="h-10 rounded-lg"
                   onClick={() =>
-                    onChange({
-                      ...identity,
-                      documentImages: identity.documentImages.filter(
+                    setValue(
+                      "identity.documentImages",
+                      getValues("identity.documentImages").filter(
                         (_, imageIndex) => imageIndex !== index,
                       ),
-                    })
+                      { shouldDirty: true },
+                    )
                   }
                 >
                   Remove
@@ -463,16 +466,17 @@ function IdentityStep({
               ) : null}
             </div>
           ))}
-          {identity.documentImages.length < 4 ? (
+          {documentImages.length < 4 ? (
             <Button
               type="button"
               variant="outline"
               className="h-10 rounded-full"
               onClick={() =>
-                onChange({
-                  ...identity,
-                  documentImages: [...identity.documentImages, ""],
-                })
+                setValue(
+                  "identity.documentImages",
+                  [...getValues("identity.documentImages"), ""],
+                  { shouldDirty: true },
+                )
               }
             >
               Add another image
@@ -484,26 +488,22 @@ function IdentityStep({
         label="Selfie link"
         hint="Optional."
         placeholder="https://"
-        value={identity.selfieUrl}
-        error={errorFor(errors, "identity.selfieUrl")}
-        onChange={(selfieUrl) => onChange({ ...identity, selfieUrl })}
+        error={errors.identity?.selfieUrl?.message}
+        {...register("identity.selfieUrl")}
       />
     </div>
   );
 }
 
-function BusinessStep({
-  values,
-  errors,
-  onChange,
-  onUsePersonalAddress,
-}: {
-  values: FormValues;
-  errors: FieldErrors;
-  onChange: (business: FormValues["business"]) => void;
-  onUsePersonalAddress: () => void;
-}) {
-  const business = values.business;
+function BusinessStep() {
+  const {
+    control,
+    register,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<FormValues>();
+  const businessType = useWatch({ control, name: "business.businessType" });
 
   return (
     <div className="space-y-5">
@@ -513,29 +513,34 @@ function BusinessStep({
       />
       <TextInput
         label="Store name"
-        value={business.storeName}
-        error={errorFor(errors, "business.storeName")}
-        onChange={(storeName) => onChange({ ...business, storeName })}
+        error={errors.business?.storeName?.message}
+        {...register("business.storeName")}
       />
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium">Business type</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           <Choice
             label="Individual"
-            selected={business.businessType === "individual"}
+            selected={businessType === "individual"}
             onSelect={() =>
-              onChange({ ...business, businessType: "individual" })
+              setValue("business.businessType", "individual", {
+                shouldDirty: true,
+              })
             }
           />
           <Choice
             label="Company"
-            selected={business.businessType === "company"}
-            onSelect={() => onChange({ ...business, businessType: "company" })}
+            selected={businessType === "company"}
+            onSelect={() =>
+              setValue("business.businessType", "company", {
+                shouldDirty: true,
+              })
+            }
           />
         </div>
-        {errorFor(errors, "business.businessType") ? (
+        {errors.business?.businessType?.message ? (
           <p className="text-sm text-destructive">
-            {errorFor(errors, "business.businessType")}
+            {errors.business.businessType.message}
           </p>
         ) : null}
       </fieldset>
@@ -544,53 +549,46 @@ function BusinessStep({
         <button
           type="button"
           className="text-sm font-medium text-primary hover:underline"
-          onClick={onUsePersonalAddress}
+          onClick={() =>
+            setValue(
+              "business.address",
+              { ...getValues("personal.address") },
+              {
+                shouldDirty: true,
+              },
+            )
+          }
         >
           Use personal address
         </button>
       </div>
-      <AddressFields
-        prefix="business.address"
-        address={business.address}
-        errors={errors}
-        onChange={(address) => onChange({ ...business, address })}
-      />
+      <AddressFields prefix="business.address" />
       <div className="grid gap-4 sm:grid-cols-2">
         <TextInput
           label="Trade license number"
           hint="Optional."
-          value={business.tradeLicenseNumber}
-          error={errorFor(errors, "business.tradeLicense.number")}
-          onChange={(tradeLicenseNumber) =>
-            onChange({ ...business, tradeLicenseNumber })
-          }
+          error={errorMessage(errors.business?.tradeLicenseNumber)}
+          {...register("business.tradeLicenseNumber")}
         />
         <TextInput
           label="Trade license document"
           hint="Optional https link."
           placeholder="https://"
-          value={business.tradeLicenseUrl}
-          error={errorFor(errors, "business.tradeLicense.documentUrl")}
-          onChange={(tradeLicenseUrl) =>
-            onChange({ ...business, tradeLicenseUrl })
-          }
+          error={errorMessage(errors.business?.tradeLicenseUrl)}
+          {...register("business.tradeLicenseUrl")}
         />
         <TextInput
           label="Tax ID"
           hint="Optional."
-          value={business.taxId}
-          error={errorFor(errors, "business.tax.taxId")}
-          onChange={(taxId) => onChange({ ...business, taxId })}
+          error={errorMessage(errors.business?.taxId)}
+          {...register("business.taxId")}
         />
         <TextInput
           label="Tax document"
           hint="Optional https link."
           placeholder="https://"
-          value={business.taxDocumentUrl}
-          error={errorFor(errors, "business.tax.documentUrl")}
-          onChange={(taxDocumentUrl) =>
-            onChange({ ...business, taxDocumentUrl })
-          }
+          error={errorMessage(errors.business?.taxDocumentUrl)}
+          {...register("business.taxDocumentUrl")}
         />
       </div>
     </div>
@@ -598,23 +596,24 @@ function BusinessStep({
 }
 
 function SellingStep({
-  values,
-  errors,
   categories,
   loading,
   failed,
   onRetry,
-  onChange,
 }: {
-  values: FormValues;
-  errors: FieldErrors;
   categories: SellingCategory[];
   loading: boolean;
   failed: boolean;
   onRetry: () => void;
-  onChange: (selling: FormValues["selling"]) => void;
 }) {
-  const selling = values.selling;
+  const {
+    control,
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext<FormValues>();
+  const categoryIds = useWatch({ control, name: "selling.categoryIds" }) ?? [];
+  const categoryError = errorMessage(errors.selling?.categoryIds);
 
   return (
     <div className="space-y-5">
@@ -622,7 +621,7 @@ function SellingStep({
         title="What you sell"
         description="Pick the categories shoppers should find you in."
       />
-      <Field label="Categories" error={errorFor(errors, "selling.categoryIds")}>
+      <Field label="Categories" error={categoryError}>
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading categories...</p>
         ) : failed ? (
@@ -640,7 +639,7 @@ function SellingStep({
         ) : (
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => {
-              const selected = selling.categoryIds.includes(category.id);
+              const selected = categoryIds.includes(category.id);
 
               return (
                 <button
@@ -648,13 +647,15 @@ function SellingStep({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => {
-                    const categoryIds = selected
-                      ? selling.categoryIds.filter((id) => id !== category.id)
-                      : [...selling.categoryIds, category.id];
+                    const next = selected
+                      ? categoryIds.filter((id) => id !== category.id)
+                      : [...categoryIds, category.id];
 
-                    if (categoryIds.length > 20) return;
+                    if (next.length > 20) return;
 
-                    onChange({ ...selling, categoryIds });
+                    setValue("selling.categoryIds", next, {
+                      shouldDirty: true,
+                    });
                   }}
                   className={cn(
                     "rounded-full border px-3 py-1.5 text-sm transition-colors",
@@ -673,49 +674,45 @@ function SellingStep({
       <Field
         label="Business description"
         hint="At least 20 characters."
-        error={errorFor(errors, "selling.description")}
+        error={errors.selling?.description?.message}
       >
         <textarea
-          value={selling.description}
           rows={5}
+          aria-invalid={Boolean(errors.selling?.description)}
           className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          onChange={(event) =>
-            onChange({ ...selling, description: event.target.value })
-          }
+          {...register("selling.description")}
         />
       </Field>
     </div>
   );
 }
 
-function ReviewStep({
-  values,
-  categoryNames,
-}: {
-  values: FormValues;
-  categoryNames: Map<string, string>;
-}) {
+function ReviewStep({ categoryNames }: { categoryNames: Map<string, string> }) {
+  const { control } = useFormContext<FormValues>();
+  const values = useWatch({ control });
+  const personal = values.personal;
+  const identity = values.identity;
+  const business = values.business;
+  const selling = values.selling;
   const rows = [
-    ["Name", values.personal.fullName],
-    ["Email", values.personal.email],
-    ["Phone", values.personal.phone],
-    ["Date of birth", values.personal.dateOfBirth],
+    ["Name", personal?.fullName],
+    ["Email", personal?.email],
+    ["Phone", personal?.phone],
+    ["Date of birth", personal?.dateOfBirth],
     [
       "Document",
-      values.identity.documentType === "nid"
+      identity?.documentType === "nid"
         ? "National ID"
-        : values.identity.documentType === "passport"
+        : identity?.documentType === "passport"
           ? "Passport"
           : "",
     ],
-    ["Document number", values.identity.documentNumber],
-    ["Store", values.business.storeName],
-    ["Business type", values.business.businessType],
+    ["Document number", identity?.documentNumber],
+    ["Store", business?.storeName],
+    ["Business type", business?.businessType],
     [
       "Categories",
-      values.selling.categoryIds
-        .map((id) => categoryNames.get(id) ?? id)
-        .join(", "),
+      selling?.categoryIds?.map((id) => categoryNames.get(id) ?? id).join(", "),
     ],
   ];
 
@@ -735,33 +732,33 @@ function ReviewStep({
           </div>
         ))}
       </dl>
-      <p className="text-sm text-muted-foreground">
-        {values.selling.description}
-      </p>
+      <p className="text-sm text-muted-foreground">{selling?.description}</p>
     </div>
   );
 }
 
 function AddressFields({
   prefix,
-  address,
-  errors,
-  onChange,
 }: {
-  prefix: string;
-  address: FormValues["personal"]["address"];
-  errors: FieldErrors;
-  onChange: (address: FormValues["personal"]["address"]) => void;
+  prefix: "personal.address" | "business.address";
 }) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormValues>();
+  const addressErrors =
+    prefix === "personal.address"
+      ? errors.personal?.address
+      : errors.business?.address;
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <TextInput
           label="Address line"
           autoComplete="address-line1"
-          value={address.line1}
-          error={errorFor(errors, `${prefix}.line1`)}
-          onChange={(line1) => onChange({ ...address, line1 })}
+          error={addressErrors?.line1?.message}
+          {...register(`${prefix}.line1`)}
         />
       </div>
       <div className="sm:col-span-2">
@@ -769,38 +766,33 @@ function AddressFields({
           label="Address line 2"
           hint="Optional."
           autoComplete="address-line2"
-          value={address.line2}
-          error={errorFor(errors, `${prefix}.line2`)}
-          onChange={(line2) => onChange({ ...address, line2 })}
+          error={addressErrors?.line2?.message}
+          {...register(`${prefix}.line2`)}
         />
       </div>
       <TextInput
         label="City"
         autoComplete="address-level2"
-        value={address.city}
-        error={errorFor(errors, `${prefix}.city`)}
-        onChange={(city) => onChange({ ...address, city })}
+        error={addressErrors?.city?.message}
+        {...register(`${prefix}.city`)}
       />
       <TextInput
         label="State"
         autoComplete="address-level1"
-        value={address.state}
-        error={errorFor(errors, `${prefix}.state`)}
-        onChange={(state) => onChange({ ...address, state })}
+        error={addressErrors?.state?.message}
+        {...register(`${prefix}.state`)}
       />
       <TextInput
         label="Postal code"
         autoComplete="postal-code"
-        value={address.postalCode}
-        error={errorFor(errors, `${prefix}.postalCode`)}
-        onChange={(postalCode) => onChange({ ...address, postalCode })}
+        error={addressErrors?.postalCode?.message}
+        {...register(`${prefix}.postalCode`)}
       />
       <TextInput
         label="Country"
         autoComplete="country-name"
-        value={address.country}
-        error={errorFor(errors, `${prefix}.country`)}
-        onChange={(country) => onChange({ ...address, country })}
+        error={addressErrors?.country?.message}
+        {...register(`${prefix}.country`)}
       />
     </div>
   );

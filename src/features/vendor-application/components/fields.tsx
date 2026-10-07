@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from "react";
+import { useId, type ComponentProps, type ReactNode } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,18 +9,30 @@ type FieldProps = {
   htmlFor?: string;
   error?: string;
   hint?: string;
+  descriptionId?: string;
   children: ReactNode;
 };
 
-export function Field({ label, htmlFor, error, hint, children }: FieldProps) {
+export function Field({
+  label,
+  htmlFor,
+  error,
+  hint,
+  descriptionId,
+  children,
+}: FieldProps) {
   return (
     <div className="grid gap-2">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
       {error ? (
-        <p className="text-sm text-destructive">{error}</p>
+        <p id={descriptionId} className="text-sm text-destructive">
+          {error}
+        </p>
       ) : hint ? (
-        <p className="text-sm text-muted-foreground">{hint}</p>
+        <p id={descriptionId} className="text-sm text-muted-foreground">
+          {hint}
+        </p>
       ) : null}
     </div>
   );
@@ -28,38 +40,36 @@ export function Field({ label, htmlFor, error, hint, children }: FieldProps) {
 
 type TextInputProps = {
   label: string;
-  value: string;
-  onChange: (value: string) => void;
   error?: string;
   hint?: string;
-  type?: string;
-  autoComplete?: string;
-  placeholder?: string;
-};
+} & ComponentProps<typeof Input>;
 
 export function TextInput({
   label,
-  value,
-  onChange,
   error,
   hint,
-  type = "text",
-  autoComplete,
-  placeholder,
+  id,
+  className,
+  ...props
 }: TextInputProps) {
-  const id = useId();
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
+  const descriptionId = `${fieldId}-description`;
 
   return (
-    <Field label={label} htmlFor={id} error={error} hint={hint}>
+    <Field
+      label={label}
+      htmlFor={fieldId}
+      error={error}
+      hint={hint}
+      descriptionId={descriptionId}
+    >
       <Input
-        id={id}
-        value={value}
-        type={type}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
+        id={fieldId}
         aria-invalid={Boolean(error)}
-        className="h-10"
-        onChange={(event) => onChange(event.target.value)}
+        aria-describedby={error || hint ? descriptionId : undefined}
+        className={className ?? "h-10"}
+        {...props}
       />
     </Field>
   );
