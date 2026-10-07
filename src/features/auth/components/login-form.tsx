@@ -100,7 +100,7 @@ export function LoginForm() {
           type="submit"
           size="lg"
           disabled={signIn.isPending}
-          className="auth-orange-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#2a1218] hover:text-[#ff4d4d]"
+          className="auth-orange-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#2a1218] hover:text-[#fff4f2]"
         >
           {signIn.isPending ? "Signing in..." : "Sign in"}
         </Button>

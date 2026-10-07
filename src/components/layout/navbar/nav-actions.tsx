@@ -24,7 +24,7 @@ export function NavActions() {
         >
           <Icon className="size-5" />
           {count ? (
-            <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-[#fff4f2]">
+            <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-[#fff4f2]">
               {count}
             </span>
           ) : null}

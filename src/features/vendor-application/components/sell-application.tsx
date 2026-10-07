@@ -171,7 +171,7 @@ function Message({
         <p className="mt-3 text-sm text-muted-foreground">{body}</p>
         {onRetry ? (
           <Button
-            className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-primary"
+            className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-[#fff4f2]"
             onClick={onRetry}
           >
             Retry
@@ -180,7 +180,7 @@ function Message({
         {actionHref && actionLabel ? (
           <Button
             nativeButton={false}
-            className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-primary"
+            className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-[#fff4f2]"
             render={<Link href={actionHref} />}
           >
             {actionLabel}

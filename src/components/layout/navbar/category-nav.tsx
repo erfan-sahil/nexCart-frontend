@@ -31,14 +31,14 @@ function CategoryNavLinks() {
         className={cn(
           "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold transition-colors",
           allActive
-            ? "bg-primary text-primary-foreground"
+            ? "bg-primary text-[#fff4f2]"
             : "text-foreground hover:bg-card hover:text-primary",
         )}
       >
         <LayoutGrid
           className={cn(
             "size-4",
-            allActive ? "text-primary-foreground" : "text-primary",
+            allActive ? "text-[#fff4f2]" : "text-primary",
           )}
         />
         All categories
@@ -53,7 +53,7 @@ function CategoryNavLinks() {
             className={cn(
               "rounded-full px-3 py-1 text-sm transition-colors",
               active
-                ? "bg-primary font-medium text-primary-foreground"
+                ? "bg-primary font-medium text-[#fff4f2]"
                 : "text-muted-foreground hover:bg-card hover:text-primary",
             )}
           >

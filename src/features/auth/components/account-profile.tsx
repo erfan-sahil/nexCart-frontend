@@ -49,7 +49,7 @@ export function AccountProfile() {
           The account request failed. Try again in a moment.
         </p>
         <Button
-          className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-primary"
+          className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-[#fff4f2]"
           onClick={() => profile.refetch()}
         >
           Retry
@@ -106,7 +106,7 @@ export function AccountProfile() {
         <Button
           variant="outline"
           nativeButton={false}
-          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-[#fff4f2]"
           render={<Link href="/orders" />}
         >
           View orders
@@ -114,7 +114,7 @@ export function AccountProfile() {
         <Button
           variant="outline"
           nativeButton={false}
-          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-[#fff4f2]"
           render={<Link href="/wishlist" />}
         >
           Wishlist

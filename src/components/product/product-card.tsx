@@ -106,7 +106,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </p>
           <button
             type="button"
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-ink hover:text-primary"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-ink hover:text-[#fff4f2]"
             aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingBag className="size-3.5" />

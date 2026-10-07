@@ -238,7 +238,7 @@ export function ApplicationForm({
                     className={cn(
                       "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs",
                       active
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-primary text-[#fff4f2]"
                         : "bg-muted text-muted-foreground",
                     )}
                   >
@@ -309,7 +309,7 @@ export function ApplicationForm({
             </Button>
             <Button
               type="submit"
-              className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-primary"
+              className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-[#fff4f2]"
               disabled={pending}
             >
               {step === 4
@@ -660,7 +660,7 @@ function SellingStep({
                   className={cn(
                     "rounded-full border px-3 py-1.5 text-sm transition-colors",
                     selected
-                      ? "border-primary bg-primary text-primary-foreground"
+                      ? "border-primary bg-primary text-[#fff4f2]"
                       : "border-border hover:border-primary/50",
                   )}
                 >

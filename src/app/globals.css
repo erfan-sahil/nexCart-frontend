@@ -192,7 +192,7 @@
     height: 3rem;
     border-radius: 9999px;
     background-color: #ff4d4d;
-    color: #2a1218;
+    color: #fff4f2;
     font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
@@ -204,17 +204,17 @@
 
   .auth-orange-button:hover {
     background-color: #2a1218;
-    color: #ff4d4d;
+    color: #fff4f2;
   }
 
   .auth-dark-button {
     background-color: #2a1218;
-    color: #fff;
+    color: #fff4f2;
   }
 
   .auth-dark-button:hover {
     background-color: #ff4d4d;
-    color: #2a1218;
+    color: #fff4f2;
   }
 
   .auth-wave-back-fill {

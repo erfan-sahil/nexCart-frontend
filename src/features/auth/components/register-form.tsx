@@ -145,7 +145,7 @@ export function RegisterForm() {
           type="submit"
           size="lg"
           disabled={createAccount.isPending}
-          className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff4d4d] hover:text-[#2a1218]"
+          className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff4d4d] hover:text-[#fff4f2]"
         >
           {createAccount.isPending ? "Creating account..." : "Create account"}
         </Button>
