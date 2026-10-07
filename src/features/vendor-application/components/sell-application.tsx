@@ -179,6 +179,7 @@ function Message({
         ) : null}
         {actionHref && actionLabel ? (
           <Button
+            nativeButton={false}
             className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-primary"
             render={<Link href={actionHref} />}
           >

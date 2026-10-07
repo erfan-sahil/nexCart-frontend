@@ -23,6 +23,26 @@ export type Product = {
   listedAt: string;
 };
 
+export type ProductSpecification = {
+  label: string;
+  value: string;
+};
+
+export type ProductReview = {
+  id: string;
+  author: string;
+  rating: number;
+  createdAt: string;
+  comment: string;
+};
+
+export type ProductDetail = Product & {
+  description: string;
+  images: string[];
+  specifications: ProductSpecification[];
+  reviews: ProductReview[];
+};
+
 export type Subcategory = {
   id: string;
   name: string;

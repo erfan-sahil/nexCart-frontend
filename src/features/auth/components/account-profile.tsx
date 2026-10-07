@@ -105,6 +105,7 @@ export function AccountProfile() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Button
           variant="outline"
+          nativeButton={false}
           className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
           render={<Link href="/orders" />}
         >
@@ -112,6 +113,7 @@ export function AccountProfile() {
         </Button>
         <Button
           variant="outline"
+          nativeButton={false}
           className="rounded-full border-primary/40 px-4 hover:border-primary hover:bg-primary hover:text-primary-foreground"
           render={<Link href="/wishlist" />}
         >

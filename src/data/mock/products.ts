@@ -622,6 +622,10 @@ export const newArrivalProducts = pick([
   "p2",
 ]);
 
+export function getProductBySlug(slug: string) {
+  return products.find((product) => product.slug === slug);
+}
+
 export const flashDealEndsAt = new Date(
   Date.now() + 1000 * 60 * 60 * 11 + 1000 * 60 * 42,
 ).toISOString();

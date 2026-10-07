@@ -8,6 +8,7 @@ export {
 } from "./categories";
 export {
   flashDealEndsAt,
+  getProductBySlug,
   flashDealProducts,
   newArrivalProducts,
   products,
