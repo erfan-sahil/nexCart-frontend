@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { AddToCartButton } from "@/features/cart";
+import { WishlistToggle } from "@/features/wishlist";
 import { discountPercent, formatCount, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -49,13 +50,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           ) : null}
         </div>
 
-        <button
-          type="button"
-          className="absolute top-2.5 right-2.5 inline-flex size-8 items-center justify-center rounded-full bg-card/95 text-muted-foreground shadow-sm transition-colors hover:text-primary"
-          aria-label={`Save ${product.name}`}
-        >
-          <Heart className="size-4" />
-        </button>
+        <WishlistToggle productId={product.id} name={product.name} />
       </div>
 
       <div className="flex flex-1 flex-col gap-2 bg-card p-3 transition-colors duration-300 group-hover:bg-brand-soft">

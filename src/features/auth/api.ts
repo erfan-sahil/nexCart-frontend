@@ -8,6 +8,7 @@ import type {
   LoginPayload,
   MeProfile,
   RegisterPayload,
+  UpdateProfilePayload,
 } from "./types";
 
 async function postSession(
@@ -74,6 +75,23 @@ export function refreshSession() {
   }
 
   return refreshRequest;
+}
+
+export async function updateProfile(input: UpdateProfilePayload) {
+  const phone = input.phone?.trim();
+
+  try {
+    const { data } = await api.patch<ApiSuccess<MeProfile>>("/auth/me", {
+      firstName: input.firstName.trim(),
+      lastName: input.lastName.trim(),
+      phone: phone ?? "",
+    });
+    const profile = data.data;
+    useAuthStore.getState().setUser(profile.user, profile.sessionId);
+    return profile;
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export async function getMe() {

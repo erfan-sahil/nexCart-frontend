@@ -15,6 +15,12 @@ export type RegisterValues = {
   confirmPassword: string;
 };
 
+export type ProfileValues = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+};
+
 export type FieldErrors<T extends string> = Partial<Record<T, string>>;
 
 function emailError(email: string) {
@@ -77,6 +83,23 @@ export function validateRegister(
   if (password) errors.password = password;
   if (values.confirmPassword !== values.password) {
     errors.confirmPassword = "Passwords do not match";
+  }
+
+  return errors;
+}
+
+export function validateProfile(
+  values: ProfileValues,
+): FieldErrors<keyof ProfileValues> {
+  const errors: FieldErrors<keyof ProfileValues> = {};
+  const firstName = nameError(values.firstName, "First name");
+  const lastName = nameError(values.lastName, "Last name");
+  const phone = values.phone.trim();
+
+  if (firstName) errors.firstName = firstName;
+  if (lastName) errors.lastName = lastName;
+  if (phone && !PHONE_PATTERN.test(phone)) {
+    errors.phone = "Enter a valid phone number for the selected country";
   }
 
   return errors;
