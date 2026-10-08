@@ -37,6 +37,7 @@ import { Logo, ThemeToggle } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
 import { DrawerSessionButton } from "@/features/auth/components/account-menu";
 import { useCartItemCount } from "@/features/cart";
+import { useWishlistCount } from "@/features/wishlist";
 import { cn } from "@/lib/utils";
 
 import { SearchBar } from "./search-bar";
@@ -125,6 +126,7 @@ function Reveal({
 export function MobileNav() {
   const pathname = usePathname();
   const cartCount = useCartItemCount();
+  const wishlistCount = useWishlistCount();
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
@@ -420,6 +422,11 @@ export function MobileNav() {
                           {href === "/cart" && cartCount > 0 ? (
                             <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-[#fff4f2]">
                               {cartCount > 9 ? "9+" : cartCount}
+                            </span>
+                          ) : null}
+                          {href === "/wishlist" && wishlistCount > 0 ? (
+                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-[#fff4f2]">
+                              {wishlistCount > 9 ? "9+" : wishlistCount}
                             </span>
                           ) : null}
                         </Link>

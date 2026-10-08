@@ -185,6 +185,42 @@ export const SAMPLE_ORDERS: TrackedOrder[] = [
       },
     ],
   },
+  {
+    id: "NX-55102",
+    email: "aisha@example.com",
+    status: "confirmed",
+    eta: "Arriving Oct 12",
+    carrier: "Pathao",
+    trackingNumber: "PTH-118330",
+    shipTo: "12 Road 7, Dhanmondi, Dhaka",
+    paymentLabel: "bKash",
+    items: [
+      {
+        name: "Carbon Low-Profile Keyboard",
+        slug: "carbon-keyboard",
+        image:
+          "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=400&q=80",
+        quantity: 1,
+        price: 149,
+      },
+    ],
+    events: [
+      {
+        id: "e2",
+        title: "Confirmed",
+        detail: "Pixelab is packing the keyboard.",
+        location: "Gazipur",
+        atLabel: "Oct 7, 6:15 PM",
+      },
+      {
+        id: "e1",
+        title: "Order placed",
+        detail: "Payment confirmed.",
+        location: "NexCart",
+        atLabel: "Oct 7, 11:40 AM",
+      },
+    ],
+  },
 ];
 
 export type LookupResult =

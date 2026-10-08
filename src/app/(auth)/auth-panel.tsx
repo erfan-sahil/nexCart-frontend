@@ -1,9 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ShieldCheck, Store, Truck } from "lucide-react";
+import { ShoppingBag, Store, Truck } from "lucide-react";
 
-import { Logo } from "@/components/common";
 import { cn } from "@/lib/utils";
 
 const highlights = [
@@ -18,9 +17,9 @@ const highlights = [
     description: "Track deliveries, returns, and wishlists together.",
   },
   {
-    icon: ShieldCheck,
-    title: "Secure sign-in",
-    description: "Your session stays on this device until you sign out.",
+    icon: ShoppingBag,
+    title: "One cart, many stores",
+    description: "Add items from different sellers and check out together.",
   },
 ] as const;
 
@@ -59,52 +58,39 @@ export function AuthPanel() {
         </svg>
         <div className="auth-wave-body" />
       </div>
-      <Logo
-        variant={inverted ? "on-dark" : "on-light"}
-        priority
-        className="relative"
-      />
-      <div className="relative max-w-md space-y-8">
-        <div className="space-y-3">
-          <p
-            className={cn(
-              "text-sm font-medium tracking-wide uppercase",
-              inverted ? "opacity-75" : "text-black/70",
-            )}
-          >
-            NexCart
-          </p>
+      <div className="relative flex flex-1 flex-col justify-center">
+        <div className="max-w-md space-y-8">
           <p className="font-display text-5xl leading-[1.05] font-medium tracking-[-0.03em]">
             Shop from stores you can actually find.
           </p>
-        </div>
-        <ul className="space-y-5">
-          {highlights.map(({ icon: Icon, title, description }) => (
-            <li key={title} className="flex gap-3">
-              <span
-                className={cn(
-                  "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
-                  inverted ? "bg-[var(--auth-orange)]/15" : "bg-black/10",
-                )}
-              >
-                <Icon className="size-4" />
-              </span>
-              <span>
-                <span className="font-display block text-lg leading-snug font-medium tracking-[-0.02em]">
-                  {title}
-                </span>
+          <ul className="space-y-5">
+            {highlights.map(({ icon: Icon, title, description }) => (
+              <li key={title} className="flex gap-3">
                 <span
                   className={cn(
-                    "mt-1 block text-sm",
-                    inverted ? "opacity-75" : "text-black/70",
+                    "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
+                    inverted ? "bg-[var(--auth-orange)]/15" : "bg-black/10",
                   )}
                 >
-                  {description}
+                  <Icon className="size-4" />
                 </span>
-              </span>
-            </li>
-          ))}
-        </ul>
+                <span>
+                  <span className="font-display block text-lg leading-snug font-medium tracking-[-0.02em]">
+                    {title}
+                  </span>
+                  <span
+                    className={cn(
+                      "mt-1 block text-sm",
+                      inverted ? "opacity-75" : "text-black/70",
+                    )}
+                  >
+                    {description}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <p
         className={cn(

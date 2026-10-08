@@ -1,12 +1,12 @@
 "use client";
 
-import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/features/cart";
+import { WishlistToggle } from "@/features/wishlist";
 import { discountPercent, formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import type { ProductDetail } from "@/types";
 
 type ProductBuyBoxProps = {
@@ -15,7 +15,6 @@ type ProductBuyBoxProps = {
 
 export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const [quantity, setQuantity] = useState(1);
-  const [saved, setSaved] = useState(false);
   const [added, setAdded] = useState(false);
   const off = discountPercent(product.price, product.originalPrice);
 
@@ -74,18 +73,11 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           <ShoppingBag className="size-4" />
           {added ? "Added" : "Add to cart"}
         </Button>
-        <Button
-          variant="outline"
-          className={cn(
-            "h-11 rounded-full px-4",
-            saved && "border-primary text-primary",
-          )}
-          aria-pressed={saved}
-          onClick={() => setSaved((value) => !value)}
-        >
-          <Heart className={cn("size-4", saved && "fill-primary")} />
-          {saved ? "Saved" : "Save"}
-        </Button>
+        <WishlistToggle
+          productId={product.id}
+          name={product.name}
+          variant="labeled"
+        />
       </div>
     </div>
   );

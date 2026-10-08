@@ -14,6 +14,7 @@ export function HeroBanner() {
   const [index, setIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
   const slide = heroSlides[index];
+  const nextSlide = heroSlides[(index + 1) % heroSlides.length];
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -36,8 +37,8 @@ export function HeroBanner() {
       <div className="grid items-center lg:grid-cols-2">
         <div className="order-1 px-4 pt-5 sm:px-6 sm:pt-6 lg:order-2 lg:py-10 lg:pr-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] lg:pl-2">
           <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
-            <div className="rounded-[2rem] bg-card p-2.5 shadow-[0_28px_60px_-32px_rgba(42,18,24,0.4)] ring-1 ring-border sm:p-3">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[1.45rem] bg-muted sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(32rem,68vh)]">
+            <div className="relative mb-3">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-tl-[1.35rem] rounded-tr-[6.5rem] rounded-br-[1.35rem] rounded-bl-[4rem] bg-muted sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(32rem,68vh)]">
                 {heroSlides.map((item, slideIndex) => (
                   <Image
                     key={item.id}
@@ -55,6 +56,21 @@ export function HeroBanner() {
                   />
                 ))}
               </div>
+
+              <button
+                type="button"
+                aria-label={`Next: ${nextSlide.title}`}
+                onClick={() => goTo(index + 1)}
+                className="absolute -bottom-2 -left-1 size-[4.75rem] overflow-hidden rounded-full ring-[5px] ring-background transition-transform duration-300 hover:scale-105 sm:size-[5.5rem]"
+              >
+                <Image
+                  src={nextSlide.image}
+                  alt=""
+                  fill
+                  sizes="88px"
+                  className="object-cover"
+                />
+              </button>
             </div>
           </div>
         </div>

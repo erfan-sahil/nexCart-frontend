@@ -15,7 +15,7 @@ export function AuthFormColumn({ children }: { children: ReactNode }) {
       className="auth-form-panel flex min-h-svh flex-col bg-background"
     >
       <header className="flex items-center justify-between px-4 py-4 sm:px-8">
-        <Logo priority className="lg:invisible" />
+        <Logo priority />
         <ThemeToggle showLabel={false} />
       </header>
       <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-8">

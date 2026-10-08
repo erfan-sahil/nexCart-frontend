@@ -12,7 +12,7 @@ export function Navbar() {
       <TopBar />
       <Container className="flex h-14 items-center gap-2 sm:h-16 sm:gap-4 lg:gap-6">
         <MobileNav />
-        <Logo priority className="shrink-0 [&_img]:h-7 sm:[&_img]:h-8" />
+        <Logo priority className="shrink-0 [&_img]:h-6 sm:[&_img]:h-7" />
         <SearchBar className="hidden min-w-0 flex-1 md:block" />
         <div className="ml-auto shrink-0 md:ml-0">
           <NavActions />

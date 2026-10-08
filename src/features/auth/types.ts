@@ -42,3 +42,9 @@ export type RegisterPayload = {
   lastName: string;
   phone?: string;
 };
+
+export type UpdateProfilePayload = {
+  firstName: string;
+  lastName: string;
+  phone?: string;
+};

@@ -1,13 +1,7 @@
-import Link from "next/link";
-import { Heart } from "lucide-react";
-
 import { ThemeToggle } from "@/components/common";
 import { AccountMenu } from "@/features/auth/components/account-menu";
 import { CartNavLink } from "@/features/cart";
-
-const actions = [
-  { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
-] as const;
+import { WishlistNavLink } from "@/features/wishlist";
 
 export function NavActions() {
   return (
@@ -15,21 +9,7 @@ export function NavActions() {
       <div className="hidden sm:block">
         <ThemeToggle showLabel={false} />
       </div>
-      {actions.map(({ href, label, icon: Icon, count }) => (
-        <Link
-          key={href}
-          href={href}
-          aria-label={count ? `${label}, ${count} items` : label}
-          className="relative inline-flex size-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-brand-soft hover:text-primary"
-        >
-          <Icon className="size-5" />
-          {count ? (
-            <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-[#fff4f2]">
-              {count}
-            </span>
-          ) : null}
-        </Link>
-      ))}
+      <WishlistNavLink />
       <CartNavLink />
       <span className="mx-1 hidden h-6 w-px bg-border lg:block" aria-hidden />
       <AccountMenu />
