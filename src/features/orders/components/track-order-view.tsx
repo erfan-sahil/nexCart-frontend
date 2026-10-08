@@ -1,7 +1,8 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useId, useState, type FormEvent } from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
@@ -25,13 +26,38 @@ type ViewState =
 
 const EMPTY_FORM: FormState = { orderId: "", email: "" };
 
+function prefillFromParams(params: { get(name: string): string | null }) {
+  const orderId = params.get("order")?.trim();
+  const email = params.get("email")?.trim();
+  if (!orderId || !email) return null;
+  return { orderId: orderId.toUpperCase(), email };
+}
+
 export function TrackOrderView() {
+  return (
+    <Suspense
+      fallback={
+        <Container className="py-10">
+          <div className="h-80 animate-pulse rounded-[1.75rem] bg-muted" />
+        </Container>
+      }
+    >
+      <TrackOrderScreen />
+    </Suspense>
+  );
+}
+
+function TrackOrderScreen() {
+  const params = useSearchParams();
+  const prefill = prefillFromParams(params);
   const orderFieldId = useId();
   const emailFieldId = useId();
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [form, setForm] = useState<FormState>(prefill ?? EMPTY_FORM);
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const [query, setQuery] = useState<FormState | null>(null);
-  const [view, setView] = useState<ViewState>({ status: "idle" });
+  const [query, setQuery] = useState<FormState | null>(prefill);
+  const [view, setView] = useState<ViewState>(
+    prefill ? { status: "loading" } : { status: "idle" },
+  );
   const [shipment, setShipment] = useState<TrackedOrder | null>(null);
 
   useEffect(() => {
