@@ -123,7 +123,7 @@ export function HelpCenterView() {
 
       <div className="mt-8 grid items-start gap-6 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
         <aside className="lg:sticky lg:top-44 lg:self-start">
-          <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+          <div className="no-scrollbar flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
             <TopicButton
               active={topic === "all"}
               label="All topics"
