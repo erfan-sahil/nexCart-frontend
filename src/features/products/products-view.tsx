@@ -1,5 +1,6 @@
 import { Container } from "@/components/common";
 import { ProductGrid } from "@/components/product";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatCount } from "@/lib/format";
 
 import {
@@ -26,8 +27,12 @@ export function ProductsView({ query }: ProductsViewProps) {
       <ProductsHeader query={query} copy={copy} resultCount={products.length} />
       <Container className="py-8 sm:py-10">
         <div className="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:items-start lg:gap-10">
-          <aside className="sticky top-36 hidden max-h-[calc(100vh-10rem)] overflow-y-auto rounded-2xl border border-border bg-card p-3 lg:block">
-            <ProductsFilters query={query} />
+          <aside className="sticky top-36 hidden lg:block">
+            <ScrollArea className="max-h-[calc(100vh-10rem)] rounded-2xl border border-border bg-card">
+              <div className="p-3">
+                <ProductsFilters query={query} />
+              </div>
+            </ScrollArea>
           </aside>
 
           <div className="space-y-5">

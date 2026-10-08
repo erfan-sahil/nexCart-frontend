@@ -49,11 +49,16 @@ export function CategorySection({ category }: CategorySectionProps) {
       </div>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3">
         {category.subcategories.map((subcategory) => (
-          <SubcategoryCard
+          <div
             key={subcategory.id}
-            subcategory={subcategory}
-            href={`/products?category=${category.slug}&subcategory=${subcategory.slug}`}
-          />
+            id={`aisle-${category.slug}-${subcategory.slug}`}
+            className="scroll-mt-44"
+          >
+            <SubcategoryCard
+              subcategory={subcategory}
+              href={`/products?category=${category.slug}&subcategory=${subcategory.slug}`}
+            />
+          </div>
         ))}
       </div>
     </section>
