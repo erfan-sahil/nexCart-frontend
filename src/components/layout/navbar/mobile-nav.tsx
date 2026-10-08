@@ -36,6 +36,7 @@ import {
 import { Logo, ThemeToggle } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
 import { DrawerSessionButton } from "@/features/auth/components/account-menu";
+import { useCartItemCount } from "@/features/cart";
 import { cn } from "@/lib/utils";
 
 import { SearchBar } from "./search-bar";
@@ -123,6 +124,7 @@ function Reveal({
 
 export function MobileNav() {
   const pathname = usePathname();
+  const cartCount = useCartItemCount();
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
@@ -415,6 +417,11 @@ export function MobileNav() {
                             <Icon className="size-4" />
                           </span>
                           <span className="min-w-0 flex-1">{label}</span>
+                          {href === "/cart" && cartCount > 0 ? (
+                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-[#fff4f2]">
+                              {cartCount > 9 ? "9+" : cartCount}
+                            </span>
+                          ) : null}
                         </Link>
                       </li>
                     ))}

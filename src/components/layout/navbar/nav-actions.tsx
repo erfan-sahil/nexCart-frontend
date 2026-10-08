@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart } from "lucide-react";
 
 import { ThemeToggle } from "@/components/common";
 import { AccountMenu } from "@/features/auth/components/account-menu";
+import { CartNavLink } from "@/features/cart";
 
 const actions = [
   { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
-  { href: "/cart", label: "Cart", icon: ShoppingBag, count: 3 },
 ] as const;
 
 export function NavActions() {
@@ -30,6 +30,7 @@ export function NavActions() {
           ) : null}
         </Link>
       ))}
+      <CartNavLink />
       <span className="mx-1 hidden h-6 w-px bg-border lg:block" aria-hidden />
       <AccountMenu />
     </div>

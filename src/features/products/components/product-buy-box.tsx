@@ -4,6 +4,7 @@ import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/features/cart";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ProductDetail } from "@/types";
@@ -19,6 +20,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const off = discountPercent(product.price, product.originalPrice);
 
   function addToCart() {
+    useCartStore.getState().add(product.id, quantity);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
   }
