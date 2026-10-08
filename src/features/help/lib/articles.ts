@@ -58,9 +58,9 @@ export const helpArticles: HelpArticle[] = [
     topic: "returns",
     question: "How do I start a return?",
     answer:
-      "Most items can be returned within 30 days of delivery if they are unused and in their original packaging. Send a message, choose A return, and include the order number.",
-    href: "/contact",
-    hrefLabel: "Request a return",
+      "Most items can be returned within 30 days of delivery if they are unused and in their original packaging. The returns page lists the steps, then you send a message with the order number.",
+    href: "/returns",
+    hrefLabel: "Read returns & refunds",
   },
   {
     id: "refund",
@@ -68,6 +68,8 @@ export const helpArticles: HelpArticle[] = [
     question: "When is a refund issued?",
     answer:
       "After the return is accepted, the refund goes back to the original payment method. You will get an email when that happens.",
+    href: "/returns",
+    hrefLabel: "See refund timing",
   },
   {
     id: "not-returnable",
@@ -75,8 +77,8 @@ export const helpArticles: HelpArticle[] = [
     question: "What cannot be returned?",
     answer:
       "Perishable groceries, opened beauty products, and items marked final sale are not returnable. If something arrived damaged, contact support with the order number anyway.",
-    href: "/contact",
-    hrefLabel: "Report a problem",
+    href: "/returns",
+    hrefLabel: "See what is excluded",
   },
   {
     id: "edit-profile",
