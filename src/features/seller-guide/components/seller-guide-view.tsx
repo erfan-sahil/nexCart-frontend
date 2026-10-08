@@ -101,7 +101,7 @@ export function SellerGuideView() {
       </div>
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
-        <nav className="flex gap-2 overflow-x-auto pb-1 lg:sticky lg:top-36 lg:flex-col lg:overflow-visible lg:pb-0">
+        <nav className="flex gap-2 overflow-x-auto pb-1 lg:sticky lg:top-44 lg:flex-col lg:overflow-visible lg:pb-0">
           {sections.map((section) => (
             <a
               key={section.id}
