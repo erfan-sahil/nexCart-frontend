@@ -63,7 +63,7 @@
    * Same coral / rose pair as the sign-in panel.
    * --brand is the coral fill; --brand-foreground is the rose ink on it.
    */
-  --brand: #ff7a7a;
+  --brand: #ff4d4d;
   --brand-foreground: #2a1218;
   --brand-hover: color-mix(in srgb, var(--brand) 78%, #2a1218);
   --brand-active: #2a1218;
@@ -112,7 +112,7 @@
 
 .dark {
   /*
-   * Rose charcoal matched to the sign-in panel (#ff7a7a / #2a1218).
+   * Rose charcoal matched to the sign-in panel (#ff4d4d / #2a1218).
    */
   --brand-hover: color-mix(in srgb, var(--brand) 82%, #ffffff);
   --brand-active: color-mix(in srgb, var(--brand) 70%, #000000);
@@ -176,7 +176,7 @@
 @layer utilities {
   .auth-wave-panel {
     background-color: #000;
-    --auth-orange: #ff7a7a;
+    --auth-orange: #ff4d4d;
     --auth-orange-hover: color-mix(in srgb, var(--auth-orange) 88%, #000);
     --auth-wave-back: #ffd0ce;
     --auth-wave-fill: var(--auth-orange);
@@ -191,8 +191,8 @@
   .auth-orange-button {
     height: 3rem;
     border-radius: 9999px;
-    background-color: #ff7a7a;
-    color: #2a1218;
+    background-color: #ff4d4d;
+    color: #fff4f2;
     font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
     font-size: 0.95rem;
     font-weight: 600;
@@ -204,17 +204,17 @@
 
   .auth-orange-button:hover {
     background-color: #2a1218;
-    color: #ff7a7a;
+    color: #fff4f2;
   }
 
   .auth-dark-button {
     background-color: #2a1218;
-    color: #fff;
+    color: #fff4f2;
   }
 
   .auth-dark-button:hover {
-    background-color: #ff7a7a;
-    color: #2a1218;
+    background-color: #ff4d4d;
+    color: #fff4f2;
   }
 
   .auth-wave-back-fill {
@@ -226,22 +226,22 @@
   }
 
   .auth-form-panel {
-    --input: color-mix(in srgb, #ff7a7a 42%, #ffffff);
-    --ring: #ff7a7a;
+    --input: color-mix(in srgb, #ff4d4d 42%, #ffffff);
+    --ring: #ff4d4d;
   }
 
   .auth-form-panel[data-tone="invert"] {
-    background-color: color-mix(in srgb, #ff7a7a 16%, #ffffff);
-    --input: color-mix(in srgb, #ff7a7a 70%, #ffffff);
+    background-color: color-mix(in srgb, #ff4d4d 16%, #ffffff);
+    --input: color-mix(in srgb, #ff4d4d 70%, #ffffff);
   }
 
   .dark .auth-form-panel {
-    --input: color-mix(in srgb, #ff7a7a 46%, #2a2424);
+    --input: color-mix(in srgb, #ff4d4d 46%, #2a2424);
   }
 
   .dark .auth-form-panel[data-tone="invert"] {
-    background-color: color-mix(in oklch, #ff7a7a 28%, #1a1014);
-    --input: color-mix(in oklch, #ff7a7a 48%, #2c1a1e);
+    background-color: color-mix(in oklch, #ff4d4d 28%, #1a1014);
+    --input: color-mix(in oklch, #ff4d4d 48%, #2c1a1e);
   }
 
   .auth-wave-rise {

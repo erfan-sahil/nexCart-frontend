@@ -1,34 +1,45 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/errors";
 
-import { register } from "../api";
+import { register as registerAccount } from "../api";
 import { splitApiError } from "../lib/api-errors";
-import {
-  validateRegister,
-  type FieldErrors,
-  type RegisterValues,
-} from "../lib/validation";
+import { fieldErrorResolver } from "../lib/resolver";
+import { validateRegister, type RegisterValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
+import { PhoneField } from "./phone-field";
 import { PasswordField, TextField } from "./text-field";
-
-const emptyErrors: FieldErrors<keyof RegisterValues> = {};
 
 export function RegisterForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [errors, setErrors] = useState(emptyErrors);
-  const [formError, setFormError] = useState<string>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterValues>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    },
+    resolver: fieldErrorResolver(validateRegister),
+  });
 
   const createAccount = useMutation({
-    mutationFn: register,
+    mutationFn: registerAccount,
     onSuccess: (session) => {
       useAuthStore.getState().setSession(session);
       queryClient.setQueryData(sessionQueryKey, session);
@@ -38,41 +49,18 @@ export function RegisterForm() {
     onError: (error) => {
       if (error instanceof ApiError) {
         const next = splitApiError<keyof RegisterValues>(error);
-        setErrors(next.fields);
-        setFormError(next.form);
+
+        for (const [field, message] of Object.entries(next.fields)) {
+          if (message) setError(field as keyof RegisterValues, { message });
+        }
+
+        if (next.form) setError("root", { message: next.form });
         return;
       }
 
-      setFormError("Something went wrong. Please try again.");
+      setError("root", { message: "Something went wrong. Please try again." });
     },
   });
-
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const values: RegisterValues = {
-      firstName: String(formData.get("firstName") ?? ""),
-      lastName: String(formData.get("lastName") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      phone: String(formData.get("phone") ?? ""),
-      password: String(formData.get("password") ?? ""),
-      confirmPassword: String(formData.get("confirmPassword") ?? ""),
-    };
-    const nextErrors = validateRegister(values);
-
-    setErrors(nextErrors);
-    setFormError(undefined);
-
-    if (Object.keys(nextErrors).length > 0) return;
-
-    createAccount.mutate({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phone: values.phone,
-      password: values.password,
-    });
-  }
 
   return (
     <div className="space-y-8">
@@ -85,64 +73,79 @@ export function RegisterForm() {
         </p>
       </div>
 
-      <form className="space-y-5" onSubmit={onSubmit} noValidate>
-        {formError ? (
+      <form
+        className="space-y-5"
+        noValidate
+        onSubmit={handleSubmit((values) =>
+          createAccount.mutate({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+            password: values.password,
+          }),
+        )}
+      >
+        {errors.root?.message ? (
           <p role="alert" className="text-sm text-destructive">
-            {formError}
+            {errors.root.message}
           </p>
         ) : null}
         <div className="grid gap-5 sm:grid-cols-2">
           <TextField
-            name="firstName"
             label="First name"
             autoComplete="given-name"
             placeholder="Sahil"
-            error={errors.firstName}
+            error={errors.firstName?.message}
+            {...register("firstName")}
           />
           <TextField
-            name="lastName"
             label="Last name"
             autoComplete="family-name"
             placeholder="Rahman"
-            error={errors.lastName}
+            error={errors.lastName?.message}
+            {...register("lastName")}
           />
         </div>
         <TextField
-          name="email"
           type="email"
           label="Email"
           autoComplete="email"
           placeholder="you@example.com"
-          error={errors.email}
+          error={errors.email?.message}
+          {...register("email")}
         />
-        <TextField
+        <Controller
           name="phone"
-          type="tel"
-          label="Phone"
-          autoComplete="tel"
-          placeholder="+8801712345678"
-          hint="Optional. Use international format."
-          error={errors.phone}
+          control={control}
+          render={({ field }) => (
+            <PhoneField
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.phone?.message}
+            />
+          )}
         />
         <PasswordField
-          name="password"
           label="Password"
           autoComplete="new-password"
           placeholder="At least 8 characters"
-          error={errors.password}
+          error={errors.password?.message}
+          {...register("password")}
         />
         <PasswordField
-          name="confirmPassword"
           label="Confirm password"
           autoComplete="new-password"
           placeholder="Repeat your password"
-          error={errors.confirmPassword}
+          error={errors.confirmPassword?.message}
+          {...register("confirmPassword")}
         />
         <Button
           type="submit"
           size="lg"
           disabled={createAccount.isPending}
-          className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff7a7a] hover:text-[#2a1218]"
+          className="auth-orange-button auth-dark-button h-12 w-full rounded-full duration-500 ease-out hover:bg-[#ff4d4d] hover:text-[#fff4f2]"
         >
           {createAccount.isPending ? "Creating account..." : "Create account"}
         </Button>
@@ -152,7 +155,7 @@ export function RegisterForm() {
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-medium text-[#ff7a7a] hover:underline"
+          className="font-medium text-[#ff4d4d] hover:underline"
         >
           Sign in
         </Link>

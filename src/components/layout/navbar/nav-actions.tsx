@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart } from "lucide-react";
 
 import { ThemeToggle } from "@/components/common";
 import { AccountMenu } from "@/features/auth/components/account-menu";
+import { CartNavLink } from "@/features/cart";
 
 const actions = [
   { href: "/wishlist", label: "Wishlist", icon: Heart, count: 2 },
-  { href: "/cart", label: "Cart", icon: ShoppingBag, count: 3 },
 ] as const;
 
 export function NavActions() {
@@ -24,12 +24,13 @@ export function NavActions() {
         >
           <Icon className="size-5" />
           {count ? (
-            <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-primary">
+            <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-[#fff4f2]">
               {count}
             </span>
           ) : null}
         </Link>
       ))}
+      <CartNavLink />
       <span className="mx-1 hidden h-6 w-px bg-border lg:block" aria-hidden />
       <AccountMenu />
     </div>

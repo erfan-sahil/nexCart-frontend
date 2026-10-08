@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 import { formatCount } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import type { Subcategory } from "@/types";
 
 type SubcategoryCardProps = {
@@ -20,42 +20,55 @@ export function SubcategoryCard({
 }: SubcategoryCardProps) {
   const compact = variant === "compact";
 
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "group flex flex-col rounded-2xl border border-border bg-card p-2 transition-shadow hover:shadow-[0_8px_30px_rgba(10,10,10,0.06)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.45)]",
-        compact && "min-w-[148px] shrink-0 sm:min-w-[168px]",
-      )}
-    >
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-xl bg-surface-muted",
-          compact ? "aspect-[4/3]" : "aspect-square",
-        )}
+  if (!compact) {
+    return (
+      <Link
+        href={href}
+        className="group flex flex-col items-center rounded-2xl bg-surface-muted p-1.5 pb-2.5 text-center transition-colors duration-300 hover:bg-brand-soft"
       >
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-card">
+          <Image
+            src={subcategory.image}
+            alt={subcategory.name}
+            fill
+            sizes="(max-width: 640px) 30vw, 160px"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        </div>
+        <p className="mt-2 w-full truncate px-0.5 text-xs font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
+          {subcategory.name}
+        </p>
+        <p className="mt-0.5 text-[11px] leading-none text-muted-foreground">
+          {formatCount(subcategory.productCount)} items
+        </p>
+      </Link>
+    );
+  }
+
+  return (
+    <Link href={href} className="group flex w-[128px] shrink-0 flex-col">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-muted ring-1 ring-border transition duration-300 group-hover:ring-primary">
         <Image
           src={subcategory.image}
           alt={subcategory.name}
           fill
-          sizes={
-            compact
-              ? "168px"
-              : "(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-          }
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="128px"
+          className="object-cover transition duration-700 ease-out group-hover:scale-105"
         />
+        <span className="absolute right-1.5 bottom-1.5 flex size-6 items-center justify-center rounded-full border border-primary bg-brand-soft text-primary transition-colors duration-300 group-hover:text-black dark:group-hover:text-white">
+          <ArrowUpRight className="size-3" />
+        </span>
       </div>
-      <div className="px-1 pt-2.5 pb-1">
+      <div className="px-0.5 pt-2.5">
         {categoryName ? (
-          <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+          <p className="mb-1.5 truncate text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
             {categoryName}
           </p>
         ) : null}
-        <p className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
+        <p className="truncate font-display text-sm leading-none font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
           {subcategory.name}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="mt-1.5 text-[11px] leading-none text-muted-foreground">
           {formatCount(subcategory.productCount)} items
         </p>
       </div>

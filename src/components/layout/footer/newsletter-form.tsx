@@ -33,7 +33,7 @@ export function NewsletterForm() {
       />
       <button
         type="submit"
-        className="auth-orange-button h-11 shrink-0 px-5 text-sm"
+        className="auth-orange-button h-11 shrink-0 px-5 text-sm text-[#fff4f2]! hover:text-[#fff4f2]!"
       >
         Join
       </button>

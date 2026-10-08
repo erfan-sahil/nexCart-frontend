@@ -14,14 +14,25 @@ export function FlashDeals() {
               <Zap className="size-3.5 fill-primary" />
               Limited time
             </p>
-            <h2 className="text-2xl text-white sm:text-3xl">Flash deals</h2>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="min-w-0 text-2xl text-white sm:text-3xl">
+                Flash deals
+              </h2>
+              <SeeAllLink
+                href="/products?collection=flash-deals"
+                className="lg:hidden"
+              />
+            </div>
             <p className="mt-1.5 text-sm text-white/65 sm:text-base">
               Prices drop hard, then they are gone.
             </p>
           </div>
           <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
             <CountdownTimer target={flashDealEndsAt} />
-            <SeeAllLink href="/products?collection=flash-deals" />
+            <SeeAllLink
+              href="/products?collection=flash-deals"
+              className="hidden lg:inline-flex"
+            />
           </div>
         </div>
         <ProductGrid products={flashDealProducts} columns="flash" />

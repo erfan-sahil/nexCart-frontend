@@ -14,6 +14,8 @@ import { usePathname } from "next/navigation";
 import {
   BookOpen,
   Car,
+  ChevronDown,
+  ChevronRight,
   Cpu,
   Dumbbell,
   Heart,
@@ -26,13 +28,15 @@ import {
   ShoppingBag,
   Sparkles,
   Store,
+  UserRound,
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
 
 import { Logo, ThemeToggle } from "@/components/common";
 import { CATEGORY_LINKS } from "@/constants/navigation";
-import { AccountNavLink } from "@/features/auth/components/account-menu";
+import { DrawerSessionButton } from "@/features/auth/components/account-menu";
+import { useCartItemCount } from "@/features/cart";
 import { cn } from "@/lib/utils";
 
 import { SearchBar } from "./search-bar";
@@ -51,15 +55,19 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 const SHORTCUTS = [
+  { href: "/account", label: "Account", icon: UserRound },
   { href: "/orders", label: "Orders", icon: Package },
   { href: "/wishlist", label: "Wishlist", icon: Heart },
   { href: "/cart", label: "Cart", icon: ShoppingBag },
-  { href: "/sell", label: "Sell", icon: Store },
-  { href: "/track-order", label: "Track", icon: MapPin },
-  { href: "/help", label: "Help", icon: HelpCircle },
+  { href: "/sell", label: "Sell on NexCart", icon: Store },
+  { href: "/track-order", label: "Track order", icon: MapPin },
+  { href: "/help", label: "Help center", icon: HelpCircle },
 ] as const;
 
 const EASE = "cubic-bezier(0.22,1,0.36,1)";
+
+const iconWellClass =
+  "inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-primary";
 
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
@@ -116,20 +124,24 @@ function Reveal({
 
 export function MobileNav() {
   const pathname = usePathname();
+  const cartCount = useCartItemCount();
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const wasOpen = useRef(false);
   const closeTimer = useRef<number | null>(null);
   const openFrame = useRef<number | null>(null);
+  const categoriesId = useId();
   const [open, setOpen] = useState(false);
   const [present, setPresent] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [trackedPath, setTrackedPath] = useState(pathname);
 
   if (trackedPath !== pathname) {
     setTrackedPath(pathname);
     setOpen(false);
     setPresent(false);
+    setCategoriesOpen(false);
   }
 
   const cancelMotion = useCallback(() => {
@@ -156,6 +168,7 @@ export function MobileNav() {
   const closeMenu = useCallback(() => {
     cancelMotion();
     setOpen(false);
+    setCategoriesOpen(false);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPresent(false);
       return;
@@ -270,14 +283,13 @@ export function MobileNav() {
               aria-modal="true"
               aria-label="Site menu"
               className={cn(
-                "absolute inset-y-0 left-0 flex w-[min(88vw,22rem)] flex-col overflow-hidden rounded-r-3xl bg-background shadow-2xl",
+                "absolute inset-y-0 left-0 flex w-[min(88vw,22rem)] flex-col overflow-hidden border-r border-border bg-background",
                 "transition-transform duration-500 motion-reduce:transition-none",
                 open ? "translate-x-0" : "-translate-x-full",
               )}
               style={{ transitionTimingFunction: EASE }}
             >
-              <div className="h-1 bg-linear-to-r from-primary via-brand-hover to-ink" />
-              <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+              <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3.5">
                 <div className="contents" onClick={closeMenu}>
                   <Logo />
                 </div>
@@ -292,7 +304,7 @@ export function MobileNav() {
                 </button>
               </div>
 
-              <div className="flex-1 space-y-6 overflow-y-auto px-4 pb-6">
+              <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4">
                 <Reveal active={open} index={0}>
                   <div
                     onKeyDown={(event) => {
@@ -304,61 +316,112 @@ export function MobileNav() {
                 </Reveal>
 
                 <Reveal active={open} index={1}>
-                  <p className="mb-2 px-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                    Categories
-                  </p>
-                  <ul className="space-y-0.5">
-                    <li>
-                      <Link
-                        href="/categories"
-                        className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-sm font-semibold transition-colors hover:bg-brand-soft hover:text-primary"
-                        onClick={closeMenu}
+                  <div className="overflow-hidden rounded-2xl border border-border">
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 px-3 py-3 text-left text-sm font-semibold transition-colors hover:bg-muted"
+                      aria-expanded={categoriesOpen}
+                      aria-controls={categoriesId}
+                      onClick={() => setCategoriesOpen((current) => !current)}
+                    >
+                      <span className={iconWellClass}>
+                        <LayoutGrid className="size-4" />
+                      </span>
+                      <span className="min-w-0 flex-1">Categories</span>
+                      <ChevronDown
+                        className={cn(
+                          "size-4 shrink-0 text-muted-foreground transition-transform duration-300 motion-reduce:transition-none",
+                          categoriesOpen && "rotate-180",
+                        )}
+                        style={{ transitionTimingFunction: EASE }}
+                      />
+                    </button>
+                    <div
+                      id={categoriesId}
+                      className={cn(
+                        "grid transition-[grid-template-rows] duration-300 motion-reduce:transition-none",
+                        categoriesOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                      )}
+                      style={{ transitionTimingFunction: EASE }}
+                    >
+                      <div
+                        className="overflow-hidden"
+                        inert={categoriesOpen ? undefined : true}
                       >
-                        <span className="inline-flex size-8 items-center justify-center rounded-lg bg-brand-soft text-primary">
-                          <LayoutGrid className="size-4" />
-                        </span>
-                        All categories
-                      </Link>
-                    </li>
-                    {CATEGORY_LINKS.map((item) => {
-                      const Icon = CATEGORY_ICONS[item.slug] ?? LayoutGrid;
+                        <ul
+                          className={cn(
+                            "border-t border-border transition-transform duration-300 motion-reduce:translate-y-0 motion-reduce:transition-none",
+                            categoriesOpen ? "translate-y-0" : "-translate-y-3",
+                          )}
+                          style={{ transitionTimingFunction: EASE }}
+                        >
+                          <li>
+                            <Link
+                              href="/categories"
+                              className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted hover:text-primary"
+                              onClick={closeMenu}
+                            >
+                              <span className={iconWellClass}>
+                                <LayoutGrid className="size-4" />
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                All categories
+                              </span>
+                              <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                            </Link>
+                          </li>
+                          {CATEGORY_LINKS.map((item) => {
+                            const Icon =
+                              CATEGORY_ICONS[item.slug] ?? LayoutGrid;
 
-                      return (
-                        <li key={item.href}>
-                          <Link
-                            href={item.href}
-                            className="flex items-center gap-3 rounded-xl px-2 py-2 text-sm text-foreground transition-colors hover:bg-brand-soft hover:text-primary"
-                            onClick={closeMenu}
-                          >
-                            <span className="inline-flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                              <Icon className="size-4" />
-                            </span>
-                            {item.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                            return (
+                              <li
+                                key={item.href}
+                                className="border-t border-border"
+                              >
+                                <Link
+                                  href={item.href}
+                                  className="flex items-center gap-3 px-3 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
+                                  onClick={closeMenu}
+                                >
+                                  <span className={iconWellClass}>
+                                    <Icon className="size-4" />
+                                  </span>
+                                  <span className="min-w-0 flex-1">
+                                    {item.label}
+                                  </span>
+                                  <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </Reveal>
 
                 <Reveal active={open} index={2}>
-                  <p className="mb-2 px-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                    Account
-                  </p>
-                  <AccountNavLink
-                    onNavigate={closeMenu}
-                    className="mb-2 flex items-center gap-3 rounded-xl bg-brand-soft px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:text-primary"
-                  />
-                  <ul className="grid grid-cols-3 gap-2">
+                  <ul className="overflow-hidden rounded-2xl border border-border">
                     {SHORTCUTS.map(({ href, label, icon: Icon }) => (
-                      <li key={href}>
+                      <li
+                        key={href}
+                        className="border-t border-border first:border-t-0"
+                      >
                         <Link
                           href={href}
-                          className="flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-card px-2 py-3 text-center text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                          className="flex items-center gap-3 px-3 py-3 text-sm font-medium transition-colors hover:bg-muted hover:text-primary"
                           onClick={closeMenu}
                         >
-                          <Icon className="size-4" />
-                          {label}
+                          <span className={iconWellClass}>
+                            <Icon className="size-4" />
+                          </span>
+                          <span className="min-w-0 flex-1">{label}</span>
+                          {href === "/cart" && cartCount > 0 ? (
+                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-[#fff4f2]">
+                              {cartCount > 9 ? "9+" : cartCount}
+                            </span>
+                          ) : null}
                         </Link>
                       </li>
                     ))}
@@ -366,9 +429,13 @@ export function MobileNav() {
                 </Reveal>
               </div>
 
-              <div className="flex items-center justify-between border-t border-border px-4 py-3">
+              <div className="flex shrink-0 items-center justify-between border-t border-border px-4 py-3">
                 <p className="text-sm font-medium">Appearance</p>
                 <ThemeToggle showLabel={false} />
+              </div>
+
+              <div className="shrink-0 border-t border-border bg-background px-4 py-3">
+                <DrawerSessionButton onNavigate={closeMenu} />
               </div>
             </aside>
           </div>,

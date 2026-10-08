@@ -1,4 +1,9 @@
+export { ProductBuyBox } from "./product-buy-box";
+export { ProductGallery } from "./product-gallery";
+export { ProductReviews } from "./product-reviews";
+export { ProductSpecs } from "./product-specs";
 export { ProductsEmpty } from "./products-empty";
+export { StarRating } from "./star-rating";
 export { ProductsFilters, ProductsMobileFilters } from "./products-filters";
 export { ProductsHeader } from "./products-header";
 export { ProductsSort } from "./products-sort";

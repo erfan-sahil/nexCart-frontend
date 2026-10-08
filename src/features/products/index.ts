@@ -1,4 +1,5 @@
 export { ProductsView } from "./products-view";
+export { ProductDetailView } from "./product-detail-view";
 export {
   getProductPageCopy,
   parseProductSearchParams,

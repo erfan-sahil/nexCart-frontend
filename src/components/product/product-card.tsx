@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 
+import { AddToCartButton } from "@/features/cart";
 import { discountPercent, formatCount, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -37,7 +38,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
         <div className="pointer-events-none absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
           {off > 0 ? (
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
+            <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-[#fff4f2]">
               -{off}%
             </span>
           ) : null}
@@ -104,13 +105,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
               </span>
             ) : null}
           </p>
-          <button
-            type="button"
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors duration-300 hover:bg-ink hover:text-primary"
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingBag className="size-3.5" />
-          </button>
+          <AddToCartButton productId={product.id} name={product.name} />
         </div>
       </div>
     </article>

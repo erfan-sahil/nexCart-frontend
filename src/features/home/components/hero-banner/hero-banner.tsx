@@ -73,7 +73,7 @@ export function HeroBanner() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href={slide.href}
-                className="auth-orange-button inline-flex h-12 items-center px-6"
+                className="auth-orange-button inline-flex h-12 items-center px-6 text-[#fff4f2]! hover:text-[#fff4f2]!"
               >
                 {slide.ctaLabel}
               </Link>

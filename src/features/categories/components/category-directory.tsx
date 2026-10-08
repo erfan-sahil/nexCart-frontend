@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { Container } from "@/components/common";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { CATEGORY_ICONS } from "@/constants/category-icons";
-import { formatCount } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types";
 
@@ -45,6 +45,14 @@ export function CategoryDirectory({ categories }: CategoryDirectoryProps) {
   );
 
   const isFiltering = query.trim().length > 0;
+  const [openSlug, setOpenSlug] = useState(categories[0]?.slug ?? "");
+  const openSyncKey = isFiltering ? "filtering" : activeSlug;
+  const [prevOpenSyncKey, setPrevOpenSyncKey] = useState(openSyncKey);
+
+  if (openSyncKey !== prevOpenSyncKey) {
+    setPrevOpenSyncKey(openSyncKey);
+    if (!isFiltering && activeSlug) setOpenSlug(activeSlug);
+  }
 
   useEffect(() => {
     if (isFiltering || visible.length === 0) return;
@@ -117,38 +125,79 @@ export function CategoryDirectory({ categories }: CategoryDirectoryProps) {
       </div>
 
       <div className="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:items-start lg:gap-10">
-        <aside className="sticky top-36 hidden max-h-[calc(100vh-10rem)] overflow-y-auto rounded-2xl border border-border bg-card p-3 lg:block">
-          <p className="px-2 pt-1 pb-2 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-            Departments
-          </p>
-          <ul className="space-y-0.5">
-            {categories.map((category) => {
-              const Icon = CATEGORY_ICONS[category.slug];
-              const isActive = !isFiltering && activeSlug === category.slug;
+        <aside className="sticky top-36 hidden lg:block">
+          <ScrollArea className="max-h-[calc(100vh-10rem)] rounded-2xl border border-border bg-card">
+            <div className="p-3">
+              <p className="px-2 pt-1 pb-2 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+                Departments
+              </p>
+              <ul className="space-y-0.5">
+                {(isFiltering ? visible : categories).map((category) => {
+                  const Icon = CATEGORY_ICONS[category.slug];
+                  const isActive = !isFiltering && activeSlug === category.slug;
+                  const open = isFiltering || openSlug === category.slug;
 
-              return (
-                <li key={category.slug}>
-                  <a
-                    href={`#category-${category.slug}`}
-                    className={cn(
-                      "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors",
-                      isActive
-                        ? "bg-brand-soft font-medium text-primary"
-                        : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
-                    )}
-                  >
-                    {Icon ? <Icon className="size-4 shrink-0" /> : null}
-                    <span className="min-w-0 flex-1 truncate">
-                      {category.name}
-                    </span>
-                    <span className="text-[11px] tabular-nums text-muted-foreground">
-                      {formatCount(category.productCount)}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+                  return (
+                    <li key={category.slug}>
+                      <div
+                        className={cn(
+                          "flex items-center rounded-xl pr-1",
+                          isActive && "bg-brand-soft",
+                        )}
+                      >
+                        <a
+                          href={`#category-${category.slug}`}
+                          className={cn(
+                            "flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors",
+                            isActive
+                              ? "font-medium text-primary"
+                              : "text-muted-foreground hover:text-foreground",
+                          )}
+                        >
+                          {Icon ? <Icon className="size-4 shrink-0" /> : null}
+                          <span className="min-w-0 flex-1 truncate">
+                            {category.name}
+                          </span>
+                        </a>
+                        <button
+                          type="button"
+                          aria-expanded={open}
+                          aria-label={`${open ? "Hide" : "Show"} ${category.name} aisles`}
+                          onClick={() =>
+                            setOpenSlug((current) =>
+                              current === category.slug ? "" : category.slug,
+                            )
+                          }
+                          className="flex size-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <ChevronDown
+                            className={cn(
+                              "size-4 transition-transform duration-200",
+                              open && "rotate-180",
+                            )}
+                          />
+                        </button>
+                      </div>
+                      {open ? (
+                        <ul className="mt-0.5 mb-1 ml-5 space-y-0.5 border-l border-border py-1 pl-2">
+                          {category.subcategories.map((aisle) => (
+                            <li key={aisle.id}>
+                              <a
+                                href={`#aisle-${category.slug}-${aisle.slug}`}
+                                className="block truncate rounded-lg px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
+                              >
+                                {aisle.name}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </ScrollArea>
         </aside>
 
         <div>

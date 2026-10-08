@@ -212,7 +212,7 @@ function assignText(
   path: string,
   required: boolean,
 ) {
-  const trimmed = value.trim();
+  const trimmed = (value ?? "").trim();
 
   if (!trimmed) {
     if (required) errors[path] = `${label} is required`;
@@ -331,7 +331,7 @@ function identityPayload(
 ) {
   const identity: NonNullable<SaveVendorApplicationPayload["identity"]> = {};
   const documentNumber = values.identity.documentNumber.trim();
-  const images = values.identity.documentImages
+  const images = (values.identity.documentImages ?? [])
     .map((image) => image.trim())
     .filter(Boolean);
   const selfieUrl = values.identity.selfieUrl.trim();
@@ -452,8 +452,8 @@ function sellingPayload(
   required: boolean,
 ) {
   const selling: NonNullable<SaveVendorApplicationPayload["selling"]> = {};
-  const description = values.selling.description.trim();
-  const categoryIds = values.selling.categoryIds;
+  const description = (values.selling.description ?? "").trim();
+  const categoryIds = values.selling.categoryIds ?? [];
 
   if (categoryIds.length > 20) {
     errors["selling.categoryIds"] = "Select up to 20 categories";
