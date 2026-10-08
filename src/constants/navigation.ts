@@ -46,7 +46,6 @@ export const FOOTER_LINK_GROUPS = [
       { href: "/sell", label: "Sell on NexCart" },
       { href: "/sell/guide", label: "Seller Guide" },
       { href: "/sell/fees", label: "Fees & Payouts" },
-      { href: "/sell/success", label: "Success Stories" },
     ],
   },
   {
