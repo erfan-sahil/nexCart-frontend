@@ -240,8 +240,24 @@
   }
 
   .dark .auth-form-panel[data-tone="invert"] {
-    background-color: color-mix(in oklch, #ff4d4d 28%, #1a1014);
-    --input: color-mix(in oklch, #ff4d4d 48%, #2c1a1e);
+    background-color: #1a1014;
+    --input: color-mix(in srgb, #fff4f2 16%, #2c1a1e);
+  }
+
+  .dark .auth-form-panel[data-tone="invert"] [data-slot="input"],
+  .dark .auth-form-panel[data-tone="invert"] [data-slot="phone-field"] {
+    background-color: #2c1a1e;
+    border-color: color-mix(in srgb, #fff4f2 16%, #2c1a1e);
+  }
+
+  .dark .auth-form-panel[data-tone="invert"] .auth-dark-button {
+    background-color: #ff4d4d;
+    color: #fff4f2;
+  }
+
+  .dark .auth-form-panel[data-tone="invert"] .auth-dark-button:hover {
+    background-color: #d63d3d;
+    color: #fff4f2;
   }
 
   .auth-wave-rise {

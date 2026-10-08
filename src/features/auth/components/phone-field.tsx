@@ -24,6 +24,7 @@ type PhoneFieldProps = {
   onBlur: () => void;
   error?: string;
   hint?: string;
+  placeholder?: string;
 };
 
 export function PhoneField({
@@ -32,6 +33,7 @@ export function PhoneField({
   onBlur,
   error,
   hint = "Optional. Choose a country, then enter your number.",
+  placeholder = "1712345678",
 }: PhoneFieldProps) {
   const fieldId = useId();
   const descriptionId = `${fieldId}-description`;
@@ -58,6 +60,7 @@ export function PhoneField({
     <div className="grid gap-2">
       <Label htmlFor={fieldId}>Phone</Label>
       <div
+        data-slot="phone-field"
         className={cn(
           "flex h-10 overflow-hidden rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30",
           error &&
@@ -145,7 +148,7 @@ export function PhoneField({
           type="tel"
           inputMode="tel"
           autoComplete="tel-national"
-          placeholder="1712345678"
+          placeholder={placeholder}
           value={national}
           maxLength={nationalLimit(country)}
           aria-invalid={Boolean(error)}

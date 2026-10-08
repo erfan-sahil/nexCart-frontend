@@ -95,14 +95,14 @@ export function RegisterForm() {
           <TextField
             label="First name"
             autoComplete="given-name"
-            placeholder="Sahil"
+            placeholder="First"
             error={errors.firstName?.message}
             {...register("firstName")}
           />
           <TextField
             label="Last name"
             autoComplete="family-name"
-            placeholder="Rahman"
+            placeholder="Last"
             error={errors.lastName?.message}
             {...register("lastName")}
           />
@@ -124,6 +124,7 @@ export function RegisterForm() {
               onChange={field.onChange}
               onBlur={field.onBlur}
               error={errors.phone?.message}
+              placeholder="1111111111"
             />
           )}
         />
