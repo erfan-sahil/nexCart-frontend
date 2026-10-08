@@ -122,26 +122,28 @@ export function HelpCenterView() {
       </ul>
 
       <div className="mt-8 grid items-start gap-6 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
-        <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
-          <TopicButton
-            active={topic === "all"}
-            label="All topics"
-            count={helpArticles.length}
-            onClick={() => setTopic("all")}
-          />
-          {HELP_TOPICS.map((item) => (
+        <aside className="lg:sticky lg:top-44 lg:self-start">
+          <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
             <TopicButton
-              key={item.id}
-              active={topic === item.id}
-              label={item.label}
-              count={
-                helpArticles.filter((article) => article.topic === item.id)
-                  .length
-              }
-              onClick={() => setTopic(item.id)}
+              active={topic === "all"}
+              label="All topics"
+              count={helpArticles.length}
+              onClick={() => setTopic("all")}
             />
-          ))}
-        </div>
+            {HELP_TOPICS.map((item) => (
+              <TopicButton
+                key={item.id}
+                active={topic === item.id}
+                label={item.label}
+                count={
+                  helpArticles.filter((article) => article.topic === item.id)
+                    .length
+                }
+                onClick={() => setTopic(item.id)}
+              />
+            ))}
+          </div>
+        </aside>
 
         <div>
           <p className="text-sm text-muted-foreground">
@@ -170,12 +172,15 @@ export function HelpCenterView() {
                 return (
                   <article
                     key={article.id}
-                    className="border-b border-border last:border-b-0"
+                    className={cn(
+                      "border-b border-border transition-colors last:border-b-0 hover:bg-brand-soft",
+                      open && "bg-brand-soft",
+                    )}
                   >
                     <h2>
                       <button
                         type="button"
-                        className="flex w-full items-start justify-between gap-4 px-4 py-4 text-left sm:px-5"
+                        className="flex w-full cursor-pointer items-start justify-between gap-4 px-4 py-4 text-left sm:px-5"
                         aria-expanded={open}
                         onClick={() => setOpenId(open ? null : article.id)}
                       >
@@ -257,7 +262,7 @@ function TopicButton({
     <button
       type="button"
       className={cn(
-        "inline-flex shrink-0 items-center justify-between gap-3 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors lg:w-full lg:rounded-xl",
+        "inline-flex shrink-0 cursor-pointer items-center justify-between gap-3 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors lg:w-full lg:rounded-xl",
         active
           ? "border-primary bg-brand-soft text-primary"
           : "border-border bg-card text-foreground hover:bg-muted",
