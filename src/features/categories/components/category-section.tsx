@@ -51,7 +51,7 @@ export function CategorySection({ category }: CategorySectionProps) {
           <ArrowRight className="size-4" />
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {category.subcategories.map((subcategory) => (
           <SubcategoryCard
             key={subcategory.id}
