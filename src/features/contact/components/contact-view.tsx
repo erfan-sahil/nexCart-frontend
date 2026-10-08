@@ -15,6 +15,13 @@ import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMe } from "@/features/auth/use-me";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +56,7 @@ const EMPTY: ContactValues = {
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fieldClass =
-  "h-11 rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary";
+  "h-11 w-full min-w-0 rounded-xl border border-input bg-background px-3 text-sm text-foreground shadow-none transition-colors outline-none placeholder:text-muted-foreground hover:bg-background focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-11 dark:bg-background dark:hover:bg-background dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40";
 
 function needsOrder(topic: ContactValues["topic"]) {
   return topic === "order" || topic === "return";
@@ -205,6 +212,15 @@ export function ContactView() {
             </div>
           ) : (
             <form className="grid gap-4" noValidate onSubmit={onSubmit}>
+              <div>
+                <h2 className="font-display text-2xl tracking-tight">
+                  Send a message
+                </h2>
+                <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                  Share a few details and we will reply to the email you enter.
+                </p>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Name" id={nameId} error={errors.name}>
                   <Input
@@ -232,26 +248,26 @@ export function ContactView() {
               </div>
 
               <Field label="Topic" id={topicId} error={errors.topic}>
-                <select
-                  id={topicId}
-                  value={values.topic}
-                  aria-invalid={Boolean(errors.topic)}
-                  className={cn(
-                    fieldClass,
-                    "w-full border bg-background outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                    !values.topic && "text-muted-foreground",
-                  )}
-                  onChange={(event) =>
-                    update("topic", event.target.value as Topic | "")
-                  }
+                <Select
+                  items={TOPICS}
+                  value={values.topic || null}
+                  onValueChange={(value) => update("topic", value ?? "")}
                 >
-                  <option value="">Choose a topic</option>
-                  {TOPICS.map((topic) => (
-                    <option key={topic.value} value={topic.value}>
-                      {topic.label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger
+                    id={topicId}
+                    aria-invalid={Boolean(errors.topic)}
+                    className={cn(fieldClass, "justify-between font-normal")}
+                  >
+                    <SelectValue placeholder="Choose a topic" />
+                  </SelectTrigger>
+                  <SelectContent align="start" className="p-1">
+                    {TOPICS.map((topic) => (
+                      <SelectItem key={topic.value} value={topic.value}>
+                        {topic.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
 
               {needsOrder(values.topic) ? (
@@ -277,7 +293,10 @@ export function ContactView() {
                   rows={6}
                   placeholder="Tell us what happened"
                   aria-invalid={Boolean(errors.message)}
-                  className={cn(fieldClass, "h-auto resize-y py-3 leading-6")}
+                  className={cn(
+                    fieldClass,
+                    "h-auto min-h-36 resize-y py-3 leading-6",
+                  )}
                   onChange={(event) => update("message", event.target.value)}
                 />
               </Field>
