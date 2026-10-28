@@ -148,7 +148,11 @@ export function ProductsSort({ query }: ProductsSortProps) {
           {PRODUCT_SORT_OPTIONS.map((option) => (
             <Link
               key={option.id}
-              href={productsHref({ ...query, sort: option.id })}
+              href={productsHref({
+                ...query,
+                sort: option.id,
+                sortExplicit: true,
+              })}
               onClick={() => setSortOpen(false)}
               className={optionClass(query.sort === option.id)}
             >

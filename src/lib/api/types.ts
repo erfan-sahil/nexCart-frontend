@@ -1,7 +1,17 @@
+export type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
 export type ApiSuccess<T> = {
   success: true;
   message: string;
   data: T;
+  meta?: {
+    pagination?: PaginationMeta;
+  };
   requestId: string;
 };
 

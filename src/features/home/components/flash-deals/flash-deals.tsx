@@ -2,9 +2,16 @@ import { Zap } from "lucide-react";
 
 import { Container, CountdownTimer, SeeAllLink } from "@/components/common";
 import { ProductGrid } from "@/components/product";
-import { flashDealEndsAt, flashDealProducts } from "@/data/mock";
+import type { Product } from "@/types";
 
-export function FlashDeals() {
+import { SectionEmpty } from "../section-empty";
+
+type FlashDealsProps = {
+  products: Product[];
+  endsAt: string | null;
+};
+
+export function FlashDeals({ products = [], endsAt }: FlashDealsProps) {
   return (
     <section className="bg-surface-dark py-12 sm:py-16">
       <Container>
@@ -28,14 +35,18 @@ export function FlashDeals() {
             </p>
           </div>
           <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
-            <CountdownTimer target={flashDealEndsAt} />
+            {endsAt ? <CountdownTimer target={endsAt} /> : null}
             <SeeAllLink
               href="/products?collection=flash-deals"
               className="hidden lg:inline-flex"
             />
           </div>
         </div>
-        <ProductGrid products={flashDealProducts} columns="flash" />
+        {products.length > 0 ? (
+          <ProductGrid products={products} columns="flash" />
+        ) : (
+          <SectionEmpty invert message="No flash deals available right now." />
+        )}
       </Container>
     </section>
   );

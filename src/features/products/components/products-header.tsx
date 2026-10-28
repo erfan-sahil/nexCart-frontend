@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { Container, PageBreadcrumb } from "@/components/common";
 import { formatCount } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { getCategoryBySlug } from "@/data/mock";
 
 import {
   PRICE_FILTERS,
@@ -13,6 +12,7 @@ import {
   hasActiveFilters,
   productsHref,
   queryWithout,
+  type FilterCategory,
   type ProductPageCopy,
   type ProductQuery,
 } from "../lib/query";
@@ -20,7 +20,8 @@ import {
 type ProductsHeaderProps = {
   query: ProductQuery;
   copy: ProductPageCopy;
-  resultCount: number;
+  category?: FilterCategory | null;
+  total: number;
 };
 
 function Chip({
@@ -51,19 +52,21 @@ function Chip({
 export function ProductsHeader({
   query,
   copy,
-  resultCount,
+  category,
+  total,
 }: ProductsHeaderProps) {
-  const category = query.category
-    ? getCategoryBySlug(query.category)
-    : undefined;
+  const subcategory = category?.children.find(
+    (item) => item.slug === query.subcategory,
+  );
   const priceLabel = PRICE_FILTERS.find(
     (item) => item.id === query.price,
   )?.label;
   const showChips = hasActiveFilters(query);
+  const onImage = Boolean(category?.image);
 
   const content = (
     <>
-      <PageBreadcrumb items={copy.breadcrumbs} invert={Boolean(category)} />
+      <PageBreadcrumb items={copy.breadcrumbs} invert={onImage} />
       <p className="mt-5 text-xs font-semibold tracking-[0.18em] text-primary uppercase">
         {copy.eyebrow}
       </p>
@@ -71,7 +74,7 @@ export function ProductsHeader({
         <h1
           className={cn(
             "text-3xl sm:text-4xl",
-            category ? "text-white" : "text-foreground",
+            onImage ? "text-white" : "text-foreground",
           )}
         >
           {copy.title}
@@ -79,7 +82,7 @@ export function ProductsHeader({
         <p
           className={cn(
             "mt-2 text-sm sm:text-base",
-            category ? "text-white/80" : "text-muted-foreground",
+            onImage ? "text-white/80" : "text-muted-foreground",
           )}
         >
           {copy.description}
@@ -87,11 +90,10 @@ export function ProductsHeader({
         <p
           className={cn(
             "mt-3 text-sm font-medium tabular-nums",
-            category ? "text-white" : "text-muted-foreground",
+            onImage ? "text-white" : "text-muted-foreground",
           )}
         >
-          {formatCount(resultCount)}{" "}
-          {resultCount === 1 ? "product" : "products"}
+          {formatCount(total)} {total === 1 ? "product" : "products"}
         </p>
       </div>
 
@@ -99,15 +101,23 @@ export function ProductsHeader({
         <div className="mt-5 flex flex-wrap items-center gap-2">
           {query.q ? (
             <Chip
-              onImage={Boolean(category)}
+              onImage={onImage}
               href={productsHref(queryWithout(query, ["q"]))}
             >
               Search: {query.q}
             </Chip>
           ) : null}
+          {subcategory ? (
+            <Chip
+              onImage={onImage}
+              href={productsHref(queryWithout(query, ["subcategory"]))}
+            >
+              {subcategory.name}
+            </Chip>
+          ) : null}
           {query.collection ? (
             <Chip
-              onImage={Boolean(category)}
+              onImage={onImage}
               href={productsHref(queryWithout(query, ["collection"]))}
             >
               {getCollectionCopy(query.collection).title}
@@ -115,7 +125,7 @@ export function ProductsHeader({
           ) : null}
           {priceLabel ? (
             <Chip
-              onImage={Boolean(category)}
+              onImage={onImage}
               href={productsHref(queryWithout(query, ["price"]))}
             >
               {priceLabel}
@@ -123,7 +133,7 @@ export function ProductsHeader({
           ) : null}
           {query.rating ? (
             <Chip
-              onImage={Boolean(category)}
+              onImage={onImage}
               href={productsHref(queryWithout(query, ["rating"]))}
             >
               {query.rating}+ stars
@@ -134,7 +144,7 @@ export function ProductsHeader({
               href="/products"
               className={cn(
                 "text-xs font-medium underline-offset-4 hover:underline",
-                category ? "text-white hover:text-primary" : "text-primary",
+                onImage ? "text-white hover:text-primary" : "text-primary",
               )}
             >
               Clear all
@@ -145,7 +155,7 @@ export function ProductsHeader({
     </>
   );
 
-  if (!category) {
+  if (!category?.image) {
     return (
       <section className="border-b border-border bg-surface-muted">
         <Container className="py-8 sm:py-10">{content}</Container>
@@ -163,6 +173,7 @@ export function ProductsHeader({
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 1120px"
+            unoptimized={!category.image.includes("images.unsplash.com")}
             className="object-cover object-[78%_center]"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/95 via-[42%] to-ink/72 lg:hidden" />

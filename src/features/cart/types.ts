@@ -5,6 +5,7 @@ export const MAX_CART_QUANTITY = 10;
 export type CartLine = {
   productId: string;
   quantity: number;
+  product?: Product;
 };
 
 export type ResolvedCartLine = {

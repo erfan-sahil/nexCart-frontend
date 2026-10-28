@@ -5,7 +5,8 @@ import type { CartLine, ResolvedCartLine } from "../types";
 
 export function resolveCartLines(lines: CartLine[]): ResolvedCartLine[] {
   return lines.flatMap((line) => {
-    const product = products.find((item) => item.id === line.productId);
+    const product =
+      line.product ?? products.find((item) => item.id === line.productId);
     if (!product) return [];
     return [{ product, quantity: line.quantity }];
   });

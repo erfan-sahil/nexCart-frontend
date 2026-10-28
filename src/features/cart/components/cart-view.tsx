@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Trash2 } from "lucide-react";
 
-import { Container, PageBreadcrumb } from "@/components/common";
+import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 
@@ -66,14 +65,9 @@ export function CartView() {
                 className="overflow-hidden rounded-2xl border border-border bg-card"
               >
                 <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-                  <span className="relative size-7 overflow-hidden rounded-full bg-surface-muted ring-1 ring-border">
-                    <Image
-                      src={group.store.logo}
-                      alt=""
-                      fill
-                      sizes="28px"
-                      className="object-cover"
-                    />
+                  <span className="relative flex size-7 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[11px] font-semibold ring-1 ring-border">
+                    <MediaImage src={group.store.logo} alt="" sizes="28px" />
+                    {group.store.logo ? null : group.store.name.slice(0, 1)}
                   </span>
                   <Link
                     href={`/stores/${group.store.slug}`}
@@ -98,12 +92,10 @@ export function CartView() {
                         href={`/products/${line.product.slug}`}
                         className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-surface-muted"
                       >
-                        <Image
+                        <MediaImage
                           src={line.product.image}
                           alt={line.product.name}
-                          fill
                           sizes="56px"
-                          className="object-cover"
                         />
                       </Link>
                       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">

@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 
-import {
-  ProductsView,
-  parseProductSearchParams,
-  type ProductSearchParams,
-} from "@/features/products";
+import { CatalogListing, type ProductSearchParams } from "@/features/products";
 
 type NewArrivalsPageProps = {
   searchParams: Promise<ProductSearchParams>;
@@ -12,15 +8,16 @@ type NewArrivalsPageProps = {
 
 export const metadata: Metadata = {
   title: "New arrivals",
-  description: "Fresh inventory from vendors who listed this week.",
+  description: "Fresh inventory from vendors who listed recently.",
 };
 
 export default async function NewArrivalsPage({
   searchParams,
 }: NewArrivalsPageProps) {
-  const query = parseProductSearchParams(await searchParams, {
-    collection: "new-arrivals",
-  });
-
-  return <ProductsView query={query} />;
+  return (
+    <CatalogListing
+      searchParams={await searchParams}
+      defaults={{ collection: "new-arrivals" }}
+    />
+  );
 }

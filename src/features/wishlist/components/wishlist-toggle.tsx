@@ -5,23 +5,26 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import type { Product } from "@/types";
+
 import { useWishlistStore } from "../store";
 
 type WishlistToggleProps = {
-  productId: string;
-  name: string;
+  product: Product;
   variant?: "icon" | "inline" | "labeled";
   className?: string;
 };
 
 export function WishlistToggle({
-  productId,
-  name,
+  product,
   variant = "icon",
   className,
 }: WishlistToggleProps) {
-  const saved = useWishlistStore((state) => state.ids.includes(productId));
+  const saved = useWishlistStore((state) =>
+    state.entries.some((entry) => entry.id === product.id),
+  );
   const toggle = useWishlistStore((state) => state.toggle);
+  const name = product.name;
   const label = saved ? `Remove ${name} from wishlist` : `Save ${name}`;
 
   if (variant === "labeled") {
@@ -35,7 +38,7 @@ export function WishlistToggle({
         )}
         aria-pressed={saved}
         aria-label={label}
-        onClick={() => toggle(productId)}
+        onClick={() => toggle(product)}
       >
         <Heart className={cn("size-4", saved && "fill-primary")} />
         {saved ? "Saved" : "Save"}
@@ -56,7 +59,7 @@ export function WishlistToggle({
       )}
       aria-pressed={saved}
       aria-label={label}
-      onClick={() => toggle(productId)}
+      onClick={() => toggle(product)}
     >
       <Heart className={cn("size-4", saved && "fill-primary")} />
     </button>

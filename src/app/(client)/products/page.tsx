@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
+import { CatalogListing } from "@/features/products/catalog-listing";
 import {
-  ProductsView,
   getProductPageCopy,
   parseProductSearchParams,
   type ProductSearchParams,
@@ -26,6 +26,5 @@ export async function generateMetadata({
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  const query = parseProductSearchParams(await searchParams);
-  return <ProductsView query={query} />;
+  return <CatalogListing searchParams={await searchParams} />;
 }

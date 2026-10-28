@@ -1,14 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Star } from "lucide-react";
 
-import { Container, PageBreadcrumb } from "@/components/common";
+import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { ProductGrid } from "@/components/product";
 import { formatCount } from "@/lib/format";
-import type { ProductDetail } from "@/types";
+import type { Product, ProductDetail } from "@/types";
 
 import { productsHref } from "./lib/query";
-import { getProductCategoryLabel, getRelatedProducts } from "./lib/detail";
 import { ProductBuyBox } from "./components/product-buy-box";
 import { ProductGallery } from "./components/product-gallery";
 import { ProductReviews } from "./components/product-reviews";
@@ -16,34 +14,28 @@ import { ProductSpecs } from "./components/product-specs";
 
 type ProductDetailViewProps = {
   product: ProductDetail;
+  related: Product[];
 };
 
-export function ProductDetailView({ product }: ProductDetailViewProps) {
-  const { category, subcategory } = getProductCategoryLabel(product);
-  const related = getRelatedProducts(product);
+function ratingLabel(value: number) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
 
+export function ProductDetailView({
+  product,
+  related,
+}: ProductDetailViewProps) {
   return (
     <Container className="py-8 sm:py-10">
       <PageBreadcrumb
         items={[
           { label: "Home", href: "/" },
           { label: "Products", href: "/products" },
-          ...(category
+          ...(product.categoryName
             ? [
                 {
-                  label: category.name,
-                  href: productsHref({ category: category.slug }),
-                },
-              ]
-            : []),
-          ...(subcategory
-            ? [
-                {
-                  label: subcategory.name,
-                  href: productsHref({
-                    category: product.categorySlug,
-                    subcategory: subcategory.slug,
-                  }),
+                  label: product.categoryName,
+                  href: productsHref({ category: product.categorySlug }),
                 },
               ]
             : []),
@@ -59,14 +51,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             href={`/stores/${product.store.slug}`}
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
-            <span className="relative size-7 overflow-hidden rounded-full bg-surface-muted ring-1 ring-border">
-              <Image
-                src={product.store.logo}
-                alt=""
-                fill
-                sizes="28px"
-                className="object-cover"
-              />
+            <span className="relative flex size-7 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[11px] font-semibold ring-1 ring-border">
+              <MediaImage src={product.store.logo} alt="" sizes="28px" />
+              {product.store.logo ? null : product.store.name.slice(0, 1)}
             </span>
             {product.store.name}
             {product.store.verified ? (
@@ -86,7 +73,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             <span className="inline-flex items-center gap-1.5">
               <Star className="size-4 fill-primary text-primary" />
               <span className="font-semibold text-foreground">
-                {product.rating}
+                {ratingLabel(product.rating)}
               </span>
               <span>({formatCount(product.reviewCount)})</span>
             </span>
@@ -115,7 +102,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {related.length > 0 ? (
         <section className="mt-12">
           <h2 className="text-2xl sm:text-3xl">
-            More in {category?.name ?? "this category"}
+            More in {product.categoryName ?? "this category"}
           </h2>
           <ProductGrid products={related} columns="catalog" className="mt-6" />
         </section>

@@ -1,19 +1,20 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { getCategoryBySlug } from "@/data/mock";
 
-import { productsHref, type ProductQuery } from "../lib/query";
+import {
+  productsHref,
+  type FilterCategory,
+  type ProductQuery,
+} from "../lib/query";
 
 type SubcategoryChipsProps = {
   query: ProductQuery;
+  category?: FilterCategory | null;
 };
 
-export function SubcategoryChips({ query }: SubcategoryChipsProps) {
-  if (!query.category) return null;
-
-  const category = getCategoryBySlug(query.category);
-  if (!category) return null;
+export function SubcategoryChips({ query, category }: SubcategoryChipsProps) {
+  if (!category || category.children.length === 0) return null;
 
   return (
     <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
@@ -28,7 +29,7 @@ export function SubcategoryChips({ query }: SubcategoryChipsProps) {
       >
         All
       </Link>
-      {category.subcategories.map((aisle) => {
+      {category.children.map((aisle) => {
         const active = query.subcategory === aisle.slug;
 
         return (

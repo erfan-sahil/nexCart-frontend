@@ -1,29 +1,36 @@
 import { create } from "zustand";
 
+import type { Product } from "@/types";
+
+type WishlistEntry = {
+  id: string;
+  product?: Product;
+};
+
 type WishlistState = {
-  ids: string[];
-  toggle: (productId: string) => void;
+  entries: WishlistEntry[];
+  toggle: (product: Product) => void;
   remove: (productId: string) => void;
   clear: () => void;
 };
 
-export const dummyWishlistIds = ["p4", "p5"];
+const dummyEntries: WishlistEntry[] = [{ id: "p4" }, { id: "p5" }];
 
 export const useWishlistStore = create<WishlistState>((set) => ({
-  ids: dummyWishlistIds,
-  toggle: (productId) =>
+  entries: dummyEntries,
+  toggle: (product) =>
     set((state) => ({
-      ids: state.ids.includes(productId)
-        ? state.ids.filter((id) => id !== productId)
-        : [...state.ids, productId],
+      entries: state.entries.some((entry) => entry.id === product.id)
+        ? state.entries.filter((entry) => entry.id !== product.id)
+        : [...state.entries, { id: product.id, product }],
     })),
   remove: (productId) =>
     set((state) => ({
-      ids: state.ids.filter((id) => id !== productId),
+      entries: state.entries.filter((entry) => entry.id !== productId),
     })),
-  clear: () => set({ ids: [] }),
+  clear: () => set({ entries: [] }),
 }));
 
 export function useWishlistCount() {
-  return useWishlistStore((state) => state.ids.length);
+  return useWishlistStore((state) => state.entries.length);
 }

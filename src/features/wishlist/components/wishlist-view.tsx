@@ -13,15 +13,15 @@ import { resolveWishlist } from "../lib/catalog";
 import { useWishlistStore } from "../store";
 
 export function WishlistView() {
-  const ids = useWishlistStore((state) => state.ids);
+  const entries = useWishlistStore((state) => state.entries);
   const clear = useWishlistStore((state) => state.clear);
-  const products = resolveWishlist(ids);
+  const products = resolveWishlist(entries);
   const [added, setAdded] = useState(false);
 
   function addAllToCart() {
     const add = useCartStore.getState().add;
     for (const product of products) {
-      add(product.id);
+      add(product.id, 1, product);
     }
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);

@@ -5,13 +5,17 @@ import Link from "next/link";
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { categories } from "@/data/mock";
 import { CATEGORY_ICONS } from "@/constants/category-icons";
 
-import { productsHref, type ProductQuery } from "../lib/query";
+import {
+  productsHref,
+  type FilterCategory,
+  type ProductQuery,
+} from "../lib/query";
 
 type ProductsFiltersProps = {
   query: ProductQuery;
+  categories: FilterCategory[];
 };
 
 function navQuery(
@@ -56,7 +60,7 @@ function FilterLink({
   );
 }
 
-export function ProductsFilters({ query }: ProductsFiltersProps) {
+export function ProductsFilters({ query, categories }: ProductsFiltersProps) {
   const categorySlug = query.category ?? null;
   const [openSlug, setOpenSlug] = useState<string | null>(categorySlug);
   const [prevCategorySlug, setPrevCategorySlug] = useState(categorySlug);
@@ -134,7 +138,7 @@ export function ProductsFilters({ query }: ProductsFiltersProps) {
               </div>
               {open ? (
                 <ul className="mt-0.5 mb-1 ml-5 space-y-0.5 border-l border-border py-1 pl-2">
-                  {category.subcategories.map((aisle) => {
+                  {category.children.map((aisle) => {
                     const aisleActive =
                       active && query.subcategory === aisle.slug;
 
@@ -165,7 +169,10 @@ export function ProductsFilters({ query }: ProductsFiltersProps) {
   );
 }
 
-export function ProductsMobileFilters({ query }: ProductsFiltersProps) {
+export function ProductsMobileFilters({
+  query,
+  categories,
+}: ProductsFiltersProps) {
   return (
     <details className="group rounded-2xl border border-border bg-card lg:hidden">
       <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
@@ -178,7 +185,7 @@ export function ProductsMobileFilters({ query }: ProductsFiltersProps) {
         </span>
       </summary>
       <div className="border-t border-border px-2 py-4">
-        <ProductsFilters query={query} />
+        <ProductsFilters query={query} categories={categories} />
       </div>
     </details>
   );

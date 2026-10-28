@@ -11,11 +11,20 @@ type SearchBarProps = {
 function SearchForm({
   className,
   defaultQuery = "",
-}: SearchBarProps & { defaultQuery?: string }) {
+  hidden,
+}: SearchBarProps & {
+  defaultQuery?: string;
+  hidden?: Record<string, string>;
+}) {
   const inputId = useId();
 
   return (
     <form action="/products" className={className} role="search">
+      {Object.entries(hidden ?? {}).map(([name, value]) =>
+        value ? (
+          <input key={name} type="hidden" name={name} value={value} />
+        ) : null,
+      )}
       <label htmlFor={inputId} className="sr-only">
         Search products and stores
       </label>
@@ -43,11 +52,20 @@ function SearchForm({
 
 function SearchBarWithQuery({ className }: SearchBarProps) {
   const searchParams = useSearchParams();
+  const hidden = {
+    collection: searchParams.get("collection") ?? "",
+    category: searchParams.get("category") ?? "",
+    subcategory: searchParams.get("subcategory") ?? "",
+    sort: searchParams.get("sort") ?? "",
+    price: searchParams.get("price") ?? "",
+    rating: searchParams.get("rating") ?? "",
+  };
 
   return (
     <SearchForm
       className={className}
       defaultQuery={searchParams.get("q") ?? ""}
+      hidden={hidden}
     />
   );
 }

@@ -1,8 +1,15 @@
 import { Container, SectionHeader } from "@/components/common";
 import { ProductShowcase } from "@/components/product";
-import { topSellingProducts, topSellingPromo } from "@/data/mock";
+import { topSellingPromo } from "@/data/mock";
+import type { Product } from "@/types";
 
-export function TopSellingProducts() {
+import { SectionEmpty } from "../section-empty";
+
+type TopSellingProductsProps = {
+  products: Product[];
+};
+
+export function TopSellingProducts({ products = [] }: TopSellingProductsProps) {
   return (
     <section className="py-12 sm:py-16">
       <Container>
@@ -12,11 +19,15 @@ export function TopSellingProducts() {
           description="What the marketplace cannot keep in stock."
           href="/products?collection=bestsellers"
         />
-        <ProductShowcase
-          products={topSellingProducts}
-          promo={topSellingPromo}
-          promoPosition="start"
-        />
+        {products.length > 0 ? (
+          <ProductShowcase
+            products={products}
+            promo={topSellingPromo}
+            promoPosition="start"
+          />
+        ) : (
+          <SectionEmpty message="No top selling products available right now." />
+        )}
       </Container>
     </section>
   );

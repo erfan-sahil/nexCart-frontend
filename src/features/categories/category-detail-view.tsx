@@ -1,8 +1,4 @@
-import {
-  ProductsView,
-  parseProductSearchParams,
-  type ProductSearchParams,
-} from "@/features/products";
+import { CatalogListing, type ProductSearchParams } from "@/features/products";
 import type { Category } from "@/types";
 
 type CategoryDetailViewProps = {
@@ -15,10 +11,9 @@ export function CategoryDetailView({
   searchParams = {},
 }: CategoryDetailViewProps) {
   return (
-    <ProductsView
-      query={parseProductSearchParams(searchParams, {
-        category: category.slug,
-      })}
+    <CatalogListing
+      searchParams={searchParams}
+      defaults={{ category: category.slug }}
     />
   );
 }

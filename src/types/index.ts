@@ -19,8 +19,10 @@ export type Product = {
   badge?: string;
   sold?: number;
   categorySlug: string;
+  categoryName?: string;
   subcategorySlug: string;
   listedAt: string;
+  inStock?: boolean;
 };
 
 export type ProductSpecification = {

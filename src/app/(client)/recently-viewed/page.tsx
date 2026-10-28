@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 
-import {
-  ProductsView,
-  parseProductSearchParams,
-  type ProductSearchParams,
-} from "@/features/products";
+import { CatalogListing, type ProductSearchParams } from "@/features/products";
 
 type RecentlyViewedPageProps = {
   searchParams: Promise<ProductSearchParams>;
@@ -18,9 +14,10 @@ export const metadata: Metadata = {
 export default async function RecentlyViewedPage({
   searchParams,
 }: RecentlyViewedPageProps) {
-  const query = parseProductSearchParams(await searchParams, {
-    collection: "recently-viewed",
-  });
-
-  return <ProductsView query={query} />;
+  return (
+    <CatalogListing
+      searchParams={await searchParams}
+      defaults={{ collection: "recently-viewed" }}
+    />
+  );
 }

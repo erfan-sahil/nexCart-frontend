@@ -1,8 +1,14 @@
 import { Container, SectionHeader } from "@/components/common";
 import { ProductGrid } from "@/components/product";
-import { recentlyViewedProducts } from "@/data/mock";
+import type { Product } from "@/types";
 
-export function RecentlyViewed() {
+import { SectionEmpty } from "../section-empty";
+
+type RecentlyViewedProps = {
+  products?: Product[];
+};
+
+export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
   return (
     <section className="py-12 sm:py-16">
       <Container>
@@ -12,7 +18,11 @@ export function RecentlyViewed() {
           description="Jump back into products you already opened."
           href="/products?collection=recently-viewed"
         />
-        <ProductGrid products={recentlyViewedProducts} columns="rail" />
+        {products.length > 0 ? (
+          <ProductGrid products={products} columns="rail" />
+        ) : (
+          <SectionEmpty message="No recently viewed products available right now." />
+        )}
       </Container>
     </section>
   );

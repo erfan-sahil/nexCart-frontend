@@ -1,18 +1,28 @@
 import { Container, SectionHeader } from "@/components/common";
 import { ProductGrid } from "@/components/product";
-import { trendingProducts } from "@/data/mock";
+import type { Product } from "@/types";
 
-export function TrendingProducts() {
+import { SectionEmpty } from "../section-empty";
+
+type TrendingProductsProps = {
+  products: Product[];
+};
+
+export function TrendingProducts({ products = [] }: TrendingProductsProps) {
   return (
     <section className="py-12 sm:py-16">
       <Container>
         <SectionHeader
           eyebrow="Right now"
           title="Trending products"
-          description="Rising fast across stores in the last 24 hours."
+          description="Rising fast across stores this week."
           href="/products?collection=trending"
         />
-        <ProductGrid products={trendingProducts} />
+        {products.length > 0 ? (
+          <ProductGrid products={products} />
+        ) : (
+          <SectionEmpty message="No trending products available right now." />
+        )}
       </Container>
     </section>
   );
