@@ -5,32 +5,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { heroSlides } from "@/data/mock";
 import { cn } from "@/lib/utils";
+
+import type { StoreHero } from "../../get-hero";
 
 const SLIDE_MS = 6500;
 
-export function HeroBanner() {
+export function HeroBanner({ slides }: { slides: StoreHero[] }) {
   const [index, setIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
-  const slide = heroSlides[index];
-  const nextSlide = heroSlides[(index + 1) % heroSlides.length];
+  const count = slides.length;
+  const slide = slides[index] ?? slides[0];
+  const multiple = count > 1;
 
   useEffect(() => {
+    if (!multiple) return;
+
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (motion.matches) return;
 
     const id = window.setInterval(() => {
-      setIndex((current) => (current + 1) % heroSlides.length);
+      setIndex((current) => (current + 1) % count);
     }, SLIDE_MS);
 
     return () => window.clearInterval(id);
-  }, [cycle]);
+  }, [count, cycle, multiple]);
+
+  if (!slide) return null;
 
   const goTo = (next: number) => {
-    setIndex((next + heroSlides.length) % heroSlides.length);
+    setIndex((next + count) % count);
     setCycle((current) => current + 1);
   };
+
+  const nextSlide = slides[(index + 1) % count] ?? slide;
 
   return (
     <section aria-roledescription="carousel" aria-label="Featured">
@@ -39,9 +47,9 @@ export function HeroBanner() {
           <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
             <div className="relative mb-3">
               <div className="relative aspect-[4/3] overflow-hidden rounded-tl-[1.35rem] rounded-tr-[6.5rem] rounded-br-[1.35rem] rounded-bl-[4rem] bg-muted sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(32rem,68vh)]">
-                {heroSlides.map((item, slideIndex) => (
+                {slides.map((item, slideIndex) => (
                   <Image
-                    key={item.id}
+                    key={`${item.image}-${slideIndex}`}
                     src={item.image}
                     alt=""
                     fill
@@ -57,20 +65,22 @@ export function HeroBanner() {
                 ))}
               </div>
 
-              <button
-                type="button"
-                aria-label={`Next: ${nextSlide.title}`}
-                onClick={() => goTo(index + 1)}
-                className="absolute -bottom-2 -left-1 size-[4.75rem] overflow-hidden rounded-full ring-[5px] ring-background transition-transform duration-300 hover:scale-105 sm:size-[5.5rem]"
-              >
-                <Image
-                  src={nextSlide.image}
-                  alt=""
-                  fill
-                  sizes="88px"
-                  className="object-cover"
-                />
-              </button>
+              {multiple ? (
+                <button
+                  type="button"
+                  aria-label={`Next: ${nextSlide.title}`}
+                  onClick={() => goTo(index + 1)}
+                  className="absolute -bottom-2 -left-1 size-[4.75rem] overflow-hidden rounded-full ring-[5px] ring-background transition-transform duration-300 hover:scale-105 sm:size-[5.5rem]"
+                >
+                  <Image
+                    src={nextSlide.image}
+                    alt=""
+                    fill
+                    sizes="88px"
+                    className="object-cover"
+                  />
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -84,14 +94,14 @@ export function HeroBanner() {
               {slide.title}
             </h1>
             <p className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg">
-              {slide.subtitle}
+              {slide.description}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href={slide.href}
+                href="/products"
                 className="auth-orange-button inline-flex h-12 items-center px-6 text-[#fff4f2]! hover:text-[#fff4f2]!"
               >
-                {slide.ctaLabel}
+                Shop now
               </Link>
               <Link
                 href="/stores"
@@ -101,51 +111,53 @@ export function HeroBanner() {
               </Link>
             </div>
 
-            <div className="mt-12 flex items-center gap-4 sm:mt-16">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  aria-label="Previous slide"
-                  onClick={() => goTo(index - 1)}
-                  className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <ChevronLeft className="size-5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Next slide"
-                  onClick={() => goTo(index + 1)}
-                  className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <ChevronRight className="size-5" />
-                </button>
+            {multiple ? (
+              <div className="mt-12 flex items-center gap-4 sm:mt-16">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    aria-label="Previous hero"
+                    onClick={() => goTo(index - 1)}
+                    className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next hero"
+                    onClick={() => goTo(index + 1)}
+                    className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <ChevronRight className="size-5" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  {slides.map((item, slideIndex) => {
+                    const active = slideIndex === index;
+                    return (
+                      <button
+                        key={`${item.image}-dot-${slideIndex}`}
+                        type="button"
+                        aria-label={`Show hero ${slideIndex + 1}`}
+                        aria-current={active ? "true" : undefined}
+                        onClick={() => goTo(slideIndex)}
+                        className={cn(
+                          "relative h-1.5 overflow-hidden rounded-full bg-border transition-[width] duration-300",
+                          active ? "w-12" : "w-4",
+                        )}
+                      >
+                        {active ? (
+                          <span
+                            key={`${item.image}-${cycle}`}
+                            className="hero-slide-progress absolute inset-0 origin-left bg-primary"
+                          />
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                {heroSlides.map((item, slideIndex) => {
-                  const active = slideIndex === index;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      aria-label={`Show slide ${slideIndex + 1}`}
-                      aria-current={active ? "true" : undefined}
-                      onClick={() => goTo(slideIndex)}
-                      className={cn(
-                        "relative h-1.5 overflow-hidden rounded-full bg-border transition-[width] duration-300",
-                        active ? "w-12" : "w-4",
-                      )}
-                    >
-                      {active ? (
-                        <span
-                          key={`${item.id}-${cycle}`}
-                          className="hero-slide-progress absolute inset-0 origin-left bg-primary"
-                        />
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
       </div>

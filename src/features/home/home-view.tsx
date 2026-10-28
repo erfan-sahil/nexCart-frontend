@@ -16,17 +16,20 @@ import { RecentlyViewed } from "./components/recently-viewed";
 import { RecommendedForYou } from "./components/recommended-for-you";
 import { TopSellingProducts } from "./components/top-selling-products";
 import { TrendingProducts } from "./components/trending-products";
+import { getHero } from "./get-hero";
 
 export async function HomeView() {
-  const [home, tree] = await Promise.all([
+  const [home, tree, hero] = await Promise.all([
     getCatalogHome().catch(() => null),
     getCategoryTree(),
+    getHero(),
   ]);
   const categories = toStorefrontCategories(tree);
+  const slides = (hero?.slides ?? []).filter((slide) => slide.isActive);
 
   return (
     <>
-      <HeroBanner />
+      {slides.length > 0 ? <HeroBanner slides={slides} /> : null}
       <FeaturedCategories categories={categories} />
       {home ? (
         <>
