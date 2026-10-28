@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { MediaImage } from "@/components/common";
 import { cn } from "@/lib/utils";
 
 import type { StoreHero } from "../../get-hero";
@@ -48,15 +48,14 @@ export function HeroBanner({ slides }: { slides: StoreHero[] }) {
             <div className="relative mb-3">
               <div className="relative aspect-[4/3] overflow-hidden rounded-tl-[1.35rem] rounded-tr-[6.5rem] rounded-br-[1.35rem] rounded-bl-[4rem] bg-muted sm:aspect-[16/10] lg:aspect-[5/4] lg:max-h-[min(32rem,68vh)]">
                 {slides.map((item, slideIndex) => (
-                  <Image
+                  <MediaImage
                     key={`${item.image}-${slideIndex}`}
                     src={item.image}
                     alt=""
-                    fill
                     priority={slideIndex === 0}
                     sizes="(min-width: 1024px) 42vw, 100vw"
                     className={cn(
-                      "object-cover object-center transition-opacity duration-700",
+                      "object-center transition-opacity duration-700",
                       slideIndex === index
                         ? "opacity-100"
                         : "pointer-events-none opacity-0",
@@ -72,13 +71,7 @@ export function HeroBanner({ slides }: { slides: StoreHero[] }) {
                   onClick={() => goTo(index + 1)}
                   className="absolute -bottom-2 -left-1 size-[4.75rem] overflow-hidden rounded-full ring-[5px] ring-background transition-transform duration-300 hover:scale-105 sm:size-[5.5rem]"
                 >
-                  <Image
-                    src={nextSlide.image}
-                    alt=""
-                    fill
-                    sizes="88px"
-                    className="object-cover"
-                  />
+                  <MediaImage src={nextSlide.image} alt="" sizes="88px" />
                 </button>
               ) : null}
             </div>
