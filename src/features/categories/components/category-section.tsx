@@ -1,7 +1,5 @@
-import Image from "next/image";
-
 import { SubcategoryCard } from "@/components/category";
-import { SeeAllLink } from "@/components/common";
+import { MediaImage, SeeAllLink } from "@/components/common";
 import { CATEGORY_ICONS } from "@/constants/category-icons";
 import { formatCount } from "@/lib/format";
 import type { Category } from "@/types";
@@ -21,13 +19,7 @@ export function CategorySection({ category }: CategorySectionProps) {
       <div className="mb-5 flex items-center justify-between gap-4 sm:mb-6">
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-surface-muted sm:size-16">
-            <Image
-              src={category.image}
-              alt=""
-              fill
-              sizes="64px"
-              className="object-cover"
-            />
+            <MediaImage src={category.image} alt="" sizes="64px" />
           </div>
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight sm:text-2xl">
@@ -38,7 +30,11 @@ export function CategorySection({ category }: CategorySectionProps) {
             </h2>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {formatCount(category.productCount)} items ·{" "}
-              {category.subcategories.length} aisles
+              {category.subcategories.reduce(
+                (total, aisle) => total + 1 + (aisle.children?.length ?? 0),
+                0,
+              )}{" "}
+              aisles
             </p>
           </div>
         </div>
@@ -48,18 +44,22 @@ export function CategorySection({ category }: CategorySectionProps) {
         />
       </div>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3">
-        {category.subcategories.map((subcategory) => (
-          <div
-            key={subcategory.id}
-            id={`aisle-${category.slug}-${subcategory.slug}`}
-            className="scroll-mt-44"
-          >
-            <SubcategoryCard
-              subcategory={subcategory}
-              href={`/products?category=${category.slug}&subcategory=${subcategory.slug}`}
-            />
-          </div>
-        ))}
+        {category.subcategories.flatMap((subcategory) => {
+          const cards = [subcategory, ...(subcategory.children ?? [])];
+
+          return cards.map((item) => (
+            <div
+              key={item.id}
+              id={`aisle-${category.slug}-${item.slug}`}
+              className="scroll-mt-44"
+            >
+              <SubcategoryCard
+                subcategory={item}
+                href={`/products?category=${category.slug}&subcategory=${item.slug}`}
+              />
+            </div>
+          ));
+        })}
       </div>
     </section>
   );

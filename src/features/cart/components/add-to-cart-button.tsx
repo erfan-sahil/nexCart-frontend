@@ -4,25 +4,23 @@ import { Check, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
 
 import { useCartStore } from "../store";
 
 type AddToCartButtonProps = {
-  productId: string;
-  name: string;
+  product: Product;
   className?: string;
 };
 
-export function AddToCartButton({
-  productId,
-  name,
-  className,
-}: AddToCartButtonProps) {
+export function AddToCartButton({ product, className }: AddToCartButtonProps) {
   const add = useCartStore((state) => state.add);
   const [added, setAdded] = useState(false);
+  const unavailable = product.inStock === false;
 
   function addToCart() {
-    add(productId);
+    if (unavailable) return;
+    add(product.id, 1, product);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1200);
   }
@@ -31,10 +29,17 @@ export function AddToCartButton({
     <button
       type="button"
       className={cn(
-        "inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-ink hover:text-[#fff4f2]",
+        "inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-ink hover:text-[#fff4f2] disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
-      aria-label={added ? `Added ${name} to cart` : `Add ${name} to cart`}
+      aria-label={
+        unavailable
+          ? `${product.name} is out of stock`
+          : added
+            ? `Added ${product.name} to cart`
+            : `Add ${product.name} to cart`
+      }
+      disabled={unavailable}
       onClick={addToCart}
     >
       {added ? (

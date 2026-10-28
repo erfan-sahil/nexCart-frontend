@@ -18,8 +18,11 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const [added, setAdded] = useState(false);
   const off = discountPercent(product.price, product.originalPrice);
 
+  const unavailable = product.inStock === false;
+
   function addToCart() {
-    useCartStore.getState().add(product.id, quantity);
+    if (unavailable) return;
+    useCartStore.getState().add(product.id, quantity, product);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
   }
@@ -69,15 +72,12 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         <Button
           className="auth-orange-button h-11 min-w-40 flex-1 px-6"
           onClick={addToCart}
+          disabled={unavailable}
         >
           <ShoppingBag className="size-4" />
-          {added ? "Added" : "Add to cart"}
+          {unavailable ? "Out of stock" : added ? "Added" : "Add to cart"}
         </Button>
-        <WishlistToggle
-          productId={product.id}
-          name={product.name}
-          variant="labeled"
-        />
+        <WishlistToggle product={product} variant="labeled" />
       </div>
     </div>
   );

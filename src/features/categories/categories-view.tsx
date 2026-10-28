@@ -1,4 +1,10 @@
-import { categories, getCatalogStats, getPopularAisles } from "@/data/mock";
+import type { CategoryNode } from "@/features/catalog";
+
+import {
+  categoryStats,
+  popularAisles,
+  toStorefrontCategories,
+} from "./lib/map";
 
 import {
   CategoriesHeader,
@@ -6,13 +12,18 @@ import {
   PopularAisles,
 } from "./components";
 
-export function CategoriesView() {
-  const stats = getCatalogStats();
+type CategoriesViewProps = {
+  tree: CategoryNode[];
+};
+
+export function CategoriesView({ tree }: CategoriesViewProps) {
+  const categories = toStorefrontCategories(tree);
+  const stats = categoryStats(categories);
 
   return (
     <>
       <CategoriesHeader {...stats} />
-      <PopularAisles aisles={getPopularAisles()} />
+      <PopularAisles aisles={popularAisles(categories)} />
       <CategoryDirectory categories={categories} />
     </>
   );

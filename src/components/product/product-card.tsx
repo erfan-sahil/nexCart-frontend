@@ -1,12 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 
+import { MediaImage } from "@/components/common";
 import { AddToCartButton } from "@/features/cart";
 import { WishlistToggle } from "@/features/wishlist";
 import { discountPercent, formatCount, formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
+
+function ratingLabel(value: number) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
 
 type ProductCardProps = {
   product: Product;
@@ -28,12 +32,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
           href={`/products/${product.slug}`}
           className="relative block aspect-square overflow-hidden"
         >
-          <Image
+          <MediaImage
             src={product.image}
             alt={product.name}
-            fill
             sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 220px"
-            className="object-cover transition duration-500 group-hover:scale-105"
+            className="transition duration-500 group-hover:scale-105"
           />
         </Link>
 
@@ -50,7 +53,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           ) : null}
         </div>
 
-        <WishlistToggle productId={product.id} name={product.name} />
+        <WishlistToggle product={product} />
       </div>
 
       <div className="flex flex-1 flex-col gap-2 bg-card p-3 transition-colors duration-300 group-hover:bg-brand-soft">
@@ -58,14 +61,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
           href={`/stores/${product.store.slug}`}
           className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-primary"
         >
-          <span className="relative size-5 shrink-0 overflow-hidden rounded-full bg-surface-muted ring-1 ring-border">
-            <Image
-              src={product.store.logo}
-              alt=""
-              fill
-              sizes="20px"
-              className="object-cover"
-            />
+          <span className="relative flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[9px] font-semibold ring-1 ring-border">
+            <MediaImage src={product.store.logo} alt="" sizes="20px" />
+            {product.store.logo ? null : product.store.name.slice(0, 1)}
           </span>
           <span className="truncate">{product.store.name}</span>
         </Link>
@@ -80,7 +78,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           <p className="inline-flex min-w-0 items-center gap-1">
             <Star className="size-3.5 shrink-0 fill-primary text-primary" />
             <span className="font-semibold text-foreground">
-              {product.rating}
+              {ratingLabel(product.rating)}
             </span>
             <span>({formatCount(product.reviewCount)})</span>
           </p>
@@ -100,7 +98,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
               </span>
             ) : null}
           </p>
-          <AddToCartButton productId={product.id} name={product.name} />
+          <AddToCartButton product={product} />
         </div>
       </div>
     </article>

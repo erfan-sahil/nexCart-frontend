@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 
 import { Logo, ThemeToggle } from "@/components/common";
-import { CATEGORY_LINKS } from "@/constants/navigation";
+import type { CategoryNavLink } from "./category-nav";
 import { DrawerSessionButton } from "@/features/auth/components/account-menu";
 import { useCartItemCount } from "@/features/cart";
 import { useWishlistCount } from "@/features/wishlist";
@@ -123,7 +123,7 @@ function Reveal({
   );
 }
 
-export function MobileNav() {
+export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
   const pathname = usePathname();
   const cartCount = useCartItemCount();
   const wishlistCount = useWishlistCount();
@@ -372,7 +372,7 @@ export function MobileNav() {
                               <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
                             </Link>
                           </li>
-                          {CATEGORY_LINKS.map((item) => {
+                          {categories.map((item) => {
                             const Icon =
                               CATEGORY_ICONS[item.slug] ?? LayoutGrid;
 

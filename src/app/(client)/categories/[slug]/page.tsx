@@ -1,27 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { categories, getCategoryBySlug } from "@/data/mock";
-import {
-  ProductsView,
-  parseProductSearchParams,
-  type ProductSearchParams,
-} from "@/features/products";
+import { findCategory, getCategoryTree } from "@/features/catalog";
+import { CatalogListing, type ProductSearchParams } from "@/features/products";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<ProductSearchParams>;
 };
 
-export function generateStaticParams() {
-  return categories.map((category) => ({ slug: category.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = findCategory(await getCategoryTree(), slug);
 
   if (!category) {
     return { title: "Category" };
@@ -38,15 +30,16 @@ export default async function CategoryPage({
   searchParams,
 }: CategoryPageProps) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = findCategory(await getCategoryTree(), slug);
 
   if (!category) {
     notFound();
   }
 
-  const query = parseProductSearchParams(await searchParams, {
-    category: slug,
-  });
-
-  return <ProductsView query={query} />;
+  return (
+    <CatalogListing
+      searchParams={await searchParams}
+      defaults={{ category: slug }}
+    />
+  );
 }

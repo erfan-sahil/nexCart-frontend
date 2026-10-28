@@ -1,8 +1,14 @@
 import { Container, SectionHeader } from "@/components/common";
 import { ProductGrid } from "@/components/product";
-import { recommendedProducts } from "@/data/mock";
+import type { Product } from "@/types";
 
-export function RecommendedForYou() {
+import { SectionEmpty } from "../section-empty";
+
+type RecommendedForYouProps = {
+  products?: Product[];
+};
+
+export function RecommendedForYou({ products = [] }: RecommendedForYouProps) {
   return (
     <section className="bg-brand-soft/60 py-12 sm:py-16 dark:bg-surface-muted">
       <Container>
@@ -12,7 +18,11 @@ export function RecommendedForYou() {
           description="Picked from stores and categories you tend to open."
           href="/products?collection=recommended"
         />
-        <ProductGrid products={recommendedProducts} />
+        {products.length > 0 ? (
+          <ProductGrid products={products} />
+        ) : (
+          <SectionEmpty message="No recommended products available right now." />
+        )}
       </Container>
     </section>
   );

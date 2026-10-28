@@ -1,9 +1,15 @@
 import { products } from "@/data/mock";
 import type { Product } from "@/types";
 
-export function resolveWishlist(ids: string[]): Product[] {
-  return ids.flatMap((id) => {
-    const product = products.find((item) => item.id === id);
+type WishlistEntry = {
+  id: string;
+  product?: Product;
+};
+
+export function resolveWishlist(entries: WishlistEntry[]): Product[] {
+  return entries.flatMap((entry) => {
+    const product =
+      entry.product ?? products.find((item) => item.id === entry.id);
     return product ? [product] : [];
   });
 }

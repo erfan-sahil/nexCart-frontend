@@ -1,4 +1,3 @@
-import { categories, getCategoryBySlug } from "@/data/mock";
 import type { BreadcrumbItem } from "@/components/common/page-breadcrumb";
 
 export const PRODUCT_COLLECTIONS = [
@@ -46,12 +45,22 @@ export const PRODUCT_SORT_OPTIONS: { id: ProductSort; label: string }[] = [
   { id: "rating", label: "Top rated" },
 ];
 
+export type FilterCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  children: { id: string; name: string; slug: string }[];
+};
+
 export type ProductQuery = {
   q?: string;
   collection?: ProductCollection;
   category?: string;
   subcategory?: string;
   sort: ProductSort;
+  sortExplicit: boolean;
   price?: PriceFilterId;
   rating?: number;
 };
@@ -98,11 +107,14 @@ export function parseProductSearchParams(
     collection = rawSort;
   }
 
+  const sortExplicit = Boolean(rawSort && isSort(rawSort));
   let sort: ProductSort = defaults.sort ?? "featured";
-  if (rawSort && isSort(rawSort)) {
+  if (sortExplicit && rawSort && isSort(rawSort)) {
     sort = rawSort;
-  } else if (collection === "bestsellers" && !rawSort) {
+  } else if (collection === "bestsellers") {
     sort = "bestsellers";
+  } else if (collection === "new-arrivals") {
+    sort = "newest";
   }
 
   const ratingValue = rawRating ? Number(rawRating) : defaults.rating;
@@ -115,21 +127,31 @@ export function parseProductSearchParams(
     category: category || undefined,
     subcategory: subcategory || undefined,
     sort,
+    sortExplicit,
     price: rawPrice && isPrice(rawPrice) ? rawPrice : defaults.price,
     rating,
   };
 }
 
-export function productsHref(query: Partial<ProductQuery>): string {
+export function parsePage(searchParams: ProductSearchParams) {
+  const raw = Number(first(searchParams.page));
+  if (!Number.isInteger(raw) || raw < 1) return 1;
+  return raw;
+}
+
+export function productsHref(query: Partial<ProductQuery>, page = 1): string {
   const params = new URLSearchParams();
 
   if (query.q) params.set("q", query.q);
   if (query.collection) params.set("collection", query.collection);
   if (query.category) params.set("category", query.category);
   if (query.subcategory) params.set("subcategory", query.subcategory);
-  if (query.sort && query.sort !== "featured") params.set("sort", query.sort);
+  if (query.sort && (query.sortExplicit || query.sort !== "featured")) {
+    params.set("sort", query.sort);
+  }
   if (query.price) params.set("price", query.price);
   if (query.rating) params.set("rating", String(query.rating));
+  if (page > 1) params.set("page", String(page));
 
   const qs = params.toString();
   return qs ? `/products?${qs}` : "/products";
@@ -192,11 +214,11 @@ export type ProductPageCopy = {
   breadcrumbs: BreadcrumbItem[];
 };
 
-export function getProductPageCopy(query: ProductQuery): ProductPageCopy {
-  const category = query.category
-    ? getCategoryBySlug(query.category)
-    : undefined;
-  const subcategory = category?.subcategories.find(
+export function getProductPageCopy(
+  query: ProductQuery,
+  category?: FilterCategory | null,
+): ProductPageCopy {
+  const subcategory = category?.children.find(
     (item) => item.slug === query.subcategory,
   );
 
@@ -251,7 +273,7 @@ export function getProductPageCopy(query: ProductQuery): ProductPageCopy {
   return {
     eyebrow: "Marketplace",
     title: "All products",
-    description: `Browse ${categories.length} departments from independent stores on NexCart.`,
+    description: "Browse products from independent stores on NexCart.",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Products" }],
   };
 }

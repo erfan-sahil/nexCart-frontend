@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
+import { MediaImage } from "@/components/common";
 import { cn } from "@/lib/utils";
 
 type ProductGalleryProps = {
@@ -14,18 +14,22 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
   const [active, setActive] = useState(0);
   const current = images[active] ?? images[0];
 
-  if (!current) return null;
+  if (!current) {
+    return (
+      <div className="flex aspect-square items-center justify-center rounded-2xl border border-border bg-surface-muted text-sm text-muted-foreground">
+        No image
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
       <div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-surface-muted">
-        <Image
+        <MediaImage
           src={current}
           alt={name}
-          fill
           priority
           sizes="(max-width: 1024px) 100vw, 640px"
-          className="object-cover"
         />
       </div>
       {images.length > 1 ? (
@@ -42,13 +46,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
                 index === active ? "border-primary" : "border-border",
               )}
             >
-              <Image
-                src={src}
-                alt=""
-                fill
-                sizes="140px"
-                className="object-cover"
-              />
+              <MediaImage src={src} alt="" sizes="140px" />
             </button>
           ))}
         </div>
