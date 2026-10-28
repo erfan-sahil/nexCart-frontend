@@ -5,9 +5,15 @@ import type { CatalogProduct } from "./types";
 
 const LIMIT = 6;
 
-async function fetchProducts(search: string) {
+async function fetchProducts(search: string, categoryId?: string) {
   const { data } = await api.get<ApiSuccess<CatalogProduct[]>>("/products", {
-    params: { search, limit: LIMIT, page: 1, sort: "featured" },
+    params: {
+      search,
+      limit: LIMIT,
+      page: 1,
+      sort: "featured",
+      categoryId: categoryId || undefined,
+    },
   });
 
   return data.data ?? [];
@@ -51,11 +57,15 @@ function score(product: CatalogProduct, query: string) {
   return value;
 }
 
-export async function suggestProducts(query: string) {
+export async function suggestProducts(
+  query: string,
+  options?: { categoryId?: string },
+) {
   const q = query.trim();
   if (q.length < 2) return [];
 
-  const primary = await fetchProducts(q);
+  const categoryId = options?.categoryId;
+  const primary = await fetchProducts(q, categoryId);
   const merged = new Map(primary.map((product) => [product.id, product]));
 
   if (merged.size < LIMIT) {
@@ -65,7 +75,7 @@ export async function suggestProducts(query: string) {
 
     for (const word of words.slice(0, 2)) {
       if (merged.size >= LIMIT) break;
-      const extra = await fetchProducts(word);
+      const extra = await fetchProducts(word, categoryId);
       for (const product of extra) {
         if (!merged.has(product.id)) merged.set(product.id, product);
       }

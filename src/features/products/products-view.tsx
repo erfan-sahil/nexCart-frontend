@@ -63,7 +63,7 @@ export function ProductsView({
 
           <div className="space-y-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <ProductsSearch query={query} />
+              <ProductsSearch query={query} category={category} />
               <ProductsSort query={query} />
             </div>
             <ProductsMobileFilters query={query} categories={categories} />
