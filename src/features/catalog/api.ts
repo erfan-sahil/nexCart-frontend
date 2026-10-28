@@ -48,11 +48,9 @@ export async function getCatalogHome() {
 
 export async function getCategoryTree() {
   try {
-    const body = await serverGet<CategoryNode[]>(
-      "/categories/tree",
-      { isActive: true },
-      { revalidate: 300 },
-    );
+    const body = await serverGet<CategoryNode[]>("/categories/tree", {
+      isActive: true,
+    });
     return body.data ?? [];
   } catch {
     return [];

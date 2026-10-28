@@ -97,6 +97,9 @@ export type CategoryNode = {
   slug: string;
   description: string;
   image: string;
+  level: number;
+  sortOrder: number;
   isActive: boolean;
+  productCount: number;
   children: CategoryNode[];
 };

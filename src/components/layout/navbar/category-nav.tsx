@@ -6,8 +6,17 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 
 import { Container } from "@/components/common";
-import { CATEGORY_LINKS } from "@/constants/navigation";
 import { cn } from "@/lib/utils";
+
+export type CategoryNavLink = {
+  slug: string;
+  label: string;
+  href: string;
+};
+
+type CategoryNavProps = {
+  categories: CategoryNavLink[];
+};
 
 function isCategoryActive(
   pathname: string,
@@ -18,7 +27,7 @@ function isCategoryActive(
   return pathname === "/products" && selectedSlug === slug;
 }
 
-function CategoryNavLinks() {
+function CategoryNavLinks({ categories }: CategoryNavProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const selectedSlug = searchParams.get("category");
@@ -43,7 +52,7 @@ function CategoryNavLinks() {
         />
         All categories
       </Link>
-      {CATEGORY_LINKS.map((item) => {
+      {categories.map((item) => {
         const active = isCategoryActive(pathname, selectedSlug, item.slug);
 
         return (
@@ -65,7 +74,7 @@ function CategoryNavLinks() {
   );
 }
 
-export function CategoryNav() {
+export function CategoryNav({ categories }: CategoryNavProps) {
   return (
     <nav
       aria-label="Product categories"
@@ -81,7 +90,7 @@ export function CategoryNav() {
           </Container>
         }
       >
-        <CategoryNavLinks />
+        <CategoryNavLinks categories={categories} />
       </Suspense>
     </nav>
   );

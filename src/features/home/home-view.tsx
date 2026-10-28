@@ -1,5 +1,11 @@
 import { Container } from "@/components/common";
-import { getCatalogHome, toProduct, toStore } from "@/features/catalog";
+import {
+  getCatalogHome,
+  getCategoryTree,
+  toProduct,
+  toStore,
+} from "@/features/catalog";
+import { toStorefrontCategories } from "@/features/categories/lib/map";
 
 import { FeaturedCategories } from "./components/featured-categories";
 import { FlashDeals } from "./components/flash-deals";
@@ -12,12 +18,16 @@ import { TopSellingProducts } from "./components/top-selling-products";
 import { TrendingProducts } from "./components/trending-products";
 
 export async function HomeView() {
-  const home = await getCatalogHome().catch(() => null);
+  const [home, tree] = await Promise.all([
+    getCatalogHome().catch(() => null),
+    getCategoryTree(),
+  ]);
+  const categories = toStorefrontCategories(tree);
 
   return (
     <>
       <HeroBanner />
-      <FeaturedCategories />
+      <FeaturedCategories categories={categories} />
       {home ? (
         <>
           <FlashDeals

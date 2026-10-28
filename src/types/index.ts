@@ -52,6 +52,7 @@ export type Subcategory = {
   image: string;
   productCount: number;
   popular?: boolean;
+  children?: Subcategory[];
 };
 
 export type Category = {

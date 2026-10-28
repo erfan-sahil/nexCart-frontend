@@ -15,15 +15,27 @@ type CategoryDirectoryProps = {
   categories: Category[];
 };
 
+function filterAisles(
+  aisles: Category["subcategories"],
+  query: string,
+): Category["subcategories"] {
+  return aisles.flatMap((aisle) => {
+    const children = filterAisles(aisle.children ?? [], query);
+    const nameMatch = aisle.name.toLowerCase().includes(query);
+
+    if (nameMatch) return [aisle];
+    if (children.length > 0) return [{ ...aisle, children }];
+    return [];
+  });
+}
+
 function filterCategories(categories: Category[], query: string) {
   const q = query.trim().toLowerCase();
   if (!q) return categories;
 
   return categories.reduce<Category[]>((matched, category) => {
     const nameMatch = category.name.toLowerCase().includes(q);
-    const matchingAisles = category.subcategories.filter((aisle) =>
-      aisle.name.toLowerCase().includes(q),
-    );
+    const matchingAisles = filterAisles(category.subcategories, q);
 
     if (nameMatch) {
       matched.push(category);
@@ -188,6 +200,20 @@ export function CategoryDirectory({ categories }: CategoryDirectoryProps) {
                               >
                                 {aisle.name}
                               </a>
+                              {aisle.children && aisle.children.length > 0 ? (
+                                <ul className="ml-3 border-l border-border pl-2">
+                                  {aisle.children.map((child) => (
+                                    <li key={child.id}>
+                                      <a
+                                        href={`#aisle-${category.slug}-${child.slug}`}
+                                        className="block truncate rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
+                                      >
+                                        {child.name}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
                             </li>
                           ))}
                         </ul>
