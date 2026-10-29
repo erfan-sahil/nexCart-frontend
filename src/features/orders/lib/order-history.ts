@@ -8,12 +8,14 @@ export type HistoryFilter = "all" | "open" | "delivered" | "cancelled";
 
 export type HistoryOrder = {
   id: string;
+  orderNumber?: string;
   email: string;
   status: HistoryStatus;
   placedOn: string;
   summary: string;
   items: TrackedItem[];
   trackable: boolean;
+  total?: number;
 };
 
 export const HISTORY_FILTERS: { id: HistoryFilter; label: string }[] = [

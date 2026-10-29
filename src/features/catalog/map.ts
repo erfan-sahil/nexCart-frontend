@@ -60,6 +60,7 @@ export function toProduct(dto: CatalogProduct): Product {
     subcategorySlug: "",
     listedAt: dto.publishedAt ?? dto.createdAt,
     inStock: dto.offer.inStock,
+    defaultVariantId: dto.offer.defaultVariantId,
   };
 }
 

@@ -3,10 +3,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuthStore } from "@/features/auth/store";
+import { listOrders } from "@/features/orders/api";
+import {
+  formatOrderDate,
+  mapOrderStatus,
+  orderIsTrackable,
+  orderItemsToTracked,
+  orderStatusSummary,
+} from "@/features/orders/lib/map-order";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -14,8 +24,6 @@ import {
   HISTORY_FILTERS,
   historyStatusLabel,
   matchesHistoryFilter,
-  orderHistory,
-  orderTotal,
   type HistoryFilter,
   type HistoryOrder,
   type HistoryStatus,
@@ -36,11 +44,58 @@ function statusBadge(status: HistoryStatus) {
 }
 
 export function OrderHistoryView() {
-  const orders = useMemo(() => orderHistory(), []);
+  const authStatus = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
   const [filter, setFilter] = useState<HistoryFilter>("all");
+
+  const ordersQuery = useQuery({
+    queryKey: ["orders", "list"],
+    enabled: authStatus === "authenticated",
+    queryFn: () => listOrders(1, 50),
+  });
+
+  const orders: HistoryOrder[] = useMemo(() => {
+    const rows = ordersQuery.data?.items ?? [];
+
+    return rows.map((order) => ({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      email: user?.email ?? "",
+      status: mapOrderStatus(order.status),
+      placedOn: formatOrderDate(order.createdAt),
+      summary: orderStatusSummary(order),
+      items: orderItemsToTracked(order),
+      trackable: orderIsTrackable(order),
+      total: order.totals.grandTotal,
+    }));
+  }, [ordersQuery.data?.items, user?.email]);
+
   const visible = orders.filter((order) =>
     matchesHistoryFilter(order.status, filter),
   );
+
+  if (authStatus === "loading") {
+    return (
+      <Container className="py-16">
+        <p className="text-sm text-muted-foreground">Loading orders…</p>
+      </Container>
+    );
+  }
+
+  if (authStatus !== "authenticated") {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Sign in to see orders</h1>
+        <Button
+          nativeButton={false}
+          render={<Link href="/login?next=/orders" />}
+          className="auth-orange-button mt-6"
+        >
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-8 sm:py-10">
@@ -58,13 +113,19 @@ export function OrderHistoryView() {
         </p>
         <h1 className="mt-1 text-3xl sm:text-4xl">Order history</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {orders.length} orders placed with this account.
+          {ordersQuery.isLoading
+            ? "Loading…"
+            : `${orders.length} orders with this account.`}
         </p>
       </div>
 
       <OrderFilterTabs orders={orders} filter={filter} onChange={setFilter} />
 
-      {visible.length === 0 ? (
+      {ordersQuery.isError ? (
+        <p className="mt-6 text-sm text-destructive">Could not load orders.</p>
+      ) : null}
+
+      {visible.length === 0 && !ordersQuery.isLoading ? (
         <div className="mt-6 rounded-2xl border border-dashed border-border px-6 py-14 text-center">
           <h2 className="text-xl">No orders in this view</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
@@ -101,7 +162,7 @@ export function OrderHistoryView() {
                   className="border-b border-border align-middle last:border-b-0"
                 >
                   <td className="px-4 py-3 font-medium whitespace-nowrap">
-                    {order.id}
+                    {order.orderNumber ?? order.id}
                   </td>
                   <td className="w-72 px-4 py-3">
                     <ItemList items={order.items} />
@@ -126,19 +187,15 @@ export function OrderHistoryView() {
                     {order.placedOn}
                   </td>
                   <td className="px-4 py-3 text-right font-medium whitespace-nowrap tabular-nums">
-                    {formatPrice(orderTotal(order.items))}
+                    {formatPrice(order.total ?? 0)}
                   </td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
-                    {order.trackable ? (
-                      <Link
-                        href={`/track-order?order=${order.id}&email=${encodeURIComponent(order.email)}`}
-                        className="font-medium text-primary hover:underline"
-                      >
-                        Track
-                      </Link>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      View
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -158,16 +215,23 @@ function ItemList({ items }: { items: TrackedItem[] }) {
   const list = (
     <ul>
       {items.map((item) => (
-        <li key={item.slug} className="flex h-10 items-center gap-2 pr-2">
-          <span className="relative size-8 shrink-0 overflow-hidden rounded-md bg-surface-muted">
-            <Image
-              src={item.image}
-              alt=""
-              fill
-              sizes="32px"
-              className="object-cover"
-            />
-          </span>
+        <li
+          key={item.slug + item.name}
+          className="flex h-10 items-center gap-2 pr-2"
+        >
+          {item.image ? (
+            <span className="relative size-8 shrink-0 overflow-hidden rounded-md bg-surface-muted">
+              <Image
+                src={item.image}
+                alt=""
+                fill
+                sizes="32px"
+                className="object-cover"
+              />
+            </span>
+          ) : (
+            <span className="size-8 shrink-0 rounded-md bg-surface-muted" />
+          )}
           <span className="min-w-0 truncate">{item.name}</span>
           <span className="shrink-0 text-muted-foreground">
             ×{item.quantity}

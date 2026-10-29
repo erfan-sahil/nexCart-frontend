@@ -16,11 +16,17 @@ type AddToCartButtonProps = {
 export function AddToCartButton({ product, className }: AddToCartButtonProps) {
   const add = useCartStore((state) => state.add);
   const [added, setAdded] = useState(false);
-  const unavailable = product.inStock === false;
+  const [failed, setFailed] = useState(false);
+  const unavailable = product.inStock === false || !product.defaultVariantId;
 
   function addToCart() {
     if (unavailable) return;
-    add(product.id, 1, product);
+    const ok = add(product, 1);
+    if (!ok) {
+      setFailed(true);
+      window.setTimeout(() => setFailed(false), 2000);
+      return;
+    }
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1200);
   }

@@ -23,6 +23,8 @@ export type Product = {
   subcategorySlug: string;
   listedAt: string;
   inStock?: boolean;
+  /** Default sellable SKU for checkout */
+  defaultVariantId?: string | null;
 };
 
 export type ProductSpecification = {

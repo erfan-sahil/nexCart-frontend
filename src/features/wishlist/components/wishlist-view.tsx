@@ -21,7 +21,7 @@ export function WishlistView() {
   function addAllToCart() {
     const add = useCartStore.getState().add;
     for (const product of products) {
-      add(product.id, 1, product);
+      add(product, 1);
     }
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);
