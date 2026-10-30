@@ -23,6 +23,7 @@ import { formatCount } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import { SignInToReviewLink } from "./product-rating-link";
+import { ReviewCommentMenu } from "./review-comment-menu";
 
 type ProductReviewSectionProps = {
   productId: string;
@@ -86,7 +87,7 @@ function RatingPicker({
             aria-pressed={value === star}
             onClick={() => onChange(star)}
             className={cn(
-              "inline-flex size-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:opacity-50",
+              "inline-flex size-9 cursor-pointer items-center justify-center rounded-full border text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50",
               selected
                 ? "border-primary bg-primary text-[#fff4f2]"
                 : "border-border bg-background text-muted-foreground hover:border-primary hover:text-primary",
@@ -339,23 +340,13 @@ function ReplyItem({
             {formatReviewDate(reply.createdAt)}
           </p>
         </div>
-        {reply.isMine ? (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="text-xs font-medium text-primary hover:underline"
-              onClick={() => setEditing((value) => !value)}
-            >
-              {editing ? "Cancel" : "Edit"}
-            </button>
-            <button
-              type="button"
-              className="text-xs font-medium text-destructive hover:underline"
-              onClick={() => deleteReview.mutate({ reviewId: reply.id })}
-            >
-              Delete
-            </button>
-          </div>
+        {reply.isMine && !editing ? (
+          <ReviewCommentMenu
+            itemLabel="reply"
+            deletePending={deleteReview.isPending}
+            onEdit={() => setEditing(true)}
+            onDelete={() => deleteReview.mutate({ reviewId: reply.id })}
+          />
         ) : null}
       </div>
       {editing ? (
@@ -370,14 +361,23 @@ function ReplyItem({
           {error ? (
             <p className="mt-1 text-sm text-destructive">{error}</p>
           ) : null}
-          <Button
-            type="submit"
-            size="sm"
-            className="mt-2"
-            disabled={updateReview.isPending}
-          >
-            Save
-          </Button>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setEditing(false);
+                setBody(reply.body);
+                setError("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" size="sm" disabled={updateReview.isPending}>
+              Save
+            </Button>
+          </div>
         </form>
       ) : (
         <p className="mt-2 text-sm leading-6 text-foreground">{reply.body}</p>
@@ -401,7 +401,8 @@ function ReviewItem({
   const [body, setBody] = useState(review.body);
   const [error, setError] = useState("");
 
-  const viewerReply = review.replies.find((reply) => reply.isMine);
+  const replies = review.replies ?? [];
+  const viewerReply = replies.find((reply) => reply.isMine);
   const canReply = status === "authenticated" && !viewerReply;
 
   function save(event: FormEvent) {
@@ -442,23 +443,13 @@ function ReviewItem({
         </div>
         <div className="flex items-center gap-3">
           <StarRating value={review.rating} />
-          {review.isMine ? (
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="text-xs font-medium text-primary hover:underline"
-                onClick={() => setEditing((value) => !value)}
-              >
-                {editing ? "Cancel" : "Edit"}
-              </button>
-              <button
-                type="button"
-                className="text-xs font-medium text-destructive hover:underline"
-                onClick={() => deleteReview.mutate({ reviewId: review.id })}
-              >
-                Delete
-              </button>
-            </div>
+          {review.isMine && !editing ? (
+            <ReviewCommentMenu
+              itemLabel="review"
+              deletePending={deleteReview.isPending}
+              onEdit={() => setEditing(true)}
+              onDelete={() => deleteReview.mutate({ reviewId: review.id })}
+            />
           ) : null}
         </div>
       </div>
@@ -479,33 +470,41 @@ function ReviewItem({
           {error ? (
             <p className="mt-1 text-sm text-destructive">{error}</p>
           ) : null}
-          <Button
-            type="submit"
-            size="sm"
-            className="mt-2"
-            disabled={updateReview.isPending}
-          >
-            Save changes
-          </Button>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setEditing(false);
+                setRating(review.rating);
+                setBody(review.body);
+                setError("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" size="sm" disabled={updateReview.isPending}>
+              Save changes
+            </Button>
+          </div>
         </form>
       ) : (
         <p className="mt-3 text-sm leading-6 text-foreground">{review.body}</p>
       )}
 
-      {review.replies.length > 0 ? (
+      {replies.length > 0 ? (
         <ul className="mt-4 space-y-3">
-          {review.replies.map((reply) => (
+          {replies.map((reply) => (
             <ReplyItem key={reply.id} productId={productId} reply={reply} />
           ))}
         </ul>
       ) : null}
 
-      {review.replyCount > review.replies.length ? (
+      {review.replyCount > replies.length ? (
         <p className="mt-2 text-xs text-muted-foreground">
-          {formatCount(review.replyCount - review.replies.length)} more{" "}
-          {review.replyCount - review.replies.length === 1
-            ? "reply"
-            : "replies"}
+          {formatCount(review.replyCount - replies.length)} more{" "}
+          {review.replyCount - replies.length === 1 ? "reply" : "replies"}
         </p>
       ) : null}
 
@@ -625,7 +624,7 @@ export function ProductReviewSection({
           Could not load reviews.{" "}
           <button
             type="button"
-            className="font-medium text-primary hover:underline"
+            className="cursor-pointer font-medium text-primary hover:underline"
             onClick={() => refetch()}
           >
             Try again

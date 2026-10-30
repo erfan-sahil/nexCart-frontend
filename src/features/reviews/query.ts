@@ -87,7 +87,7 @@ export function useUpdateProductReview(productId: string, page = 1) {
           if (result.reply) {
             return {
               ...review,
-              replies: review.replies.map((reply) =>
+              replies: (review.replies ?? []).map((reply) =>
                 reply.id === result.reply!.id ? result.reply! : reply,
               ),
             };
@@ -136,11 +136,11 @@ export function useDeleteProductReview(productId: string, page = 1) {
               .filter((review) => review.id !== variables.reviewId)
               .map((review) => ({
                 ...review,
-                replies: review.replies.filter(
+                replies: (review.replies ?? []).filter(
                   (reply) => reply.id !== variables.reviewId,
                 ),
                 replyCount:
-                  review.replies.some(
+                  (review.replies ?? []).some(
                     (reply) => reply.id === variables.reviewId,
                   ) && review.replyCount > 0
                     ? review.replyCount - 1
@@ -171,7 +171,7 @@ export function useCreateReviewReply(productId: string, page = 1) {
               return review;
             }
 
-            const exists = review.replies.some(
+            const exists = (review.replies ?? []).some(
               (reply) => reply.id === result.reply.id,
             );
 
@@ -179,10 +179,10 @@ export function useCreateReviewReply(productId: string, page = 1) {
               ...review,
               replyCount: exists ? review.replyCount : review.replyCount + 1,
               replies: exists
-                ? review.replies.map((reply) =>
+                ? (review.replies ?? []).map((reply) =>
                     reply.id === result.reply.id ? result.reply : reply,
                   )
-                : [...review.replies, result.reply],
+                : [...(review.replies ?? []), result.reply],
             };
           }),
         },
