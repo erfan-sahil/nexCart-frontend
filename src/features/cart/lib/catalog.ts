@@ -1,21 +1,37 @@
-import { products } from "@/data/mock";
-import type { StoreSummary } from "@/types";
+import type { Product } from "@/types";
 
-import type { CartLine, ResolvedCartLine } from "../types";
+import { MAX_CART_QUANTITY, type CartLine } from "../types";
+
+export type ResolvedCartLine = {
+  variantId: string;
+  product: Product;
+  quantity: number;
+};
 
 export function resolveCartLines(lines: CartLine[]): ResolvedCartLine[] {
   return lines.flatMap((line) => {
-    const product =
-      line.product ?? products.find((item) => item.id === line.productId);
-    if (!product) return [];
-    return [{ product, quantity: line.quantity }];
+    if (!line.variantId || !line.product) return [];
+    return [
+      {
+        variantId: line.variantId,
+        product: line.product,
+        quantity: line.quantity,
+      },
+    ];
   });
+}
+
+export function cartItemsForCheckout(lines: ResolvedCartLine[]) {
+  return lines.map((line) => ({
+    variantId: line.variantId,
+    quantity: line.quantity,
+  }));
 }
 
 export function groupCartByStore(lines: ResolvedCartLine[]) {
   const groups = new Map<
     string,
-    { store: StoreSummary; lines: ResolvedCartLine[] }
+    { store: Product["store"]; lines: ResolvedCartLine[] }
   >();
 
   for (const line of lines) {

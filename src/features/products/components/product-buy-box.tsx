@@ -18,11 +18,12 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const [added, setAdded] = useState(false);
   const off = discountPercent(product.price, product.originalPrice);
 
-  const unavailable = product.inStock === false;
+  const unavailable = product.inStock === false || !product.defaultVariantId;
 
   function addToCart() {
     if (unavailable) return;
-    useCartStore.getState().add(product.id, quantity, product);
+    const ok = useCartStore.getState().add(product, quantity);
+    if (!ok) return;
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
   }

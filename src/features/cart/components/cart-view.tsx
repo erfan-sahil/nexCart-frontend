@@ -85,7 +85,7 @@ export function CartView() {
                 <ul>
                   {group.lines.map((line) => (
                     <li
-                      key={line.product.id}
+                      key={line.variantId}
                       className="flex items-center gap-3 border-t border-border px-4 py-2.5 first:border-t-0"
                     >
                       <Link
@@ -120,7 +120,7 @@ export function CartView() {
                             quantity={line.quantity}
                             label={line.product.name}
                             onChange={(quantity) =>
-                              setQuantity(line.product.id, quantity)
+                              setQuantity(line.variantId, quantity)
                             }
                           />
                           <p className="min-w-16 text-right font-semibold tabular-nums">
@@ -130,7 +130,7 @@ export function CartView() {
                             type="button"
                             className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                             aria-label={`Remove ${line.product.name}`}
-                            onClick={() => remove(line.product.id)}
+                            onClick={() => remove(line.variantId)}
                           >
                             <Trash2 className="size-4" />
                           </button>

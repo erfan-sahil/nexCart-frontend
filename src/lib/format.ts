@@ -1,7 +1,7 @@
-export function formatPrice(value: number) {
-  return new Intl.NumberFormat("en-US", {
+export function formatPrice(value: number, currency = "BDT") {
+  return new Intl.NumberFormat("en-BD", {
     style: "currency",
-    currency: "USD",
+    currency,
     maximumFractionDigits: value % 1 === 0 ? 0 : 2,
   }).format(value);
 }

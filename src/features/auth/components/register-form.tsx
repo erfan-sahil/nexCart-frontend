@@ -10,6 +10,7 @@ import { ApiError } from "@/lib/api/errors";
 
 import { register as registerAccount } from "../api";
 import { splitApiError } from "../lib/api-errors";
+import { withNext } from "../lib/next-path";
 import { fieldErrorResolver } from "../lib/resolver";
 import { validateRegister, type RegisterValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
@@ -17,7 +18,11 @@ import { useAuthStore } from "../store";
 import { PhoneField } from "./phone-field";
 import { PasswordField, TextField } from "./text-field";
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  nextPath?: string;
+};
+
+export function RegisterForm({ nextPath = "/" }: RegisterFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const {
@@ -43,7 +48,7 @@ export function RegisterForm() {
     onSuccess: (session) => {
       useAuthStore.getState().setSession(session);
       queryClient.setQueryData(sessionQueryKey, session);
-      router.push("/");
+      router.push(nextPath);
       router.refresh();
     },
     onError: (error) => {
@@ -155,7 +160,7 @@ export function RegisterForm() {
       <p className="text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
-          href="/login"
+          href={withNext("/login", nextPath)}
           className="font-medium text-[#ff4d4d] hover:underline"
         >
           Sign in

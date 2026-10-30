@@ -2,14 +2,25 @@
 
 import { ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useId, useState, type FormEvent } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/features/auth/store";
+import { ApiError } from "@/lib/api/errors";
 
-import { lookupOrder, type LookupResult } from "../lib/mock-orders";
+import { trackOrder } from "../api";
+import { isCheckoutEmail, toTrackedOrder } from "../lib/map-tracking";
 import type { TrackedOrder } from "../types";
 import { TrackingResult } from "./tracking-result";
 
@@ -22,15 +33,15 @@ type ViewState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "found"; result: Extract<LookupResult, { kind: "found" }> };
+  | { status: "found" };
 
-const EMPTY_FORM: FormState = { orderId: "", email: "" };
+function lookupErrorMessage(error: unknown) {
+  if (error instanceof ApiError && error.status === 404) {
+    return "No order matches that number and email.";
+  }
 
-function prefillFromParams(params: { get(name: string): string | null }) {
-  const orderId = params.get("order")?.trim();
-  const email = params.get("email")?.trim();
-  if (!orderId || !email) return null;
-  return { orderId: orderId.toUpperCase(), email };
+  if (error instanceof ApiError) return error.message;
+  return "Could not look up that order.";
 }
 
 export function TrackOrderView() {
@@ -49,60 +60,75 @@ export function TrackOrderView() {
 
 function TrackOrderScreen() {
   const params = useSearchParams();
-  const prefill = prefillFromParams(params);
+  const prefillOrder = params.get("order")?.trim().toUpperCase() ?? "";
+  const prefillEmail = params.get("email")?.trim() ?? "";
+  const userEmail = useAuthStore((state) => state.user?.email ?? "");
   const orderFieldId = useId();
   const emailFieldId = useId();
-  const [form, setForm] = useState<FormState>(prefill ?? EMPTY_FORM);
+  const [orderId, setOrderId] = useState(prefillOrder);
+  const [emailDraft, setEmailDraft] = useState<string | null>(
+    prefillEmail || null,
+  );
+  const email = emailDraft ?? userEmail;
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const [query, setQuery] = useState<FormState | null>(prefill);
   const [view, setView] = useState<ViewState>(
-    prefill ? { status: "loading" } : { status: "idle" },
+    prefillOrder && prefillEmail ? { status: "loading" } : { status: "idle" },
   );
   const [shipment, setShipment] = useState<TrackedOrder | null>(null);
+  const requestSeq = useRef(0);
+
+  const applyLookup = useCallback(
+    (seq: number, lookupEmail: string, orderNumber: string) => {
+      return trackOrder({ orderNumber, email: lookupEmail }).then(
+        (order) => {
+          if (seq !== requestSeq.current) return;
+          setShipment(toTrackedOrder(order, lookupEmail));
+          setView({ status: "found" });
+        },
+        (error: unknown) => {
+          if (seq !== requestSeq.current) return;
+          setShipment(null);
+          setView({ status: "error", message: lookupErrorMessage(error) });
+        },
+      );
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!query) return;
+    if (!prefillOrder || !prefillEmail) return;
 
-    const timer = window.setTimeout(() => {
-      const result = lookupOrder(query.orderId, query.email);
-
-      if (result.kind === "found") {
-        setShipment(result.order);
-        setView({ status: "found", result });
-        return;
-      }
-
-      setView({
-        status: "error",
-        message:
-          result.kind === "mismatch"
-            ? "That email does not match this order."
-            : "No shipment uses that order number.",
-      });
-    }, 450);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
+    const seq = ++requestSeq.current;
+    void applyLookup(seq, prefillEmail, prefillOrder);
+  }, [applyLookup, prefillEmail, prefillOrder]);
 
   function track(next: FormState) {
-    const orderId = next.orderId.trim();
-    const email = next.email.trim();
+    const nextOrderId = next.orderId.trim().toUpperCase();
+    const nextEmail = next.email.trim();
 
-    if (!orderId || !email) {
+    if (!nextOrderId || !nextEmail) {
       setFieldError("Add the order number and the checkout email.");
       if (!shipment) setView({ status: "idle" });
       return;
     }
 
+    if (!isCheckoutEmail(nextEmail)) {
+      setFieldError("Enter the email used at checkout.");
+      if (!shipment) setView({ status: "idle" });
+      return;
+    }
+
     setFieldError(null);
-    setForm({ orderId, email });
+    setOrderId(nextOrderId);
+    setEmailDraft(nextEmail);
     setView({ status: "loading" });
-    setQuery({ orderId, email });
+    const seq = ++requestSeq.current;
+    void applyLookup(seq, nextEmail, nextOrderId);
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    track(form);
+    track({ orderId, email });
   }
 
   const notice = fieldError ?? (view.status === "error" ? view.message : null);
@@ -128,30 +154,20 @@ function TrackOrderScreen() {
           >
             <Input
               aria-label="Order number"
-              value={form.orderId}
+              value={orderId}
               autoComplete="off"
               placeholder="Order number"
               className="h-10 bg-card uppercase"
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  orderId: event.target.value.toUpperCase(),
-                }))
-              }
+              onChange={(event) => setOrderId(event.target.value.toUpperCase())}
             />
             <Input
               aria-label="Email"
               type="email"
-              value={form.email}
+              value={email}
               autoComplete="email"
               placeholder="Email"
               className="h-10 bg-card"
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  email: event.target.value,
-                }))
-              }
+              onChange={(event) => setEmailDraft(event.target.value)}
             />
             <Button
               type="submit"
@@ -186,16 +202,13 @@ function TrackOrderScreen() {
                 <Label htmlFor={orderFieldId}>Order number</Label>
                 <Input
                   id={orderFieldId}
-                  value={form.orderId}
+                  value={orderId}
                   autoComplete="off"
-                  placeholder="NX-48291"
+                  placeholder="NC20261030A1B2C3"
                   className="h-12 text-base uppercase"
                   aria-invalid={Boolean(fieldError)}
                   onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      orderId: event.target.value.toUpperCase(),
-                    }))
+                    setOrderId(event.target.value.toUpperCase())
                   }
                 />
               </div>
@@ -204,17 +217,12 @@ function TrackOrderScreen() {
                 <Input
                   id={emailFieldId}
                   type="email"
-                  value={form.email}
+                  value={email}
                   autoComplete="email"
                   placeholder="you@email.com"
                   className="h-12"
                   aria-invalid={Boolean(fieldError)}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      email: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setEmailDraft(event.target.value)}
                 />
               </div>
               {fieldError ? (
@@ -235,6 +243,10 @@ function TrackOrderScreen() {
           </div>
         </section>
       )}
+
+      {view.status === "loading" && !shipment ? (
+        <div className="mt-6 h-40 animate-pulse rounded-[1.75rem] bg-muted" />
+      ) : null}
 
       {shipment ? (
         <>

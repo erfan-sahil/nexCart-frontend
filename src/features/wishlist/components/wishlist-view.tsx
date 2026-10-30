@@ -7,21 +7,74 @@ import { useState } from "react";
 import { Container, PageBreadcrumb } from "@/components/common";
 import { ProductCard } from "@/components/product";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/features/auth/store";
 import { useCartStore } from "@/features/cart";
 
-import { resolveWishlist } from "../lib/catalog";
-import { useWishlistStore } from "../store";
+import { ProductCardSkeleton } from "./product-card-skeleton";
+import { useClearWishlist, useWishlist } from "../query";
+
+const SKELETON_CARDS = 6;
 
 export function WishlistView() {
-  const entries = useWishlistStore((state) => state.entries);
-  const clear = useWishlistStore((state) => state.clear);
-  const products = resolveWishlist(entries);
+  const authStatus = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
+  const wishlist = useWishlist();
+  const clearWishlist = useClearWishlist();
   const [added, setAdded] = useState(false);
+
+  if (authStatus !== "loading" && authStatus !== "authenticated") {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Sign in to see your wishlist</h1>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Saved products stay on your account.
+        </p>
+        <Button
+          nativeButton={false}
+          render={<Link href="/login?next=/wishlist" />}
+          className="auth-orange-button mt-6 px-6"
+        >
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
+
+  if (authStatus === "authenticated" && user?.role !== "customer") {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Wishlist is for customer accounts</h1>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Sign in with a customer account to save products.
+        </p>
+      </Container>
+    );
+  }
+
+  const loading =
+    authStatus === "loading" ||
+    (user?.role === "customer" && wishlist.isPending);
+
+  if (!loading && wishlist.isError) {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Could not load your wishlist</h1>
+        <Button
+          className="auth-orange-button mt-6 px-6"
+          onClick={() => wishlist.refetch()}
+        >
+          Try again
+        </Button>
+      </Container>
+    );
+  }
+
+  const products = loading ? [] : (wishlist.data ?? []);
 
   function addAllToCart() {
     const add = useCartStore.getState().add;
     for (const product of products) {
-      add(product.id, 1, product);
+      add(product, 1);
     }
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1400);
@@ -65,7 +118,8 @@ export function WishlistView() {
               <Button
                 variant="outline"
                 className="h-9 rounded-full bg-card px-3 text-sm hover:bg-destructive/10 hover:text-destructive"
-                onClick={clear}
+                disabled={clearWishlist.isPending}
+                onClick={() => clearWishlist.mutate()}
               >
                 Clear
               </Button>
@@ -73,7 +127,19 @@ export function WishlistView() {
           ) : null}
         </div>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <ul
+            aria-busy="true"
+            aria-label="Loading wishlist"
+            className="grid grid-cols-2 gap-3 bg-surface-muted p-3 sm:grid-cols-3 sm:p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          >
+            {Array.from({ length: SKELETON_CARDS }, (_, index) => (
+              <li key={index} className="min-w-0">
+                <ProductCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        ) : products.length === 0 ? (
           <div className="flex flex-col items-center px-6 py-16 text-center">
             <span className="inline-flex size-14 items-center justify-center rounded-full bg-brand-soft text-primary">
               <Heart className="size-6" />

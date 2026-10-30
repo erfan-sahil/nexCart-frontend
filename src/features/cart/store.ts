@@ -6,60 +6,68 @@ import { MAX_CART_QUANTITY, type CartLine } from "./types";
 
 type CartState = {
   lines: CartLine[];
-  add: (productId: string, quantity?: number, product?: Product) => void;
-  setQuantity: (productId: string, quantity: number) => void;
-  remove: (productId: string) => void;
+  add: (product: Product, quantity?: number) => boolean;
+  setQuantity: (variantId: string, quantity: number) => void;
+  remove: (variantId: string) => void;
   clear: () => void;
 };
-
-export const dummyCartLines: CartLine[] = [
-  { productId: "p1", quantity: 1 },
-  { productId: "p2", quantity: 2 },
-  { productId: "p3", quantity: 1 },
-];
 
 function clampQuantity(quantity: number) {
   return Math.min(MAX_CART_QUANTITY, Math.max(1, Math.floor(quantity)));
 }
 
 export const useCartStore = create<CartState>((set) => ({
-  lines: dummyCartLines,
-  add: (productId, quantity = 1, product) =>
+  lines: [],
+  add: (product, quantity = 1) => {
+    const variantId = product.defaultVariantId;
+
+    if (!variantId) {
+      return false;
+    }
+
     set((state) => {
-      const existing = state.lines.find((line) => line.productId === productId);
+      const existing = state.lines.find((line) => line.variantId === variantId);
 
       if (!existing) {
         return {
           lines: [
             ...state.lines,
-            { productId, quantity: clampQuantity(quantity), product },
+            {
+              variantId,
+              productId: product.id,
+              quantity: clampQuantity(quantity),
+              product,
+            },
           ],
         };
       }
 
       return {
         lines: state.lines.map((line) =>
-          line.productId === productId
+          line.variantId === variantId
             ? {
                 ...line,
                 quantity: clampQuantity(line.quantity + quantity),
-                product: product ?? line.product,
+                product,
               }
             : line,
         ),
       };
-    }),
-  setQuantity: (productId, quantity) =>
+    });
+
+    return true;
+  },
+  setQuantity: (variantId, quantity) =>
     set((state) => ({
       lines: state.lines.map((line) =>
-        line.productId === productId
+        line.variantId === variantId
           ? { ...line, quantity: clampQuantity(quantity) }
           : line,
       ),
     })),
-  remove: (productId) =>
+  remove: (variantId) =>
     set((state) => ({
-      lines: state.lines.filter((line) => line.productId !== productId),
+      lines: state.lines.filter((line) => line.variantId !== variantId),
     })),
   clear: () => set({ lines: [] }),
 }));

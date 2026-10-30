@@ -1,27 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Smartphone, Truck } from "lucide-react";
-import { useEffect, useId, useState, type ComponentProps } from "react";
+import { CreditCard, Truck } from "lucide-react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  type ComponentProps,
+} from "react";
 import { useForm } from "react-hook-form";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/features/auth/store";
-import { formatPrice } from "@/lib/format";
+import { ApiError } from "@/lib/api/errors";
+import {
+  buildCheckoutPayload,
+  createOrder,
+  initiatePayment,
+  quoteOrder,
+} from "@/features/orders/api";
 import { cn } from "@/lib/utils";
 
-import { resolveCartLines } from "../lib/catalog";
+import { cartItemsForCheckout, resolveCartLines } from "../lib/catalog";
 import { getCartTotals } from "../lib/totals";
 import {
   checkoutResolver,
-  createOrderId,
   emptyCheckout,
+  newIdempotencyKey,
+  toBangladeshMobile,
 } from "../lib/validation";
 import { useCartStore } from "../store";
-import type { CheckoutValues, PaymentMethod, PlacedOrder } from "../types";
+import type { CheckoutValues, PaymentMethod } from "../types";
 import { OrderSummary } from "./order-summary";
 
 function CheckoutField({
@@ -58,18 +72,18 @@ const paymentOptions: {
   id: PaymentMethod;
   label: string;
   detail: string;
-  icon: typeof Smartphone;
+  icon: typeof CreditCard;
 }[] = [
   {
-    id: "bkash",
-    label: "bKash",
-    detail: "Pay from your bKash wallet",
-    icon: Smartphone,
+    id: "prepaid",
+    label: "Pay in full online",
+    detail: "Pay items plus delivery before we confirm your order",
+    icon: CreditCard,
   },
   {
     id: "cod",
     label: "Cash on delivery",
-    detail: "Pay when the order arrives",
+    detail: "Pay the delivery fee online now; pay for items when delivered",
     icon: Truck,
   },
 ];
@@ -78,10 +92,11 @@ export function CheckoutView() {
   const lines = useCartStore((state) => state.lines);
   const clear = useCartStore((state) => state.clear);
   const user = useAuthStore((state) => state.user);
-  const [order, setOrder] = useState<PlacedOrder | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bkash");
+  const authStatus = useAuthStore((state) => state.status);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("prepaid");
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const resolved = resolveCartLines(lines);
-  const totals = getCartTotals(resolved);
+  const localTotals = getCartTotals(resolved);
 
   const {
     register,
@@ -104,11 +119,70 @@ export function CheckoutView() {
       firstName: current.firstName || user.firstName,
       lastName: current.lastName || user.lastName,
       email: current.email || user.email,
-      phone: current.phone || user.phone || "",
+      phone: current.phone || toBangladeshMobile(user.phone),
     });
   }, [getValues, reset, user]);
 
-  if (order) {
+  const checkoutItems = useMemo(
+    () => cartItemsForCheckout(resolved),
+    [resolved],
+  );
+
+  const quoteQuery = useQuery({
+    queryKey: ["checkout-quote", checkoutItems, paymentMethod],
+    enabled: resolved.length > 0 && authStatus === "authenticated",
+    queryFn: async () => {
+      const values = getValues();
+      const payload = buildCheckoutPayload(
+        { ...values, paymentMethod },
+        checkoutItems,
+      );
+      return quoteOrder(payload);
+    },
+    staleTime: 15_000,
+  });
+
+  const placeOrderMutation = useMutation({
+    mutationFn: async (values: CheckoutValues) => {
+      const payload = buildCheckoutPayload(values, checkoutItems);
+      const createKey = newIdempotencyKey();
+      const order = await createOrder(payload, createKey);
+      const payKey = newIdempotencyKey();
+      const payment = await initiatePayment(order.id, payKey);
+      return payment;
+    },
+    onSuccess: (payment) => {
+      clear();
+      window.location.assign(payment.gatewayPageUrl);
+    },
+    onError: (error) => {
+      setSubmitError(
+        error instanceof ApiError
+          ? error.message
+          : "Could not place your order",
+      );
+    },
+  });
+
+  const summaryTotals = quoteQuery.data
+    ? {
+        ...localTotals,
+        subtotal: quoteQuery.data.totals.itemsSubtotal,
+        deliveryFee: quoteQuery.data.totals.deliveryFee,
+        total: quoteQuery.data.totals.grandTotal,
+        dueNow: quoteQuery.data.totals.amountDueNow,
+      }
+    : { ...localTotals, dueNow: localTotals.total };
+
+  if (authStatus === "loading") {
+    return (
+      <Container className="py-16">
+        <p className="text-sm text-muted-foreground">Loading checkout…</p>
+      </Container>
+    );
+  }
+
+  if (authStatus !== "authenticated" || !user) {
     return (
       <Container className="py-8 sm:py-10">
         <PageBreadcrumb
@@ -118,46 +192,18 @@ export function CheckoutView() {
             { label: "Checkout" },
           ]}
         />
-        <div className="mx-auto mt-10 max-w-lg rounded-2xl border border-border bg-card px-6 py-12 text-center">
-          <span className="mx-auto inline-flex size-12 items-center justify-center rounded-full bg-brand-soft text-primary">
-            <Check className="size-6" />
-          </span>
-          <p className="mt-5 text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-            Order placed
-          </p>
-          <h1 className="mt-2 text-3xl">Thanks, {order.recipient}</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Order{" "}
-            <span className="font-medium text-foreground">{order.id}</span> is
-            confirmed. A receipt preview would go to {order.email}.
-          </p>
-          <dl className="mt-6 space-y-2 rounded-xl bg-muted/60 px-4 py-4 text-left text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">Ship to</dt>
-              <dd className="text-right font-medium">{order.address}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">Payment</dt>
-              <dd className="font-medium">{order.paymentLabel}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">
-                {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
-              </dt>
-              <dd className="font-semibold tabular-nums">
-                {formatPrice(order.total)}
-              </dd>
-            </div>
-          </dl>
-          <p className="mt-4 text-xs text-muted-foreground">
-            This is a preview checkout. No payment was captured.
+        <div className="mt-10 rounded-2xl border border-border bg-card px-6 py-16 text-center">
+          <h1 className="text-2xl">Sign in to checkout</h1>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+            Orders are tied to your account. Sign in, then return here to pay
+            securely.
           </p>
           <Button
             nativeButton={false}
-            render={<Link href="/products" />}
+            render={<Link href="/login?next=/checkout" />}
             className="auth-orange-button mt-6 px-6"
           >
-            Continue shopping
+            Sign in
           </Button>
         </div>
       </Container>
@@ -177,8 +223,8 @@ export function CheckoutView() {
         <div className="mt-10 rounded-2xl border border-border bg-card px-6 py-16 text-center">
           <h1 className="text-2xl">Nothing to check out</h1>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Your cart is empty. Add a product, then come back to place the
-            order.
+            Your cart is empty, or items are missing variant data. Add products
+            from the catalog again.
           </p>
           <Button
             nativeButton={false}
@@ -193,27 +239,8 @@ export function CheckoutView() {
   }
 
   function placeOrder(values: CheckoutValues) {
-    const address = [
-      values.line1.trim(),
-      values.city.trim(),
-      values.region.trim(),
-      values.postalCode.trim(),
-    ].join(", ");
-    const paymentLabel =
-      values.paymentMethod === "cod"
-        ? "Cash on delivery"
-        : `bKash ${values.bkashNumber.replace(/\D/g, "")}`;
-
-    setOrder({
-      id: createOrderId(),
-      email: values.email.trim(),
-      recipient: values.firstName.trim(),
-      address,
-      paymentLabel,
-      itemCount: totals.itemCount,
-      total: totals.total,
-    });
-    clear();
+    setSubmitError(null);
+    placeOrderMutation.mutate(values);
   }
 
   return (
@@ -240,6 +267,12 @@ export function CheckoutView() {
         onSubmit={handleSubmit(placeOrder)}
       >
         <div className="space-y-4">
+          {submitError ? (
+            <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+              {submitError}
+            </p>
+          ) : null}
+
           <section className="rounded-2xl border border-border bg-card p-5">
             <h2 className="font-display text-lg font-semibold">Contact</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -266,8 +299,16 @@ export function CheckoutView() {
                 label="Phone"
                 type="tel"
                 autoComplete="tel"
+                placeholder="01XXXXXXXXX"
                 error={errors.phone?.message}
-                {...register("phone")}
+                {...register("phone", {
+                  onChange: (event) => {
+                    setValue(
+                      "phone",
+                      event.target.value.replace(/\D/g, "").slice(0, 11),
+                    );
+                  },
+                })}
               />
             </div>
           </section>
@@ -292,7 +333,7 @@ export function CheckoutView() {
                 {...register("city")}
               />
               <CheckoutField
-                label="State"
+                label="State / division"
                 autoComplete="address-level1"
                 error={errors.region?.message}
                 {...register("region")}
@@ -302,6 +343,12 @@ export function CheckoutView() {
                 autoComplete="postal-code"
                 error={errors.postalCode?.message}
                 {...register("postalCode")}
+              />
+              <CheckoutField
+                label="Country"
+                autoComplete="country-name"
+                error={errors.country?.message}
+                {...register("country")}
               />
             </div>
           </section>
@@ -344,44 +391,28 @@ export function CheckoutView() {
                 );
               })}
             </div>
-
-            {paymentMethod === "bkash" ? (
-              <div className="mt-4">
-                <CheckoutField
-                  label="bKash number"
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="tel"
-                  placeholder="01XXXXXXXXX"
-                  error={errors.bkashNumber?.message}
-                  {...register("bkashNumber", {
-                    onChange: (event) => {
-                      setValue(
-                        "bkashNumber",
-                        event.target.value.replace(/\D/g, "").slice(0, 11),
-                      );
-                    },
-                  })}
-                />
-                <p className="mt-2 text-xs text-muted-foreground">
-                  A payment request is sent to this bKash number. Confirm it in
-                  the bKash app.
-                </p>
-              </div>
-            ) : null}
+            <input type="hidden" {...register("paymentMethod")} />
+            <p className="mt-4 text-xs text-muted-foreground">
+              You&apos;ll complete payment on our secure gateway (mock mode in
+              local development).
+            </p>
           </section>
         </div>
 
         <OrderSummary
-          totals={totals}
+          totals={summaryTotals}
           lines={resolved}
+          dueNow={"dueNow" in summaryTotals ? summaryTotals.dueNow : undefined}
+          loadingQuote={quoteQuery.isFetching}
           action={
             <Button
               type="submit"
               className="auth-orange-button mt-5 w-full"
-              disabled={isSubmitting}
+              disabled={isSubmitting || placeOrderMutation.isPending}
             >
-              Place order
+              {placeOrderMutation.isPending
+                ? "Processing…"
+                : "Pay & place order"}
             </Button>
           }
         />

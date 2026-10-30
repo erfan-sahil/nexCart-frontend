@@ -1,23 +1,19 @@
-import type { ResolvedCartLine } from "../types";
-
-export const FREE_SHIPPING_AT = 75;
-export const SHIPPING_FEE = 8.99;
-export const TAX_RATE = 0.08;
+import type { ResolvedCartLine } from "./catalog";
+import { CHECKOUT_DELIVERY_FEE } from "../types";
 
 export type CartTotals = {
   itemCount: number;
   subtotal: number;
   savings: number;
-  shipping: number;
-  tax: number;
+  deliveryFee: number;
   total: number;
-  freeShippingRemaining: number;
 };
 
 function money(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+/** Local estimate; checkout uses server quote before placing the order. */
 export function getCartTotals(lines: ResolvedCartLine[]): CartTotals {
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = money(
@@ -30,18 +26,28 @@ export function getCartTotals(lines: ResolvedCartLine[]): CartTotals {
       return sum + (original - line.product.price) * line.quantity;
     }, 0),
   );
-  const shipping =
-    subtotal === 0 || subtotal >= FREE_SHIPPING_AT ? 0 : SHIPPING_FEE;
-  const tax = money(subtotal * TAX_RATE);
-  const total = money(subtotal + shipping + tax);
+  const deliveryFee = itemCount === 0 ? 0 : CHECKOUT_DELIVERY_FEE;
+  const total = money(subtotal + deliveryFee);
 
   return {
     itemCount,
     subtotal,
     savings,
-    shipping,
-    tax,
+    deliveryFee,
     total,
-    freeShippingRemaining: Math.max(0, money(FREE_SHIPPING_AT - subtotal)),
+  };
+}
+
+export function totalsFromQuote(totals: {
+  itemsSubtotal: number;
+  deliveryFee: number;
+  grandTotal: number;
+  amountDueNow: number;
+}) {
+  return {
+    subtotal: totals.itemsSubtotal,
+    deliveryFee: totals.deliveryFee,
+    total: totals.grandTotal,
+    dueNow: totals.amountDueNow,
   };
 }
