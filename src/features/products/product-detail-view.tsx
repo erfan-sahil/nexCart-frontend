@@ -3,6 +3,7 @@ import { BadgeCheck, Star } from "lucide-react";
 
 import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { ProductGrid } from "@/components/product";
+import { RecordRecentlyViewed } from "@/features/recently-viewed";
 import { formatCount } from "@/lib/format";
 import type { Product, ProductDetail } from "@/types";
 
@@ -27,6 +28,7 @@ export function ProductDetailView({
 }: ProductDetailViewProps) {
   return (
     <Container className="py-8 sm:py-10">
+      <RecordRecentlyViewed productId={product.id} />
       <PageBreadcrumb
         items={[
           { label: "Home", href: "/" },

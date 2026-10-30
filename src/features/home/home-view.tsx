@@ -12,7 +12,7 @@ import { FlashDeals } from "./components/flash-deals";
 import { HeroBanner } from "./components/hero-banner";
 import { NewArrivals } from "./components/new-arrivals";
 import { PopularStores } from "./components/popular-stores";
-import { RecentlyViewed } from "./components/recently-viewed";
+import { RecentlyViewedSection } from "@/features/recently-viewed";
 import { RecommendedForYou } from "./components/recommended-for-you";
 import { TopSellingProducts } from "./components/top-selling-products";
 import { TrendingProducts } from "./components/trending-products";
@@ -41,7 +41,7 @@ export async function HomeView() {
           <PopularStores stores={home.popularStores.items.map(toStore)} />
           <TrendingProducts products={home.trending.items.map(toProduct)} />
           <RecommendedForYou />
-          <RecentlyViewed />
+          <RecentlyViewedSection />
           <NewArrivals products={home.newArrivals.items.map(toProduct)} />
         </>
       ) : (

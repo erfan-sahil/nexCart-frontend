@@ -1,0 +1,3 @@
+export const MAX_RECENTLY_VIEWED_ITEMS = 24;
+
+export const HOME_RECENTLY_VIEWED_LIMIT = 8;

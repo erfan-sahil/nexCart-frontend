@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { CatalogListing } from "@/features/products/catalog-listing";
 import {
@@ -26,5 +27,12 @@ export async function generateMetadata({
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  return <CatalogListing searchParams={await searchParams} />;
+  const params = await searchParams;
+  const query = parseProductSearchParams(params);
+
+  if (query.collection === "recently-viewed") {
+    redirect("/recently-viewed");
+  }
+
+  return <CatalogListing searchParams={params} />;
 }

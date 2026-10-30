@@ -16,7 +16,7 @@ export function RecentlyViewed({ products = [] }: RecentlyViewedProps) {
           eyebrow="Pick up where you left"
           title="Recently viewed"
           description="Jump back into products you already opened."
-          href="/products?collection=recently-viewed"
+          href="/recently-viewed"
         />
         {products.length > 0 ? (
           <ProductGrid products={products} columns="rail" />

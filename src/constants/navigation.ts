@@ -34,10 +34,7 @@ export const FOOTER_LINK_GROUPS = [
       { href: "/login", label: "Sign in" },
       { href: "/orders", label: "Order History" },
       { href: "/wishlist", label: "Wishlist" },
-      {
-        href: "/products?collection=recently-viewed",
-        label: "Recently Viewed",
-      },
+      { href: "/recently-viewed", label: "Recently Viewed" },
     ],
   },
   {
