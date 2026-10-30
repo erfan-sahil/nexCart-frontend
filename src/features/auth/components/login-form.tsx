@@ -10,13 +10,18 @@ import { ApiError } from "@/lib/api/errors";
 
 import { login } from "../api";
 import { splitApiError } from "../lib/api-errors";
+import { withNext } from "../lib/next-path";
 import { fieldErrorResolver } from "../lib/resolver";
 import { validateLogin, type LoginValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
 import { PasswordField, TextField } from "./text-field";
 
-export function LoginForm() {
+type LoginFormProps = {
+  nextPath?: string;
+};
+
+export function LoginForm({ nextPath = "/" }: LoginFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const {
@@ -34,7 +39,7 @@ export function LoginForm() {
     onSuccess: (session) => {
       useAuthStore.getState().setSession(session);
       queryClient.setQueryData(sessionQueryKey, session);
-      router.push("/");
+      router.push(nextPath);
       router.refresh();
     },
     onError: (error) => {
@@ -109,7 +114,7 @@ export function LoginForm() {
       <p className="text-sm text-muted-foreground">
         New to NexCart?{" "}
         <Link
-          href="/register"
+          href={withNext("/register", nextPath)}
           className="font-medium text-[#ff4d4d] hover:underline"
         >
           Create an account

@@ -7,16 +7,78 @@ import { useState } from "react";
 import { Container, PageBreadcrumb } from "@/components/common";
 import { ProductCard } from "@/components/product";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/features/auth/store";
 import { useCartStore } from "@/features/cart";
 
-import { resolveWishlist } from "../lib/catalog";
-import { useWishlistStore } from "../store";
+import { useClearWishlist, useWishlist } from "../query";
 
 export function WishlistView() {
-  const entries = useWishlistStore((state) => state.entries);
-  const clear = useWishlistStore((state) => state.clear);
-  const products = resolveWishlist(entries);
+  const authStatus = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
+  const wishlist = useWishlist();
+  const clearWishlist = useClearWishlist();
   const [added, setAdded] = useState(false);
+
+  if (authStatus === "loading") {
+    return (
+      <Container className="py-16">
+        <p className="text-sm text-muted-foreground">Loading wishlist…</p>
+      </Container>
+    );
+  }
+
+  if (authStatus !== "authenticated") {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Sign in to see your wishlist</h1>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Saved products stay on your account.
+        </p>
+        <Button
+          nativeButton={false}
+          render={<Link href="/login?next=/wishlist" />}
+          className="auth-orange-button mt-6 px-6"
+        >
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
+
+  if (user?.role !== "customer") {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Wishlist is for customer accounts</h1>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Sign in with a customer account to save products.
+        </p>
+      </Container>
+    );
+  }
+
+  if (wishlist.isPending) {
+    return (
+      <Container className="py-16">
+        <p className="text-sm text-muted-foreground">Loading wishlist…</p>
+      </Container>
+    );
+  }
+
+  if (wishlist.isError) {
+    return (
+      <Container className="py-10 text-center">
+        <h1 className="text-2xl">Could not load your wishlist</h1>
+        <Button
+          className="auth-orange-button mt-6 px-6"
+          onClick={() => wishlist.refetch()}
+        >
+          Try again
+        </Button>
+      </Container>
+    );
+  }
+
+  const products = wishlist.data ?? [];
 
   function addAllToCart() {
     const add = useCartStore.getState().add;
@@ -65,7 +127,8 @@ export function WishlistView() {
               <Button
                 variant="outline"
                 className="h-9 rounded-full bg-card px-3 text-sm hover:bg-destructive/10 hover:text-destructive"
-                onClick={clear}
+                disabled={clearWishlist.isPending}
+                onClick={() => clearWishlist.mutate()}
               >
                 Clear
               </Button>

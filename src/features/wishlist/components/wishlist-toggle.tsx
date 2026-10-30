@@ -1,13 +1,20 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { safeNextPath, withNext } from "@/features/auth/lib/next-path";
+import { useAuthStore } from "@/features/auth/store";
 import { cn } from "@/lib/utils";
 
 import type { Product } from "@/types";
 
-import { useWishlistStore } from "../store";
+import {
+  useAddWishlistItem,
+  useRemoveWishlistItem,
+  useWishlist,
+} from "../query";
 
 type WishlistToggleProps = {
   product: Product;
@@ -20,12 +27,37 @@ export function WishlistToggle({
   variant = "icon",
   className,
 }: WishlistToggleProps) {
-  const saved = useWishlistStore((state) =>
-    state.entries.some((entry) => entry.id === product.id),
-  );
-  const toggle = useWishlistStore((state) => state.toggle);
+  const router = useRouter();
+  const pathname = usePathname();
+  const authStatus = useAuthStore((state) => state.status);
+  const role = useAuthStore((state) => state.user?.role);
+  const wishlist = useWishlist();
+  const addItem = useAddWishlistItem();
+  const removeItem = useRemoveWishlistItem();
+  const saved = wishlist.data?.some((item) => item.id === product.id) ?? false;
+  const busy = addItem.isPending || removeItem.isPending;
   const name = product.name;
   const label = saved ? `Remove ${name} from wishlist` : `Save ${name}`;
+
+  function toggle() {
+    if (authStatus === "loading" || busy) return;
+
+    if (authStatus !== "authenticated") {
+      const query = window.location.search;
+      const current = query ? `${pathname}${query}` : pathname;
+      router.push(withNext("/login", safeNextPath(current)));
+      return;
+    }
+
+    if (role !== "customer") return;
+
+    if (saved) {
+      removeItem.mutate(product.id);
+      return;
+    }
+
+    addItem.mutate(product);
+  }
 
   if (variant === "labeled") {
     return (
@@ -38,7 +70,8 @@ export function WishlistToggle({
         )}
         aria-pressed={saved}
         aria-label={label}
-        onClick={() => toggle(product)}
+        disabled={busy}
+        onClick={toggle}
       >
         <Heart className={cn("size-4", saved && "fill-primary")} />
         {saved ? "Saved" : "Save"}
@@ -59,7 +92,8 @@ export function WishlistToggle({
       )}
       aria-pressed={saved}
       aria-label={label}
-      onClick={() => toggle(product)}
+      disabled={busy}
+      onClick={toggle}
     >
       <Heart className={cn("size-4", saved && "fill-primary")} />
     </button>

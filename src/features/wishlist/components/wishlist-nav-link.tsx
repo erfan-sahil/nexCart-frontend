@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
 
-import { useWishlistCount } from "../store";
+import { useWishlistCount } from "../query";
 
 export function WishlistNavLink() {
   const count = useWishlistCount();
