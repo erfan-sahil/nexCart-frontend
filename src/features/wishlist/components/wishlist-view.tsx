@@ -10,7 +10,10 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/store";
 import { useCartStore } from "@/features/cart";
 
+import { ProductCardSkeleton } from "./product-card-skeleton";
 import { useClearWishlist, useWishlist } from "../query";
+
+const SKELETON_CARDS = 6;
 
 export function WishlistView() {
   const authStatus = useAuthStore((state) => state.status);
@@ -19,15 +22,7 @@ export function WishlistView() {
   const clearWishlist = useClearWishlist();
   const [added, setAdded] = useState(false);
 
-  if (authStatus === "loading") {
-    return (
-      <Container className="py-16">
-        <p className="text-sm text-muted-foreground">Loading wishlist…</p>
-      </Container>
-    );
-  }
-
-  if (authStatus !== "authenticated") {
+  if (authStatus !== "loading" && authStatus !== "authenticated") {
     return (
       <Container className="py-10 text-center">
         <h1 className="text-2xl">Sign in to see your wishlist</h1>
@@ -45,7 +40,7 @@ export function WishlistView() {
     );
   }
 
-  if (user?.role !== "customer") {
+  if (authStatus === "authenticated" && user?.role !== "customer") {
     return (
       <Container className="py-10 text-center">
         <h1 className="text-2xl">Wishlist is for customer accounts</h1>
@@ -56,15 +51,11 @@ export function WishlistView() {
     );
   }
 
-  if (wishlist.isPending) {
-    return (
-      <Container className="py-16">
-        <p className="text-sm text-muted-foreground">Loading wishlist…</p>
-      </Container>
-    );
-  }
+  const loading =
+    authStatus === "loading" ||
+    (user?.role === "customer" && wishlist.isPending);
 
-  if (wishlist.isError) {
+  if (!loading && wishlist.isError) {
     return (
       <Container className="py-10 text-center">
         <h1 className="text-2xl">Could not load your wishlist</h1>
@@ -78,7 +69,7 @@ export function WishlistView() {
     );
   }
 
-  const products = wishlist.data ?? [];
+  const products = loading ? [] : (wishlist.data ?? []);
 
   function addAllToCart() {
     const add = useCartStore.getState().add;
@@ -136,7 +127,19 @@ export function WishlistView() {
           ) : null}
         </div>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <ul
+            aria-busy="true"
+            aria-label="Loading wishlist"
+            className="grid grid-cols-2 gap-3 bg-surface-muted p-3 sm:grid-cols-3 sm:p-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          >
+            {Array.from({ length: SKELETON_CARDS }, (_, index) => (
+              <li key={index} className="min-w-0">
+                <ProductCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        ) : products.length === 0 ? (
           <div className="flex flex-col items-center px-6 py-16 text-center">
             <span className="inline-flex size-14 items-center justify-center rounded-full bg-brand-soft text-primary">
               <Heart className="size-6" />
