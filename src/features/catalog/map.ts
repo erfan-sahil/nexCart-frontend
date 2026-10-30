@@ -92,7 +92,6 @@ export function toProductDetail(
     description: dto.description || dto.shortDescription,
     images: images.length > 0 ? images : product.image ? [product.image] : [],
     specifications,
-    reviews: [],
   };
 }
 

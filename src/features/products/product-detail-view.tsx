@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { BadgeCheck, Star } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 
 import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { ProductGrid } from "@/components/product";
 import { RecordRecentlyViewed } from "@/features/recently-viewed";
-import { formatCount } from "@/lib/format";
 import type { Product, ProductDetail } from "@/types";
 
 import { productsHref } from "./lib/query";
@@ -12,15 +11,12 @@ import { ProductBuyBox } from "./components/product-buy-box";
 import { ProductGallery } from "./components/product-gallery";
 import { ProductReviews } from "./components/product-reviews";
 import { ProductSpecs } from "./components/product-specs";
+import { ProductRatingLink } from "@/features/reviews";
 
 type ProductDetailViewProps = {
   product: ProductDetail;
   related: Product[];
 };
-
-function ratingLabel(value: number) {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
 
 export function ProductDetailView({
   product,
@@ -68,26 +64,13 @@ export function ProductDetailView({
 
           <h1 className="mt-3 text-3xl sm:text-4xl">{product.name}</h1>
 
-          <a
-            href="#reviews"
-            className="mt-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground"
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <Star className="size-4 fill-primary text-primary" />
-              <span className="font-semibold text-foreground">
-                {ratingLabel(product.rating)}
-              </span>
-              <span>({formatCount(product.reviewCount)})</span>
-            </span>
-            {product.sold ? (
-              <span>{formatCount(product.sold)} sold</span>
-            ) : null}
-            {product.badge ? (
-              <span className="rounded-full bg-card px-2 py-0.5 text-[11px] font-medium text-foreground ring-1 ring-border">
-                {product.badge}
-              </span>
-            ) : null}
-          </a>
+          <ProductRatingLink
+            productId={product.id}
+            average={product.rating}
+            count={product.reviewCount}
+            sold={product.sold}
+            badge={product.badge}
+          />
 
           <ProductBuyBox product={product} />
 
