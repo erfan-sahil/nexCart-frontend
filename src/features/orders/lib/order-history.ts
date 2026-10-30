@@ -1,4 +1,4 @@
-import type { TrackedItem, TrackingStepId } from "../types";
+import type { TrackedItem, TrackedOrder, TrackingStepId } from "../types";
 
 import { SAMPLE_ORDERS, STATUS_COPY } from "./mock-orders";
 
@@ -44,6 +44,13 @@ const CANCELLED: HistoryOrder = {
   ],
 };
 
+function historyStatusFromTracked(
+  status: TrackedOrder["status"],
+): HistoryStatus {
+  if (status === "expired") return "cancelled";
+  return status;
+}
+
 function placedOn(events: { title: string; atLabel: string }[]) {
   const placed = [...events]
     .reverse()
@@ -56,7 +63,7 @@ export function orderHistory(): HistoryOrder[] {
   const tracked = SAMPLE_ORDERS.map((order) => ({
     id: order.id,
     email: order.email,
-    status: order.status,
+    status: historyStatusFromTracked(order.status),
     placedOn: placedOn(order.events),
     summary: order.eta,
     items: order.items,

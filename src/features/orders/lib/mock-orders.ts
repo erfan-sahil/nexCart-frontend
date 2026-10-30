@@ -1,7 +1,7 @@
 import type { TrackedOrder, TrackingStepId } from "../types";
 
 export const STATUS_COPY: Record<
-  TrackingStepId,
+  TrackingStepId | "expired",
   { label: string; summary: string }
 > = {
   placed: {
@@ -23,6 +23,10 @@ export const STATUS_COPY: Record<
   delivered: {
     label: "Delivered",
     summary: "The package was left at the delivery address.",
+  },
+  expired: {
+    label: "Expired",
+    summary: "The payment window closed before this order was confirmed.",
   },
 };
 

@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
+import { MediaImage } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -17,12 +17,12 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
   const currentIndex = TRACKING_STEPS.findIndex(
     (step) => step.id === order.status,
   );
-  const progress = currentIndex / (TRACKING_STEPS.length - 1);
+  const progress =
+    currentIndex <= 0 ? 0 : currentIndex / (TRACKING_STEPS.length - 1);
   const copy = STATUS_COPY[order.status];
-  const total = order.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const total =
+    order.total ??
+    order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const latest = order.events[0];
 
   async function copyTrackingNumber() {
@@ -50,23 +50,25 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
             {latest ? ` Last scan in ${latest.location}.` : null}
           </p>
 
-          <div className="mt-8 px-1.5">
-            <div className="relative h-1.5 rounded-full bg-border">
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-primary"
-                style={{ width: `${progress * 100}%` }}
-              />
-              <span
-                className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-primary ring-4 ring-card"
-                style={{ left: `calc(${progress * 100}% - 7px)` }}
-              />
+          {order.status === "expired" ? null : (
+            <div className="mt-8 px-1.5">
+              <div className="relative h-1.5 rounded-full bg-border">
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                  style={{ width: `${progress * 100}%` }}
+                />
+                <span
+                  className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-primary ring-4 ring-card"
+                  style={{ left: `calc(${progress * 100}% - 7px)` }}
+                />
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-3 text-xs">
+                <span className="text-muted-foreground">Placed</span>
+                <span className="font-medium text-primary">{copy.label}</span>
+                <span className="text-muted-foreground">Delivered</span>
+              </div>
             </div>
-            <div className="mt-3 flex items-center justify-between gap-3 text-xs">
-              <span className="text-muted-foreground">Placed</span>
-              <span className="font-medium text-primary">{copy.label}</span>
-              <span className="text-muted-foreground">Delivered</span>
-            </div>
-          </div>
+          )}
 
           <ol className="mt-8 divide-y divide-border border-y border-border">
             {order.events.map((event, index) => (
@@ -104,20 +106,11 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
             In this parcel
           </p>
           <ul className="mt-4 space-y-3">
-            {order.items.map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={`/products/${item.slug}`}
-                  className="flex items-center gap-3"
-                >
+            {order.items.map((item, index) => {
+              const row = (
+                <>
                   <span className="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-card">
-                    <Image
-                      src={item.image}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
+                    <MediaImage src={item.image} alt="" sizes="64px" />
                   </span>
                   <span className="min-w-0">
                     <span className="line-clamp-2 text-sm font-medium">
@@ -127,9 +120,24 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
                       Qty {item.quantity} · {formatPrice(item.price)}
                     </span>
                   </span>
-                </Link>
-              </li>
-            ))}
+                </>
+              );
+
+              return (
+                <li key={`${item.slug}-${item.name}-${index}`}>
+                  {item.slug ? (
+                    <Link
+                      href={`/products/${item.slug}`}
+                      className="flex items-center gap-3"
+                    >
+                      {row}
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-3">{row}</div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
 
           <dl className="mt-6 space-y-3 border-t border-dashed border-border pt-5 text-sm">
@@ -144,18 +152,22 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
             <div className="flex items-end justify-between gap-3">
               <div>
                 <dt className="text-xs text-muted-foreground">Tracking no.</dt>
-                <dd className="mt-0.5 font-medium">{order.trackingNumber}</dd>
+                <dd className="mt-0.5 font-medium">
+                  {order.trackingNumber || "Not available yet"}
+                </dd>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="rounded-full"
-                onClick={copyTrackingNumber}
-              >
-                {copied ? <Check /> : <Copy />}
-                {copied ? "Copied" : "Copy"}
-              </Button>
+              {order.trackingNumber ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full"
+                  onClick={copyTrackingNumber}
+                >
+                  {copied ? <Check /> : <Copy />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              ) : null}
             </div>
             <div className="flex items-end justify-between border-t border-dashed border-border pt-3">
               <dt className="text-xs text-muted-foreground">

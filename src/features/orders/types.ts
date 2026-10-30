@@ -27,12 +27,13 @@ export type TrackedItem = {
 export type TrackedOrder = {
   id: string;
   email: string;
-  status: TrackingStepId;
+  status: TrackingStepId | "expired";
   eta: string;
   carrier: string;
   trackingNumber: string;
   shipTo: string;
   paymentLabel: string;
+  total?: number;
   events: TrackingEvent[];
   items: TrackedItem[];
 };

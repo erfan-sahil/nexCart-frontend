@@ -1,4 +1,5 @@
 import { api } from "@/lib/api/client";
+import { toApiError } from "@/lib/api/errors";
 import type { ApiSuccess, PaginationMeta } from "@/lib/api/types";
 
 export type OrderPaymentMethod = "prepaid" | "cod";
@@ -126,6 +127,50 @@ export async function listOrders(page = 1, limit = 20) {
 export async function getOrder(orderId: string) {
   const { data } = await api.get<ApiSuccess<Order>>(`/orders/${orderId}`);
   return data.data;
+}
+
+export type OrderTrackingItem = {
+  name: string;
+  slug: string;
+  imageUrl: string;
+  quantity: number;
+  unitPrice: number;
+};
+
+export type OrderTracking = {
+  orderNumber: string;
+  status: OrderStatus;
+  paymentMethod: OrderPaymentMethod;
+  paymentStatus: OrderPaymentStatus;
+  placedAt: string;
+  shipTo: Omit<OrderShipping, "phone">;
+  carrier: string;
+  trackingNumber: string;
+  packedAt: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
+  fulfillmentStartedAt: string | null;
+  grandTotal: number;
+  currency: string;
+  items: OrderTrackingItem[];
+};
+
+export async function trackOrder(input: {
+  orderNumber: string;
+  email: string;
+}) {
+  try {
+    const { data } = await api.post<ApiSuccess<OrderTracking>>(
+      "/orders/track",
+      {
+        orderNumber: input.orderNumber.trim().toUpperCase(),
+        email: input.email.trim().toLowerCase(),
+      },
+    );
+    return data.data;
+  } catch (error) {
+    throw toApiError(error);
+  }
 }
 
 export function buildCheckoutPayload(

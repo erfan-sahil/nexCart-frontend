@@ -8,8 +8,11 @@ import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/features/auth/store";
+import { ApiError } from "@/lib/api/errors";
 
-import { lookupOrder, type LookupResult } from "../lib/mock-orders";
+import { trackOrder } from "../api";
+import { isCheckoutEmail, toTrackedOrder } from "../lib/map-tracking";
 import type { TrackedOrder } from "../types";
 import { TrackingResult } from "./tracking-result";
 
@@ -18,13 +21,13 @@ type FormState = {
   email: string;
 };
 
+type LookupQuery = FormState & { attempt: number };
+
 type ViewState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "found"; result: Extract<LookupResult, { kind: "found" }> };
-
-const EMPTY_FORM: FormState = { orderId: "", email: "" };
+  | { status: "found" };
 
 function prefillFromParams(params: { get(name: string): string | null }) {
   const orderId = params.get("order")?.trim();
@@ -50,11 +53,18 @@ export function TrackOrderView() {
 function TrackOrderScreen() {
   const params = useSearchParams();
   const prefill = prefillFromParams(params);
+  const userEmail = useAuthStore((state) => state.user?.email ?? "");
   const orderFieldId = useId();
   const emailFieldId = useId();
-  const [form, setForm] = useState<FormState>(prefill ?? EMPTY_FORM);
+  const [orderId, setOrderId] = useState(prefill?.orderId ?? "");
+  const [emailDraft, setEmailDraft] = useState<string | null>(
+    prefill?.email ?? null,
+  );
+  const email = emailDraft ?? userEmail;
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const [query, setQuery] = useState<FormState | null>(prefill);
+  const [query, setQuery] = useState<LookupQuery | null>(
+    prefill ? { ...prefill, attempt: 0 } : null,
+  );
   const [view, setView] = useState<ViewState>(
     prefill ? { status: "loading" } : { status: "idle" },
   );
@@ -63,29 +73,35 @@ function TrackOrderScreen() {
   useEffect(() => {
     if (!query) return;
 
-    const timer = window.setTimeout(() => {
-      const result = lookupOrder(query.orderId, query.email);
+    let cancelled = false;
 
-      if (result.kind === "found") {
-        setShipment(result.order);
-        setView({ status: "found", result });
-        return;
-      }
-
-      setView({
-        status: "error",
-        message:
-          result.kind === "mismatch"
-            ? "That email does not match this order."
-            : "No shipment uses that order number.",
+    trackOrder({ orderNumber: query.orderId, email: query.email })
+      .then((order) => {
+        if (cancelled) return;
+        setShipment(toTrackedOrder(order, query.email));
+        setView({ status: "found" });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setShipment(null);
+        setView({
+          status: "error",
+          message:
+            error instanceof ApiError && error.status === 404
+              ? "No order matches that number and email."
+              : error instanceof ApiError
+                ? error.message
+                : "Could not look up that order.",
+        });
       });
-    }, 450);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+    };
   }, [query]);
 
   function track(next: FormState) {
-    const orderId = next.orderId.trim();
+    const orderId = next.orderId.trim().toUpperCase();
     const email = next.email.trim();
 
     if (!orderId || !email) {
@@ -94,15 +110,22 @@ function TrackOrderScreen() {
       return;
     }
 
+    if (!isCheckoutEmail(email)) {
+      setFieldError("Enter the email used at checkout.");
+      if (!shipment) setView({ status: "idle" });
+      return;
+    }
+
     setFieldError(null);
-    setForm({ orderId, email });
+    setOrderId(orderId);
+    setEmailDraft(email);
     setView({ status: "loading" });
-    setQuery({ orderId, email });
+    setQuery({ orderId, email, attempt: Date.now() });
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    track(form);
+    track({ orderId, email });
   }
 
   const notice = fieldError ?? (view.status === "error" ? view.message : null);
@@ -128,30 +151,20 @@ function TrackOrderScreen() {
           >
             <Input
               aria-label="Order number"
-              value={form.orderId}
+              value={orderId}
               autoComplete="off"
               placeholder="Order number"
               className="h-10 bg-card uppercase"
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  orderId: event.target.value.toUpperCase(),
-                }))
-              }
+              onChange={(event) => setOrderId(event.target.value.toUpperCase())}
             />
             <Input
               aria-label="Email"
               type="email"
-              value={form.email}
+              value={email}
               autoComplete="email"
               placeholder="Email"
               className="h-10 bg-card"
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  email: event.target.value,
-                }))
-              }
+              onChange={(event) => setEmailDraft(event.target.value)}
             />
             <Button
               type="submit"
@@ -186,16 +199,13 @@ function TrackOrderScreen() {
                 <Label htmlFor={orderFieldId}>Order number</Label>
                 <Input
                   id={orderFieldId}
-                  value={form.orderId}
+                  value={orderId}
                   autoComplete="off"
-                  placeholder="NX-48291"
+                  placeholder="NC20261030A1B2C3"
                   className="h-12 text-base uppercase"
                   aria-invalid={Boolean(fieldError)}
                   onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      orderId: event.target.value.toUpperCase(),
-                    }))
+                    setOrderId(event.target.value.toUpperCase())
                   }
                 />
               </div>
@@ -204,17 +214,12 @@ function TrackOrderScreen() {
                 <Input
                   id={emailFieldId}
                   type="email"
-                  value={form.email}
+                  value={email}
                   autoComplete="email"
                   placeholder="you@email.com"
                   className="h-12"
                   aria-invalid={Boolean(fieldError)}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      email: event.target.value,
-                    }))
-                  }
+                  onChange={(event) => setEmailDraft(event.target.value)}
                 />
               </div>
               {fieldError ? (
@@ -235,6 +240,10 @@ function TrackOrderScreen() {
           </div>
         </section>
       )}
+
+      {view.status === "loading" && !shipment ? (
+        <div className="mt-6 h-40 animate-pulse rounded-[1.75rem] bg-muted" />
+      ) : null}
 
       {shipment ? (
         <>
