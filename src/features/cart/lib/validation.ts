@@ -26,6 +26,23 @@ function required(value: string, message: string) {
 
 const BD_PHONE_PATTERN = /^01[3-9]\d{8}$/;
 
+/** Profile phones are stored as +880…; checkout wants the local 01… form. */
+export function toBangladeshMobile(value: string | null | undefined): string {
+  if (!value) return "";
+
+  let digits = value.replace(/\D/g, "");
+  if (digits.startsWith("00")) digits = digits.slice(2);
+
+  if (digits.startsWith("880")) {
+    const national = digits.slice(3).replace(/^0+/, "");
+    digits = national ? `0${national}` : "";
+  } else if (/^1[3-9]\d{8}$/.test(digits)) {
+    digits = `0${digits}`;
+  }
+
+  return digits.slice(0, 11);
+}
+
 export function validateCheckout(values: CheckoutValues): CheckoutErrors {
   const errors: CheckoutErrors = {};
 

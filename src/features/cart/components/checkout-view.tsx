@@ -32,6 +32,7 @@ import {
   checkoutResolver,
   emptyCheckout,
   newIdempotencyKey,
+  toBangladeshMobile,
 } from "../lib/validation";
 import { useCartStore } from "../store";
 import type { CheckoutValues, PaymentMethod } from "../types";
@@ -118,7 +119,7 @@ export function CheckoutView() {
       firstName: current.firstName || user.firstName,
       lastName: current.lastName || user.lastName,
       email: current.email || user.email,
-      phone: current.phone || user.phone?.replace(/\D/g, "") || "",
+      phone: current.phone || toBangladeshMobile(user.phone),
     });
   }, [getValues, reset, user]);
 
