@@ -1,7 +1,6 @@
 import { Container, Logo } from "@/components/common";
 
-import { CATEGORY_LINKS } from "@/constants/navigation";
-import { getCategoryTree } from "@/features/catalog";
+import { getFeaturedCategories } from "@/features/categories/api";
 import { getSiteSettings } from "@/features/site-settings/api";
 
 import { CategoryNav, type CategoryNavLink } from "./category-nav";
@@ -11,22 +10,15 @@ import { SearchBar } from "./search-bar";
 import { TopBar } from "./top-bar";
 
 export async function Navbar() {
-  const [tree, settings] = await Promise.all([
-    getCategoryTree(),
+  const [featured, settings] = await Promise.all([
+    getFeaturedCategories(),
     getSiteSettings(),
   ]);
-  const categories: CategoryNavLink[] =
-    tree.length > 0
-      ? tree.map((category) => ({
-          slug: category.slug,
-          label: category.name,
-          href: `/products?category=${category.slug}`,
-        }))
-      : CATEGORY_LINKS.map((item) => ({
-          slug: item.slug,
-          label: item.label,
-          href: item.href,
-        }));
+  const categories: CategoryNavLink[] = featured.map((category) => ({
+    slug: category.slug,
+    label: category.name,
+    href: `/products?category=${category.slug}`,
+  }));
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 shadow-sm backdrop-blur-md">
