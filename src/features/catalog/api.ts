@@ -57,7 +57,7 @@ export async function getCategoryTree() {
   }
 }
 
-export async function getRelatedProducts(slug: string, limit = 8) {
+export async function getRelatedProducts(slug: string, limit = 12) {
   const body = await serverGet<CatalogProduct[]>(
     `/catalog/products/${encodeURIComponent(slug)}/related`,
     { limit },

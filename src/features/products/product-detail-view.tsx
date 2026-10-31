@@ -18,10 +18,18 @@ type ProductDetailViewProps = {
   related: Product[];
 };
 
+function suggestedProducts(products: Product[]) {
+  if (products.length >= 12) return products.slice(0, 12);
+  if (products.length >= 6) return products.slice(0, 6);
+  return products;
+}
+
 export function ProductDetailView({
   product,
   related,
 }: ProductDetailViewProps) {
+  const suggested = suggestedProducts(related);
+
   return (
     <Container className="py-8 sm:py-10">
       <RecordRecentlyViewed productId={product.id} />
@@ -84,12 +92,16 @@ export function ProductDetailView({
 
       <ProductReviews product={product} />
 
-      {related.length > 0 ? (
+      {suggested.length > 0 ? (
         <section className="mt-12">
           <h2 className="text-2xl sm:text-3xl">
             More in {product.categoryName ?? "this category"}
           </h2>
-          <ProductGrid products={related} columns="catalog" className="mt-6" />
+          <ProductGrid
+            products={suggested}
+            columns="related"
+            className="mt-6"
+          />
         </section>
       ) : null}
     </Container>
