@@ -1,14 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CreditCard, Truck } from "lucide-react";
-import {
-  useEffect,
-  useId,
-  useMemo,
-  useState,
-  type ComponentProps,
-} from "react";
+import { useEffect, useId, useState, type ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -25,6 +20,9 @@ import {
   quoteOrder,
 } from "@/features/orders/api";
 import { cn } from "@/lib/utils";
+
+import { freeDeliveryNote } from "@/features/site-settings/delivery";
+import { useSiteSettings } from "@/features/site-settings/query";
 
 import { cartItemsForCheckout, resolveCartLines } from "../lib/catalog";
 import { getCartTotals } from "../lib/totals";
@@ -89,14 +87,17 @@ const paymentOptions: {
 ];
 
 export function CheckoutView() {
+  const router = useRouter();
   const lines = useCartStore((state) => state.lines);
   const clear = useCartStore((state) => state.clear);
   const user = useAuthStore((state) => state.user);
   const authStatus = useAuthStore((state) => state.status);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("prepaid");
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const settingsQuery = useSiteSettings();
+  const settings = settingsQuery.data;
   const resolved = resolveCartLines(lines);
-  const localTotals = getCartTotals(resolved);
+  const localTotals = getCartTotals(resolved, settings);
 
   const {
     register,
@@ -123,10 +124,7 @@ export function CheckoutView() {
     });
   }, [getValues, reset, user]);
 
-  const checkoutItems = useMemo(
-    () => cartItemsForCheckout(resolved),
-    [resolved],
-  );
+  const checkoutItems = cartItemsForCheckout(resolved);
 
   const quoteQuery = useQuery({
     queryKey: ["checkout-quote", checkoutItems, paymentMethod],
@@ -153,6 +151,10 @@ export function CheckoutView() {
     },
     onSuccess: (payment) => {
       clear();
+      if (payment.amount <= 0) {
+        router.push(`/orders/${payment.orderId}`);
+        return;
+      }
       window.location.assign(payment.gatewayPageUrl);
     },
     onError: (error) => {
@@ -172,7 +174,11 @@ export function CheckoutView() {
         total: quoteQuery.data.totals.grandTotal,
         dueNow: quoteQuery.data.totals.amountDueNow,
       }
-    : { ...localTotals, dueNow: localTotals.total };
+    : {
+        ...localTotals,
+        dueNow:
+          paymentMethod === "cod" ? localTotals.deliveryFee : localTotals.total,
+      };
 
   if (authStatus === "loading") {
     return (
@@ -359,6 +365,10 @@ export function CheckoutView() {
               {paymentOptions.map((option) => {
                 const selected = paymentMethod === option.id;
                 const Icon = option.icon;
+                const detail =
+                  option.id === "cod" && summaryTotals.deliveryFee === 0
+                    ? "Nothing due now. Pay for items when they arrive."
+                    : option.detail;
 
                 return (
                   <button
@@ -384,7 +394,7 @@ export function CheckoutView() {
                         {option.label}
                       </span>
                       <span className="mt-0.5 block text-xs text-muted-foreground">
-                        {option.detail}
+                        {detail}
                       </span>
                     </span>
                   </button>
@@ -392,10 +402,12 @@ export function CheckoutView() {
               })}
             </div>
             <input type="hidden" {...register("paymentMethod")} />
-            <p className="mt-4 text-xs text-muted-foreground">
-              You&apos;ll complete payment on our secure gateway (mock mode in
-              local development).
-            </p>
+            {summaryTotals.dueNow > 0 ? (
+              <p className="mt-4 text-xs text-muted-foreground">
+                You&apos;ll complete payment on our secure gateway (mock mode in
+                local development).
+              </p>
+            ) : null}
           </section>
         </div>
 
@@ -404,6 +416,9 @@ export function CheckoutView() {
           lines={resolved}
           dueNow={"dueNow" in summaryTotals ? summaryTotals.dueNow : undefined}
           loadingQuote={quoteQuery.isFetching}
+          deliveryNote={
+            settings ? freeDeliveryNote(summaryTotals.subtotal, settings) : null
+          }
           action={
             <Button
               type="submit"
@@ -412,7 +427,9 @@ export function CheckoutView() {
             >
               {placeOrderMutation.isPending
                 ? "Processing…"
-                : "Pay & place order"}
+                : summaryTotals.dueNow > 0
+                  ? "Pay & place order"
+                  : "Place order"}
             </Button>
           }
         />

@@ -1,5 +1,10 @@
+import { deliveryFeeFor } from "@/features/site-settings/delivery";
+import {
+  DEFAULT_SITE_SETTINGS,
+  type SiteSettings,
+} from "@/features/site-settings/types";
+
 import type { ResolvedCartLine } from "./catalog";
-import { CHECKOUT_DELIVERY_FEE } from "../types";
 
 export type CartTotals = {
   itemCount: number;
@@ -14,7 +19,10 @@ function money(value: number) {
 }
 
 /** Local estimate; checkout uses server quote before placing the order. */
-export function getCartTotals(lines: ResolvedCartLine[]): CartTotals {
+export function getCartTotals(
+  lines: ResolvedCartLine[],
+  settings: SiteSettings = DEFAULT_SITE_SETTINGS,
+): CartTotals {
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = money(
     lines.reduce((sum, line) => sum + line.product.price * line.quantity, 0),
@@ -26,7 +34,7 @@ export function getCartTotals(lines: ResolvedCartLine[]): CartTotals {
       return sum + (original - line.product.price) * line.quantity;
     }, 0),
   );
-  const deliveryFee = itemCount === 0 ? 0 : CHECKOUT_DELIVERY_FEE;
+  const deliveryFee = itemCount === 0 ? 0 : deliveryFeeFor(subtotal, settings);
   const total = money(subtotal + deliveryFee);
 
   return {

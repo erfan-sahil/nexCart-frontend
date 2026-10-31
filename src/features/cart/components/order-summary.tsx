@@ -12,6 +12,7 @@ type OrderSummaryProps = {
   lines?: ResolvedCartLine[];
   dueNow?: number;
   loadingQuote?: boolean;
+  deliveryNote?: string | null;
   action?: React.ReactNode;
 };
 
@@ -20,15 +21,17 @@ export function OrderSummary({
   lines,
   dueNow,
   loadingQuote,
+  deliveryNote,
   action,
 }: OrderSummaryProps) {
   const payNow = dueNow ?? totals.dueNow ?? totals.total;
+  const deliveryIsFree = totals.itemCount > 0 && totals.deliveryFee === 0;
 
   const rows = [
     { label: "Subtotal", value: formatPrice(totals.subtotal) },
     {
-      label: "Delivery (flat fee)",
-      value: formatPrice(totals.deliveryFee),
+      label: "Delivery",
+      value: deliveryIsFree ? "Free" : formatPrice(totals.deliveryFee),
     },
   ];
 
@@ -79,6 +82,10 @@ export function OrderSummary({
           </div>
         ) : null}
       </dl>
+
+      {deliveryNote ? (
+        <p className="mt-3 text-xs text-muted-foreground">{deliveryNote}</p>
+      ) : null}
 
       <div className="mt-4 flex items-end justify-between border-t border-border pt-4">
         <p className="text-sm font-medium">Order total</p>

@@ -7,6 +7,9 @@ import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 
+import { freeDeliveryNote } from "@/features/site-settings/delivery";
+import { useSiteSettings } from "@/features/site-settings/query";
+
 import { groupCartByStore, resolveCartLines } from "../lib/catalog";
 import { getCartTotals } from "../lib/totals";
 import { useCartStore } from "../store";
@@ -17,9 +20,11 @@ export function CartView() {
   const lines = useCartStore((state) => state.lines);
   const setQuantity = useCartStore((state) => state.setQuantity);
   const remove = useCartStore((state) => state.remove);
+  const settingsQuery = useSiteSettings();
+  const settings = settingsQuery.data;
   const resolved = resolveCartLines(lines);
   const groups = groupCartByStore(resolved);
-  const totals = getCartTotals(resolved);
+  const totals = getCartTotals(resolved, settings);
 
   return (
     <Container className="py-8 sm:py-10">
@@ -142,7 +147,12 @@ export function CartView() {
               </section>
             ))}
           </div>
-          <OrderSummary totals={totals} />
+          <OrderSummary
+            totals={totals}
+            deliveryNote={
+              settings ? freeDeliveryNote(totals.subtotal, settings) : null
+            }
+          />
         </div>
       )}
     </Container>
