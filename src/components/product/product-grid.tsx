@@ -7,6 +7,8 @@ type ProductGridProps = {
   products: Product[];
   className?: string;
   columns?: "default" | "promo" | "catalog" | "related" | "rail" | "flash";
+  /** Hide products at this index and after until the lg breakpoint. */
+  visibleUntilLg?: number;
 };
 
 const layoutClass = {
@@ -18,6 +20,9 @@ const layoutClass = {
   flash:
     "flex overflow-x-auto pb-2 no-scrollbar lg:grid lg:grid-cols-6 lg:overflow-visible",
 } as const;
+
+/** Products shown below the laptop breakpoint on the homepage grids. */
+export const PRODUCT_GRID_COMPACT_COUNT = 8;
 
 const itemClass = {
   default: "min-w-0",
@@ -32,15 +37,21 @@ export function ProductGrid({
   products,
   className,
   columns = "default",
+  visibleUntilLg,
 }: ProductGridProps) {
   return (
     <div className={cn("gap-3 sm:gap-4", layoutClass[columns], className)}>
-      {products.map((product) => (
+      {products.map((product, index) => (
         <ProductCard
           key={product.id}
           product={product}
           size={columns === "related" ? "compact" : "default"}
-          className={itemClass[columns]}
+          className={cn(
+            itemClass[columns],
+            visibleUntilLg !== undefined &&
+              index >= visibleUntilLg &&
+              "max-lg:hidden",
+          )}
         />
       ))}
     </div>

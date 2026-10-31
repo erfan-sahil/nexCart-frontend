@@ -1,3 +1,3 @@
 export { ProductCard } from "./product-card";
-export { ProductGrid } from "./product-grid";
+export { PRODUCT_GRID_COMPACT_COUNT, ProductGrid } from "./product-grid";
 export { ProductShowcase } from "./product-showcase";

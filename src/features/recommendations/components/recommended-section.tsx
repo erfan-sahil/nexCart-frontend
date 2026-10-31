@@ -1,6 +1,7 @@
 "use client";
 
 import { Container, SectionHeader } from "@/components/common";
+import { PRODUCT_GRID_COMPACT_COUNT } from "@/components/product";
 import { RecommendedForYou } from "@/features/home/components/recommended-for-you";
 import { ProductCardSkeleton } from "@/features/wishlist/components/product-card-skeleton";
 
@@ -29,7 +30,16 @@ export function RecommendedSection() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
             {Array.from({ length: HOME_RECOMMENDATIONS_LIMIT }).map(
               (_, index) => (
-                <ProductCardSkeleton key={index} />
+                <div
+                  key={index}
+                  className={
+                    index >= PRODUCT_GRID_COMPACT_COUNT
+                      ? "max-lg:hidden"
+                      : undefined
+                  }
+                >
+                  <ProductCardSkeleton />
+                </div>
               ),
             )}
           </div>
