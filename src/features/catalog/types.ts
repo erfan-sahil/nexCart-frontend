@@ -80,6 +80,29 @@ export type CatalogStore = {
   totalSales: number;
 };
 
+export type CatalogStoreAddress = {
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+};
+
+export type CatalogStoreDetail = CatalogStore & {
+  banner: string;
+  description: string;
+  joinedAt: string;
+  contact: {
+    email: string;
+    phone: string;
+  };
+  address: CatalogStoreAddress;
+  categories: CatalogRef[];
+  returnPolicy: string;
+  shippingPolicy: string;
+};
+
 export type CatalogHome = {
   flashDeals: {
     endsAt: string | null;

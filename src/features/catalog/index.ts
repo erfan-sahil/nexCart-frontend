@@ -10,6 +10,13 @@ export {
   isReservedCollection,
   listCollection,
   listProducts,
+  listStores,
 } from "./api";
-export { toProduct, toProductDetail, toStore } from "./map";
-export type { CatalogHome, CatalogProduct, CategoryNode } from "./types";
+export { toProduct, toProductDetail, toStore, toStoreProfile } from "./map";
+export type { StoreProfile } from "./map";
+export type {
+  CatalogHome,
+  CatalogProduct,
+  CatalogStoreDetail,
+  CategoryNode,
+} from "./types";

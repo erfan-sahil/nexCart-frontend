@@ -8,6 +8,7 @@ import type {
   CatalogProduct,
   CatalogSort,
   CatalogStore,
+  CatalogStoreDetail,
   CategoryNode,
 } from "./types";
 import { CATALOG_COLLECTIONS } from "./types";
@@ -79,7 +80,7 @@ export async function getProductBySlug(slug: string) {
 
 export async function getStoreBySlug(slug: string) {
   try {
-    const body = await serverGet<CatalogStore>(
+    const body = await serverGet<CatalogStoreDetail>(
       `/stores/slug/${encodeURIComponent(slug)}`,
     );
     return body.data;
@@ -89,11 +90,38 @@ export async function getStoreBySlug(slug: string) {
   }
 }
 
+export type StoreListQuery = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: "popular" | "name" | "-rating" | "-joinedAt";
+};
+
+export async function listStores(query: StoreListQuery = {}) {
+  const page = query.page ?? 1;
+  const limit = query.limit ?? CATALOG_PAGE_SIZE;
+  const body = await serverGet<CatalogStore[]>("/stores", {
+    ...query,
+    page,
+    limit,
+  });
+
+  return {
+    items: body.data,
+    pagination: paginationOf(body.meta?.pagination, {
+      page,
+      limit,
+      count: body.data.length,
+    }),
+  };
+}
+
 export type CatalogListQuery = {
   page?: number;
   limit?: number;
   search?: string;
   categoryId?: string;
+  storeId?: string;
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;

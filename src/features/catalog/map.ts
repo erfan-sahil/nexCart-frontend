@@ -7,7 +7,13 @@ import type {
   Store,
 } from "@/types";
 
-import type { CatalogAttribute, CatalogProduct, CatalogStore } from "./types";
+import type {
+  CatalogAttribute,
+  CatalogProduct,
+  CatalogStore,
+  CatalogStoreAddress,
+  CatalogStoreDetail,
+} from "./types";
 
 function attributeValue(attribute: CatalogAttribute) {
   if (attribute.options.length > 0) {
@@ -108,5 +114,61 @@ export function toStore(dto: CatalogStore): Store {
     rating: dto.rating.average,
     productCount: dto.totalProducts,
     followers: formatCount(dto.totalOrders),
+  };
+}
+
+function formatStoreAddress(address: CatalogStoreAddress) {
+  return [
+    address.line1,
+    address.line2,
+    address.city,
+    address.state,
+    address.postalCode,
+    address.country,
+  ]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+export type StoreProfile = {
+  id: string;
+  slug: string;
+  name: string;
+  logo: string;
+  banner: string;
+  description: string;
+  rating: number;
+  reviewCount: number;
+  productCount: number;
+  orderCount: number;
+  joinedAt: string;
+  email: string;
+  phone: string;
+  address: string;
+  returnPolicy: string;
+  shippingPolicy: string;
+};
+
+export function toStoreProfile(dto: CatalogStoreDetail): StoreProfile {
+  const summary = toStore(dto);
+
+  return {
+    id: summary.id,
+    slug: summary.slug,
+    name: summary.name,
+    logo: summary.logo,
+    banner: mediaUrl(dto.banner),
+    description: dto.description.trim(),
+    rating: summary.rating,
+    reviewCount: dto.rating.count,
+    productCount: summary.productCount,
+    orderCount: dto.totalOrders,
+    joinedAt: dto.joinedAt,
+    email: dto.contact.email.trim(),
+    phone: dto.contact.phone.trim(),
+    address: formatStoreAddress(dto.address),
+    returnPolicy: dto.returnPolicy.trim(),
+    shippingPolicy: dto.shippingPolicy.trim(),
   };
 }

@@ -17,6 +17,19 @@ export function deliveryFeeFor(subtotal: number, settings: SiteSettings) {
   return settings.deliveryFee;
 }
 
+export function freeShippingBanner(settings: SiteSettings) {
+  if (!settings.freeDeliveryEnabled) return null;
+
+  if (settings.freeDeliveryMinAmount <= 0) {
+    return { lead: "Free shipping on all orders", amount: null };
+  }
+
+  return {
+    lead: "Free shipping on orders over",
+    amount: formatPrice(settings.freeDeliveryMinAmount, settings.currency),
+  };
+}
+
 export function freeDeliveryNote(subtotal: number, settings: SiteSettings) {
   if (!settings.freeDeliveryEnabled || settings.freeDeliveryMinAmount <= 0) {
     return null;
