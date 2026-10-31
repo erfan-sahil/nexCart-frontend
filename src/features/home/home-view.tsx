@@ -1,11 +1,11 @@
 import { Container } from "@/components/common";
+import { getFeaturedCategories } from "@/features/categories/api";
 import {
   getCatalogHome,
   getCategoryTree,
   toProduct,
   toStore,
 } from "@/features/catalog";
-import { toStorefrontCategories } from "@/features/categories/lib/map";
 
 import { FeaturedCategories } from "./components/featured-categories";
 import { FlashDeals } from "./components/flash-deals";
@@ -19,18 +19,19 @@ import { TrendingProducts } from "./components/trending-products";
 import { getHero } from "./get-hero";
 
 export async function HomeView() {
-  const [home, tree, hero] = await Promise.all([
+  const [home, featuredCategories, hero] = await Promise.all([
     getCatalogHome().catch(() => null),
-    getCategoryTree(),
+    getFeaturedCategories(),
     getHero(),
   ]);
-  const categories = toStorefrontCategories(tree);
   const slides = (hero?.slides ?? []).filter((slide) => slide.isActive);
 
   return (
     <>
       {slides.length > 0 ? <HeroBanner slides={slides} /> : null}
-      <FeaturedCategories categories={categories} />
+      {featuredCategories.length > 0 ? (
+        <FeaturedCategories categories={featuredCategories} />
+      ) : null}
       {home ? (
         <>
           <FlashDeals
