@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useCountdown } from "@/hooks/use-countdown";
 import { cn } from "@/lib/utils";
 
 type CountdownTimerProps = {
   target: string;
   className?: string;
+  onExpired?: () => void;
 };
 
 const units = [
@@ -63,8 +66,18 @@ function Clock({
   );
 }
 
-export function CountdownTimer({ target, className }: CountdownTimerProps) {
+export function CountdownTimer({
+  target,
+  className,
+  onExpired,
+}: CountdownTimerProps) {
   const timeLeft = useCountdown(target);
+
+  useEffect(() => {
+    if (timeLeft?.isOver) {
+      onExpired?.();
+    }
+  }, [onExpired, timeLeft?.isOver]);
 
   if (!timeLeft) {
     return (
