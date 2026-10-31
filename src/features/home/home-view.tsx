@@ -1,14 +1,13 @@
 import { Container } from "@/components/common";
+import { getFeaturedCategories } from "@/features/categories/api";
+import { getCatalogHome, toProduct, toStore } from "@/features/catalog";
 import {
-  getCatalogHome,
-  getCategoryTree,
-  toProduct,
-  toStore,
-} from "@/features/catalog";
-import { toStorefrontCategories } from "@/features/categories/lib/map";
+  getSponsoredPlacements,
+  promosBySection,
+} from "@/features/sponsored-placements/api";
 
 import { FeaturedCategories } from "./components/featured-categories";
-import { FlashDeals } from "./components/flash-deals";
+import { HomeFlashDeals } from "./components/flash-deals/home-flash-deals";
 import { HeroBanner } from "./components/hero-banner";
 import { NewArrivals } from "./components/new-arrivals";
 import { PopularStores } from "./components/popular-stores";
@@ -19,30 +18,43 @@ import { TrendingProducts } from "./components/trending-products";
 import { getHero } from "./get-hero";
 
 export async function HomeView() {
-  const [home, tree, hero] = await Promise.all([
+  const [home, featuredCategories, hero, sponsored] = await Promise.all([
     getCatalogHome().catch(() => null),
-    getCategoryTree(),
+    getFeaturedCategories(),
     getHero(),
+    getSponsoredPlacements(),
   ]);
-  const categories = toStorefrontCategories(tree);
+  const promos = promosBySection(sponsored);
   const slides = (hero?.slides ?? []).filter((slide) => slide.isActive);
 
   return (
     <>
       {slides.length > 0 ? <HeroBanner slides={slides} /> : null}
-      <FeaturedCategories categories={categories} />
+      {featuredCategories.length > 0 ? (
+        <FeaturedCategories categories={featuredCategories} />
+      ) : null}
       {home ? (
         <>
-          <FlashDeals
+          <HomeFlashDeals
             products={home.flashDeals.items.map(toProduct)}
             endsAt={home.flashDeals.endsAt}
+            title={home.flashDeals.sectionTitle}
           />
-          <TopSellingProducts products={home.topSelling.items.map(toProduct)} />
+          <TopSellingProducts
+            products={home.topSelling.items.map(toProduct)}
+            promo={promos["top-selling"]}
+          />
           <PopularStores stores={home.popularStores.items.map(toStore)} />
-          <TrendingProducts products={home.trending.items.map(toProduct)} />
+          <TrendingProducts
+            products={home.trending.items.map(toProduct)}
+            promo={promos.trending}
+          />
           <RecommendedSection />
           <RecentlyViewedSection />
-          <NewArrivals products={home.newArrivals.items.map(toProduct)} />
+          <NewArrivals
+            products={home.newArrivals.items.map(toProduct)}
+            promo={promos["new-arrivals"]}
+          />
         </>
       ) : (
         <Container className="py-16 text-center">

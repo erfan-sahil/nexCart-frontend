@@ -5,6 +5,7 @@ import type { ApiSuccess } from "@/lib/api/types";
 import { sessionFromStore, useAuthStore } from "./store";
 import type {
   AuthSession,
+  AuthUser,
   LoginPayload,
   MeProfile,
   RegisterPayload,
@@ -81,14 +82,15 @@ export async function updateProfile(input: UpdateProfilePayload) {
   const phone = input.phone?.trim();
 
   try {
-    const { data } = await api.patch<ApiSuccess<MeProfile>>("/auth/me", {
+    const { data } = await api.patch<ApiSuccess<AuthUser>>("/users/me", {
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),
       phone: phone ?? "",
     });
-    const profile = data.data;
-    useAuthStore.getState().setUser(profile.user, profile.sessionId);
-    return profile;
+    const user = data.data;
+    const sessionId = useAuthStore.getState().sessionId ?? "";
+    useAuthStore.getState().setUser(user, sessionId);
+    return { user, sessionId };
   } catch (error) {
     throw toApiError(error);
   }

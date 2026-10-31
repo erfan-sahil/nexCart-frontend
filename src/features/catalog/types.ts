@@ -105,6 +105,7 @@ export type CatalogStoreDetail = CatalogStore & {
 
 export type CatalogHome = {
   flashDeals: {
+    sectionTitle: string;
     endsAt: string | null;
     items: CatalogProduct[];
   };

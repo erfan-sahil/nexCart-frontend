@@ -32,7 +32,3 @@ export type ProductReport = {
 export type ProductReportMinePayload = {
   report: ProductReport | null;
 };
-
-export type ProductReportListPayload = {
-  reports: ProductReport[];
-};

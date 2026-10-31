@@ -6,7 +6,7 @@ import { ProductGrid } from "./product-grid";
 
 type ProductShowcaseProps = {
   products: Product[];
-  promo: PromoSlot;
+  promo?: PromoSlot;
   promoPosition?: "start" | "end";
 };
 
@@ -15,6 +15,12 @@ export function ProductShowcase({
   promo,
   promoPosition = "end",
 }: ProductShowcaseProps) {
+  if (!promo) {
+    return (
+      <ProductGrid products={products} columns="promo" className="min-w-0" />
+    );
+  }
+
   const grid = (
     <ProductGrid products={products} columns="promo" className="min-w-0" />
   );

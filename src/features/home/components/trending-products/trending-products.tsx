@@ -1,14 +1,22 @@
 import { Container, SectionHeader } from "@/components/common";
-import { PRODUCT_GRID_COMPACT_COUNT, ProductGrid } from "@/components/product";
-import type { Product } from "@/types";
+import {
+  PRODUCT_GRID_COMPACT_COUNT,
+  ProductGrid,
+  ProductShowcase,
+} from "@/components/product";
+import type { Product, PromoSlot } from "@/types";
 
 import { SectionEmpty } from "../section-empty";
 
 type TrendingProductsProps = {
   products: Product[];
+  promo?: PromoSlot;
 };
 
-export function TrendingProducts({ products = [] }: TrendingProductsProps) {
+export function TrendingProducts({
+  products = [],
+  promo,
+}: TrendingProductsProps) {
   return (
     <section className="py-12 sm:py-16">
       <Container>
@@ -19,10 +27,14 @@ export function TrendingProducts({ products = [] }: TrendingProductsProps) {
           href="/products?collection=trending"
         />
         {products.length > 0 ? (
-          <ProductGrid
-            products={products}
-            visibleUntilLg={PRODUCT_GRID_COMPACT_COUNT}
-          />
+          promo ? (
+            <ProductShowcase products={products} promo={promo} />
+          ) : (
+            <ProductGrid
+              products={products}
+              visibleUntilLg={PRODUCT_GRID_COMPACT_COUNT}
+            />
+          )
         ) : (
           <SectionEmpty message="No trending products available right now." />
         )}

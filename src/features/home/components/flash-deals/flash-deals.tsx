@@ -9,9 +9,20 @@ import { SectionEmpty } from "../section-empty";
 type FlashDealsProps = {
   products: Product[];
   endsAt: string | null;
+  title: string;
+  onExpired?: () => void;
 };
 
-export function FlashDeals({ products = [], endsAt }: FlashDealsProps) {
+export function FlashDeals({
+  products = [],
+  endsAt,
+  title,
+  onExpired,
+}: FlashDealsProps) {
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <section className="bg-surface-dark py-12 sm:py-16">
       <Container>
@@ -23,7 +34,7 @@ export function FlashDeals({ products = [], endsAt }: FlashDealsProps) {
             </p>
             <div className="flex items-center justify-between gap-3">
               <h2 className="min-w-0 text-2xl text-white sm:text-3xl">
-                Flash deals
+                {title}
               </h2>
               <SeeAllLink
                 href="/products?collection=flash-deals"
@@ -35,7 +46,9 @@ export function FlashDeals({ products = [], endsAt }: FlashDealsProps) {
             </p>
           </div>
           <div className="flex items-center justify-between gap-3 lg:justify-end lg:gap-4">
-            {endsAt ? <CountdownTimer target={endsAt} /> : null}
+            {endsAt ? (
+              <CountdownTimer target={endsAt} onExpired={onExpired} />
+            ) : null}
             <SeeAllLink
               href="/products?collection=flash-deals"
               className="hidden lg:inline-flex"
