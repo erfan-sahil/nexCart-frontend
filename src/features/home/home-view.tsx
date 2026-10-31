@@ -45,10 +45,7 @@ export async function HomeView() {
             promo={promos["top-selling"]}
           />
           <PopularStores stores={home.popularStores.items.map(toStore)} />
-          <TrendingProducts
-            products={home.trending.items.map(toProduct)}
-            promo={promos.trending}
-          />
+          <TrendingProducts products={home.trending.items.map(toProduct)} />
           <RecommendedSection />
           <RecentlyViewedSection />
           <NewArrivals
