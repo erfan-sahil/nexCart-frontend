@@ -12,6 +12,7 @@ import { ProductGallery } from "./components/product-gallery";
 import { ProductReviews } from "./components/product-reviews";
 import { ProductSpecs } from "./components/product-specs";
 import { ProductRatingLink } from "@/features/reviews";
+import { ProductReportSection } from "@/features/reports";
 
 type ProductDetailViewProps = {
   product: ProductDetail;
@@ -85,6 +86,8 @@ export function ProductDetailView({
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
             {product.description}
           </p>
+
+          <ProductReportSection productId={product.id} />
 
           <ProductSpecs specifications={product.specifications} />
         </div>
