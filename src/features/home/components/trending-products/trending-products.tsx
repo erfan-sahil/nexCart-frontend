@@ -1,5 +1,5 @@
 import { Container, SectionHeader } from "@/components/common";
-import { ProductGrid } from "@/components/product";
+import { PRODUCT_GRID_COMPACT_COUNT, ProductGrid } from "@/components/product";
 import type { Product } from "@/types";
 
 import { SectionEmpty } from "../section-empty";
@@ -19,7 +19,10 @@ export function TrendingProducts({ products = [] }: TrendingProductsProps) {
           href="/products?collection=trending"
         />
         {products.length > 0 ? (
-          <ProductGrid products={products} />
+          <ProductGrid
+            products={products}
+            visibleUntilLg={PRODUCT_GRID_COMPACT_COUNT}
+          />
         ) : (
           <SectionEmpty message="No trending products available right now." />
         )}

@@ -39,7 +39,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const [related, store] = await Promise.all([
-    getRelatedProducts(slug).catch(() => []),
+    getRelatedProducts(slug, 12).catch(() => []),
     getStoreBySlug(product.store.slug).catch(() => null),
   ]);
 

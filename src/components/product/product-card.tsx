@@ -15,15 +15,22 @@ function ratingLabel(value: number) {
 type ProductCardProps = {
   product: Product;
   className?: string;
+  size?: "default" | "compact";
 };
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({
+  product,
+  className,
+  size = "default",
+}: ProductCardProps) {
   const off = discountPercent(product.price, product.originalPrice);
+  const compact = size === "compact";
 
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card",
+        "group flex h-full flex-col overflow-hidden border border-border bg-card",
+        compact ? "rounded-xl" : "rounded-2xl",
         className,
       )}
     >
@@ -35,48 +42,108 @@ export function ProductCard({ product, className }: ProductCardProps) {
           <MediaImage
             src={product.image}
             alt={product.name}
-            sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 220px"
+            sizes={
+              compact
+                ? "(max-width: 640px) 46vw, (max-width: 1024px) 22vw, 180px"
+                : "(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 220px"
+            }
             className="transition duration-500 group-hover:scale-105"
           />
         </Link>
 
-        <div className="pointer-events-none absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
+        <div
+          className={cn(
+            "pointer-events-none absolute flex flex-col items-start",
+            compact ? "top-2 left-2 gap-1" : "top-2.5 left-2.5 gap-1.5",
+          )}
+        >
           {off > 0 ? (
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-[#fff4f2]">
+            <span
+              className={cn(
+                "rounded-full bg-primary font-semibold text-[#fff4f2]",
+                compact
+                  ? "px-1.5 py-px text-[10px]"
+                  : "px-2 py-0.5 text-[11px]",
+              )}
+            >
               -{off}%
             </span>
           ) : null}
           {product.badge ? (
-            <span className="rounded-full bg-card/95 px-2 py-0.5 text-[11px] font-medium text-foreground shadow-sm">
+            <span
+              className={cn(
+                "rounded-full bg-card/95 font-medium text-foreground shadow-sm",
+                compact
+                  ? "px-1.5 py-px text-[10px]"
+                  : "px-2 py-0.5 text-[11px]",
+              )}
+            >
               {product.badge}
             </span>
           ) : null}
         </div>
 
-        <WishlistToggle product={product} />
+        <WishlistToggle
+          product={product}
+          className={compact ? "top-1.5 right-1.5 size-7" : undefined}
+        />
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 bg-card p-3 transition-colors duration-300 group-hover:bg-brand-soft">
+      <div
+        className={cn(
+          "flex flex-1 flex-col bg-card transition-colors duration-300 group-hover:bg-brand-soft",
+          compact ? "gap-1.5 p-2" : "gap-2 p-3",
+        )}
+      >
         <Link
           href={`/stores/${product.store.slug}`}
-          className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-primary"
+          className={cn(
+            "inline-flex min-w-0 items-center font-medium text-muted-foreground transition-colors hover:text-primary",
+            compact ? "gap-1 text-[10px]" : "gap-1.5 text-[11px]",
+          )}
         >
-          <span className="relative flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[9px] font-semibold ring-1 ring-border">
-            <MediaImage src={product.store.logo} alt="" sizes="20px" />
+          <span
+            className={cn(
+              "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-muted font-semibold ring-1 ring-border",
+              compact ? "size-4 text-[8px]" : "size-5 text-[9px]",
+            )}
+          >
+            <MediaImage
+              src={product.store.logo}
+              alt=""
+              sizes={compact ? "16px" : "20px"}
+            />
             {product.store.logo ? null : product.store.name.slice(0, 1)}
           </span>
           <span className="truncate">{product.store.name}</span>
         </Link>
 
         <Link href={`/products/${product.slug}`}>
-          <h3 className="line-clamp-2 min-h-10 font-display text-sm leading-5 font-semibold text-foreground transition-colors group-hover:text-primary">
+          <h3
+            className={cn(
+              "line-clamp-2 font-display font-semibold text-foreground transition-colors group-hover:text-primary",
+              compact
+                ? "min-h-8 text-xs leading-4"
+                : "min-h-10 text-sm leading-5",
+            )}
+          >
             {product.name}
           </h3>
         </Link>
 
-        <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+        <div
+          className={cn(
+            "flex items-center justify-between gap-2 text-muted-foreground",
+            compact ? "text-[10px]" : "text-[11px]",
+          )}
+        >
           <p className="inline-flex min-w-0 items-center gap-1">
-            <Star className="size-3.5 shrink-0 fill-primary text-primary" />
+            <Star
+              className={cn(
+                "shrink-0 fill-primary text-primary",
+                compact ? "size-3" : "size-3.5",
+              )}
+            />
             <span className="font-semibold text-foreground">
               {ratingLabel(product.rating)}
             </span>
@@ -87,18 +154,36 @@ export function ProductCard({ product, className }: ProductCardProps) {
           ) : null}
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-border/80 pt-2.5">
+        <div
+          className={cn(
+            "mt-auto flex items-center justify-between gap-2 border-t border-border/80",
+            compact ? "pt-2" : "pt-2.5",
+          )}
+        >
           <p className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-            <span className="text-base leading-none font-semibold tracking-tight text-foreground">
+            <span
+              className={cn(
+                "leading-none font-semibold tracking-tight text-foreground",
+                compact ? "text-sm" : "text-base",
+              )}
+            >
               {formatPrice(product.price)}
             </span>
             {product.originalPrice ? (
-              <span className="text-xs leading-none text-muted-foreground line-through">
+              <span
+                className={cn(
+                  "leading-none text-muted-foreground line-through",
+                  compact ? "text-[11px]" : "text-xs",
+                )}
+              >
                 {formatPrice(product.originalPrice)}
               </span>
             ) : null}
           </p>
-          <AddToCartButton product={product} />
+          <AddToCartButton
+            product={product}
+            className={compact ? "size-7" : undefined}
+          />
         </div>
       </div>
     </article>

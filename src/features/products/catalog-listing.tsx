@@ -1,4 +1,5 @@
 import { getCategoryTree } from "@/features/catalog";
+import { RecommendedCatalogListing } from "@/features/recommendations";
 import { ApiError } from "@/lib/api/errors";
 
 import { ProductsView } from "./products-view";
@@ -21,6 +22,16 @@ export async function CatalogListing({
 }: CatalogListingProps) {
   const query = parseProductSearchParams(searchParams, defaults);
   const page = parsePage(searchParams);
+
+  if (query.collection === "recommended") {
+    return (
+      <RecommendedCatalogListing
+        searchParams={searchParams}
+        defaults={defaults}
+      />
+    );
+  }
+
   const tree = await getCategoryTree();
   const categories = toFilterCategories(tree);
   const category =

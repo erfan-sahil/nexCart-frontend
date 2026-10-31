@@ -1,21 +1,6 @@
 import { getCategoryBySlug, getProductBySlug, products } from "@/data/mock";
 import { productDetails } from "@/data/mock/product-details";
-import type { Product, ProductDetail, ProductReview } from "@/types";
-
-function withReviewIds(
-  slug: string,
-  reviews: {
-    author: string;
-    rating: number;
-    createdAt: string;
-    comment: string;
-  }[],
-): ProductReview[] {
-  return reviews.map((review, index) => ({
-    ...review,
-    id: `${slug}-${index + 1}`,
-  }));
-}
+import type { Product, ProductDetail } from "@/types";
 
 export function getProductDetail(slug: string): ProductDetail | undefined {
   const product = getProductBySlug(slug);
@@ -36,7 +21,6 @@ export function getProductDetail(slug: string): ProductDetail | undefined {
       { label: "Seller", value: product.store.name },
       { label: "Condition", value: "New" },
     ],
-    reviews: withReviewIds(slug, extra?.reviews ?? []),
   };
 }
 
