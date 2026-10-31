@@ -4,14 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ChevronDown,
-  Flag,
-  LogIn,
-  LogOut,
-  Package,
-  UserRound,
-} from "lucide-react";
+import { ChevronDown, LogIn, LogOut, Package, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -189,17 +182,6 @@ function SignedInMenu({ user }: { user: AuthUser }) {
             <Package className="size-4" />
             Orders
           </Link>
-          {user.role === "admin" || user.role === "vendor" ? (
-            <Link
-              href="/reports"
-              role="menuitem"
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted"
-              onClick={() => setOpen(false)}
-            >
-              <Flag className="size-4" />
-              Product reports
-            </Link>
-          ) : null}
           <button
             type="button"
             role="menuitem"
