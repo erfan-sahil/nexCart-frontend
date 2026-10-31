@@ -13,7 +13,7 @@ import { HeroBanner } from "./components/hero-banner";
 import { NewArrivals } from "./components/new-arrivals";
 import { PopularStores } from "./components/popular-stores";
 import { RecentlyViewedSection } from "@/features/recently-viewed";
-import { RecommendedForYou } from "./components/recommended-for-you";
+import { RecommendedSection } from "@/features/recommendations";
 import { TopSellingProducts } from "./components/top-selling-products";
 import { TrendingProducts } from "./components/trending-products";
 import { getHero } from "./get-hero";
@@ -40,7 +40,7 @@ export async function HomeView() {
           <TopSellingProducts products={home.topSelling.items.map(toProduct)} />
           <PopularStores stores={home.popularStores.items.map(toStore)} />
           <TrendingProducts products={home.trending.items.map(toProduct)} />
-          <RecommendedForYou />
+          <RecommendedSection />
           <RecentlyViewedSection />
           <NewArrivals products={home.newArrivals.items.map(toProduct)} />
         </>

@@ -14,7 +14,7 @@ import { CATALOG_COLLECTIONS } from "./types";
 
 export const CATALOG_PAGE_SIZE = 24;
 
-const RESERVED_COLLECTIONS = new Set(["recommended", "recently-viewed"]);
+const RESERVED_COLLECTIONS = new Set(["recently-viewed"]);
 
 export function isCatalogCollection(
   value: string | undefined,

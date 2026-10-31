@@ -2,7 +2,6 @@ import {
   CATALOG_PAGE_SIZE,
   findCategory,
   isCatalogCollection,
-  isReservedCollection,
   listCollection,
   listProducts,
   toProduct,
@@ -69,7 +68,7 @@ export async function loadProductListing(
   page: number,
   categories: CategoryNode[],
 ): Promise<ProductListing> {
-  if (isReservedCollection(query.collection)) {
+  if (query.collection === "recently-viewed") {
     return {
       products: [],
       total: 0,

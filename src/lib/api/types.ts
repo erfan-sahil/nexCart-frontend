@@ -11,6 +11,7 @@ export type ApiSuccess<T> = {
   data: T;
   meta?: {
     pagination?: PaginationMeta;
+    personalized?: boolean;
   };
   requestId: string;
 };

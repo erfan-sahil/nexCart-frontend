@@ -6,16 +6,27 @@ import { SectionEmpty } from "../section-empty";
 
 type RecommendedForYouProps = {
   products?: Product[];
+  personalized?: boolean;
 };
 
-export function RecommendedForYou({ products = [] }: RecommendedForYouProps) {
+const PERSONALIZED_DESCRIPTION =
+  "Picked from stores and categories you tend to open.";
+
+export function RecommendedForYou({
+  products = [],
+  personalized = false,
+}: RecommendedForYouProps) {
   return (
     <section className="bg-brand-soft/60 py-12 sm:py-16 dark:bg-surface-muted">
       <Container>
         <SectionHeader
           eyebrow="For you"
           title="Recommended for you"
-          description="Picked from stores and categories you tend to open."
+          description={
+            personalized
+              ? PERSONALIZED_DESCRIPTION
+              : "Popular products trending across the marketplace right now."
+          }
           href="/products?collection=recommended"
         />
         {products.length > 0 ? (

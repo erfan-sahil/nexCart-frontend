@@ -1,5 +1,6 @@
 import { Container } from "@/components/common";
 import { ProductGrid } from "@/components/product";
+import { ProductCardSkeleton } from "@/features/wishlist/components/product-card-skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatCount } from "@/lib/format";
 import type { Product } from "@/types";
@@ -29,6 +30,8 @@ type ProductsViewProps = {
   categories: FilterCategory[];
   category?: FilterCategory | null;
   notice?: string;
+  descriptionOverride?: string;
+  isLoading?: boolean;
 };
 
 export function ProductsView({
@@ -40,8 +43,13 @@ export function ProductsView({
   categories,
   category,
   notice,
+  descriptionOverride,
+  isLoading = false,
 }: ProductsViewProps) {
-  const copy = getProductPageCopy(query, category);
+  const baseCopy = getProductPageCopy(query, category);
+  const copy = descriptionOverride
+    ? { ...baseCopy, description: descriptionOverride }
+    : baseCopy;
 
   return (
     <>
@@ -86,6 +94,12 @@ export function ProductsView({
             </p>
             {notice ? (
               <ProductsEmpty message={notice} />
+            ) : isLoading ? (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <ProductCardSkeleton key={index} />
+                ))}
+              </div>
             ) : products.length > 0 ? (
               <ProductGrid products={products} columns="catalog" />
             ) : (
