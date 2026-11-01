@@ -1,9 +1,11 @@
 import { serverGet } from "@/lib/api/server";
 import type { PromoSlot } from "@/types";
 
+export type SponsoredSection = "top-selling" | "new-arrivals";
+
 export type SponsoredPromoDto = {
   slot: "1" | "2";
-  section: "top-selling" | "trending" | "new-arrivals";
+  section: SponsoredSection;
   eyebrow: string;
   title: string;
   subtitle: string;
@@ -40,9 +42,7 @@ export async function getSponsoredPlacements() {
 }
 
 export function promosBySection(placements: SponsoredPromoDto[]) {
-  const map: Partial<
-    Record<"top-selling" | "trending" | "new-arrivals", PromoSlot>
-  > = {};
+  const map: Partial<Record<SponsoredSection, PromoSlot>> = {};
 
   for (const placement of placements) {
     map[placement.section] = mapSponsoredPromo(placement);

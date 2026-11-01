@@ -160,6 +160,17 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
                 <dt className="text-muted-foreground">Subtotal</dt>
                 <dd>{formatPrice(order.totals.itemsSubtotal)}</dd>
               </div>
+              {order.totals.couponDiscount > 0 ? (
+                <div className="flex justify-between text-primary">
+                  <dt>
+                    Coupon
+                    {order.totals.couponCode
+                      ? ` (${order.totals.couponCode})`
+                      : ""}
+                  </dt>
+                  <dd>−{formatPrice(order.totals.couponDiscount)}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Delivery</dt>
                 <dd>{formatPrice(order.totals.deliveryFee)}</dd>

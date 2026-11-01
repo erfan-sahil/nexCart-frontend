@@ -14,6 +14,7 @@ type OrderSummaryProps = {
   loadingQuote?: boolean;
   deliveryNote?: string | null;
   action?: React.ReactNode;
+  couponSlot?: React.ReactNode;
 };
 
 export function OrderSummary({
@@ -23,12 +24,23 @@ export function OrderSummary({
   loadingQuote,
   deliveryNote,
   action,
+  couponSlot,
 }: OrderSummaryProps) {
   const payNow = dueNow ?? totals.dueNow ?? totals.total;
   const deliveryIsFree = totals.itemCount > 0 && totals.deliveryFee === 0;
 
   const rows = [
     { label: "Subtotal", value: formatPrice(totals.subtotal) },
+    ...(totals.couponDiscount && totals.couponDiscount > 0
+      ? [
+          {
+            label: totals.couponCode
+              ? `Coupon (${totals.couponCode})`
+              : "Coupon",
+            value: `−${formatPrice(totals.couponDiscount)}`,
+          },
+        ]
+      : []),
     {
       label: "Delivery",
       value: deliveryIsFree ? "Free" : formatPrice(totals.deliveryFee),
@@ -42,6 +54,8 @@ export function OrderSummary({
       {loadingQuote ? (
         <p className="mt-2 text-xs text-muted-foreground">Updating totals…</p>
       ) : null}
+
+      {couponSlot ? <div className="mt-4">{couponSlot}</div> : null}
 
       {lines?.length ? (
         <ul className="mt-4 space-y-3 border-b border-border pb-4">
