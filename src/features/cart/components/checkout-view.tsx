@@ -94,6 +94,12 @@ export function CheckoutView() {
   const authStatus = useAuthStore((state) => state.status);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("prepaid");
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCouponCode, setAppliedCouponCode] = useState<
+    string | undefined
+  >();
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
   const settingsQuery = useSiteSettings();
   const settings = settingsQuery.data;
   const resolved = resolveCartLines(lines);
@@ -127,12 +133,17 @@ export function CheckoutView() {
   const checkoutItems = cartItemsForCheckout(resolved);
 
   const quoteQuery = useQuery({
-    queryKey: ["checkout-quote", checkoutItems, paymentMethod],
+    queryKey: [
+      "checkout-quote",
+      checkoutItems,
+      paymentMethod,
+      appliedCouponCode,
+    ],
     enabled: resolved.length > 0 && authStatus === "authenticated",
     queryFn: async () => {
       const values = getValues();
       const payload = buildCheckoutPayload(
-        { ...values, paymentMethod },
+        { ...values, paymentMethod, couponCode: appliedCouponCode },
         checkoutItems,
       );
       return quoteOrder(payload);
@@ -140,9 +151,49 @@ export function CheckoutView() {
     staleTime: 15_000,
   });
 
+  const applyCoupon = async () => {
+    const trimmed = couponInput.trim();
+
+    if (!trimmed) {
+      setAppliedCouponCode(undefined);
+      setCouponError(null);
+      return;
+    }
+
+    const code = trimmed.toUpperCase();
+    setApplyingCoupon(true);
+    setCouponError(null);
+
+    try {
+      const values = getValues();
+      const payload = buildCheckoutPayload(
+        { ...values, paymentMethod, couponCode: code },
+        checkoutItems,
+      );
+      await quoteOrder(payload);
+      setAppliedCouponCode(code);
+      setCouponInput(code);
+    } catch (error) {
+      setCouponError(
+        error instanceof ApiError ? error.message : "Could not apply coupon",
+      );
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setCouponInput("");
+    setAppliedCouponCode(undefined);
+    setCouponError(null);
+  };
+
   const placeOrderMutation = useMutation({
     mutationFn: async (values: CheckoutValues) => {
-      const payload = buildCheckoutPayload(values, checkoutItems);
+      const payload = buildCheckoutPayload(
+        { ...values, couponCode: appliedCouponCode },
+        checkoutItems,
+      );
       const createKey = newIdempotencyKey();
       const order = await createOrder(payload, createKey);
       const payKey = newIdempotencyKey();
@@ -170,6 +221,8 @@ export function CheckoutView() {
     ? {
         ...localTotals,
         subtotal: quoteQuery.data.totals.itemsSubtotal,
+        couponCode: quoteQuery.data.totals.couponCode,
+        couponDiscount: quoteQuery.data.totals.couponDiscount,
         deliveryFee: quoteQuery.data.totals.deliveryFee,
         total: quoteQuery.data.totals.grandTotal,
         dueNow: quoteQuery.data.totals.amountDueNow,
@@ -418,6 +471,48 @@ export function CheckoutView() {
           loadingQuote={quoteQuery.isFetching}
           deliveryNote={
             settings ? freeDeliveryNote(summaryTotals.subtotal, settings) : null
+          }
+          couponSlot={
+            <div className="space-y-2">
+              <Label htmlFor="checkout-coupon" className="text-sm">
+                Coupon code
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="checkout-coupon"
+                  value={couponInput}
+                  onChange={(event) => {
+                    setCouponInput(event.target.value.toUpperCase());
+                    setCouponError(null);
+                  }}
+                  placeholder="Enter code"
+                  className="h-9 font-mono uppercase"
+                  autoComplete="off"
+                  disabled={applyingCoupon || placeOrderMutation.isPending}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-9 shrink-0"
+                  disabled={applyingCoupon || placeOrderMutation.isPending}
+                  onClick={() => void applyCoupon()}
+                >
+                  {applyingCoupon ? "…" : "Apply"}
+                </Button>
+              </div>
+              {appliedCouponCode ? (
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+                  onClick={removeCoupon}
+                >
+                  Remove {appliedCouponCode}
+                </button>
+              ) : null}
+              {couponError ? (
+                <p className="text-xs text-destructive">{couponError}</p>
+              ) : null}
+            </div>
           }
           action={
             <Button

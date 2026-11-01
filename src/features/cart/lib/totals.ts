@@ -10,6 +10,8 @@ export type CartTotals = {
   itemCount: number;
   subtotal: number;
   savings: number;
+  couponCode?: string | null;
+  couponDiscount?: number;
   deliveryFee: number;
   total: number;
 };

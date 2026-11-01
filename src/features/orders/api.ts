@@ -34,6 +34,8 @@ export type OrderItem = {
 
 export type OrderTotals = {
   itemsSubtotal: number;
+  couponCode: string | null;
+  couponDiscount: number;
   deliveryFee: number;
   grandTotal: number;
   amountDueNow: number;
@@ -70,6 +72,7 @@ export type CreateOrderInput = {
   items: { variantId: string; quantity: number }[];
   shipping: OrderShipping;
   note?: string;
+  couponCode?: string;
 };
 
 export type PaymentInitiate = {
@@ -185,9 +188,12 @@ export function buildCheckoutPayload(
     country: string;
     paymentMethod: OrderPaymentMethod;
     note?: string;
+    couponCode?: string;
   },
   items: { variantId: string; quantity: number }[],
 ): CreateOrderInput {
+  const couponCode = values.couponCode?.trim().toUpperCase();
+
   return {
     paymentMethod: values.paymentMethod,
     items,
@@ -203,5 +209,6 @@ export function buildCheckoutPayload(
       country: values.country.trim() || "Bangladesh",
     },
     note: values.note?.trim() || undefined,
+    ...(couponCode ? { couponCode } : {}),
   };
 }
