@@ -1,3 +1,5 @@
+import { mediaUrl } from "@/lib/media";
+
 import type { Order } from "../api";
 import type { TrackedItem } from "../types";
 import { getOrderStatusMeta, orderStatusLabel } from "./order-status";
@@ -27,7 +29,7 @@ export function orderItemsToTracked(order: Order): TrackedItem[] {
   return order.items.map((item) => ({
     name: item.productName,
     slug: item.productId,
-    image: "",
+    image: mediaUrl(item.imageUrl),
     quantity: item.quantity,
     price: item.lineTotal,
   }));
