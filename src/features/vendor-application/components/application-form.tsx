@@ -322,7 +322,7 @@ export function ApplicationForm({
             </Button>
             <Button
               type="submit"
-              className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-[#fff4f2]"
+              className="auth-orange-button h-11 rounded-full px-6 hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active"
               disabled={pending}
             >
               {step === 4

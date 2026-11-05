@@ -140,15 +140,15 @@ function TrackOrderScreen() {
       />
 
       {shipment ? (
-        <header className="mt-6 flex flex-col gap-5 border-b border-border pb-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
+        <header className="mt-6 flex flex-col gap-5 border-b border-border pb-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+          <div className="min-w-0 shrink-0">
             <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
               Shipment
             </p>
             <h1 className="mt-1 text-3xl sm:text-4xl">{shipment.id}</h1>
           </div>
           <form
-            className="grid w-full gap-2 sm:grid-cols-[1fr_1fr_auto] lg:max-w-xl"
+            className="grid w-full gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center lg:max-w-2xl"
             noValidate
             onSubmit={onSubmit}
           >
@@ -157,7 +157,7 @@ function TrackOrderScreen() {
               value={orderId}
               autoComplete="off"
               placeholder="Order number"
-              className="h-10 bg-card uppercase"
+              className="h-12 bg-card uppercase"
               onChange={(event) => setOrderId(event.target.value.toUpperCase())}
             />
             <Input
@@ -166,15 +166,15 @@ function TrackOrderScreen() {
               value={email}
               autoComplete="email"
               placeholder="Email"
-              className="h-10 bg-card"
+              className="h-12 bg-card"
               onChange={(event) => setEmailDraft(event.target.value)}
             />
             <Button
               type="submit"
-              className="auth-orange-button h-10 px-5"
+              className="auth-orange-button w-full shrink-0 px-6 sm:w-auto"
               disabled={view.status === "loading"}
             >
-              Track
+              {view.status === "loading" ? "Looking up…" : "Track"}
             </Button>
           </form>
         </header>

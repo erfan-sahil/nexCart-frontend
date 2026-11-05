@@ -225,6 +225,11 @@
     color: #fff4f2;
   }
 
+  .dark .auth-orange-button:hover {
+    background-color: var(--brand-active);
+    color: #fff4f2;
+  }
+
   .auth-dark-button {
     background-color: #2a1218;
     color: #fff4f2;

@@ -9,58 +9,15 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-import { STATUS_COPY } from "../lib/mock-orders";
-import { TRACKING_STEPS, type TrackedOrder } from "../types";
-
-function progressForOrder(order: TrackedOrder) {
-  if (order.status === "cancelled" || order.status === "expired") {
-    return {
-      progress: 0,
-      startLabel: "Placed",
-      endLabel: "Delivered",
-      currentLabel: order.eta,
-    };
-  }
-
-  if (order.timeline.length > 0) {
-    const completed = order.timeline.filter((step) => step.completed).length;
-    const total = order.timeline.length;
-    const progress = total <= 1 ? 0 : (completed - 1) / (total - 1);
-    const current =
-      [...order.timeline].reverse().find((step) => step.completed) ??
-      order.timeline[0];
-
-    return {
-      progress,
-      startLabel: order.timeline[0]?.label ?? "Placed",
-      endLabel: order.timeline.at(-1)?.label ?? "Delivered",
-      currentLabel: current?.label ?? order.eta,
-    };
-  }
-
-  const currentIndex = TRACKING_STEPS.findIndex(
-    (step) => step.id === order.status,
-  );
-  const progress =
-    currentIndex <= 0 ? 0 : currentIndex / (TRACKING_STEPS.length - 1);
-  const copy = STATUS_COPY[order.status];
-
-  return {
-    progress,
-    startLabel: "Placed",
-    endLabel: "Delivered",
-    currentLabel: copy.label,
-  };
-}
+import { formatOrderDate } from "../lib/map-order";
+import { getOrderStatusMeta } from "../lib/order-status";
+import type { TrackedOrder } from "../types";
+import { OrderProgress } from "./order-progress";
+import { OrderStatusBadge } from "./order-status-badge";
 
 export function TrackingResult({ order }: { order: TrackedOrder }) {
   const [copied, setCopied] = useState(false);
-  const { progress, startLabel, endLabel, currentLabel } =
-    progressForOrder(order);
-  const summaryCopy =
-    order.status === "cancelled" || order.status === "expired"
-      ? STATUS_COPY[order.status]
-      : null;
+  const status = getOrderStatusMeta(order.status);
   const total =
     order.total ??
     order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -76,55 +33,22 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
     }
   }
 
-  const headlineLabel =
-    order.status === "cancelled" || order.status === "expired"
-      ? (summaryCopy?.label ?? order.eta)
-      : currentLabel;
-
-  const summaryText =
-    summaryCopy?.summary ??
-    (latest
-      ? `Last update: ${latest.title}.`
-      : "Tracking updates appear here.");
-
   return (
     <article className="mt-6 overflow-hidden rounded-[1.75rem] border border-border bg-card">
       <div className="grid lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="px-5 py-6 sm:px-8 sm:py-8">
-          <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-            {headlineLabel}
-          </p>
-          <h2 className="mt-2 text-4xl text-balance sm:text-5xl">
-            {order.eta}
+          <OrderStatusBadge status={order.status} />
+          <h2 className="mt-3 text-4xl text-balance sm:text-5xl">
+            {status.headline}
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted-foreground">
-            {summaryText}
+            {status.summary}
             {latest && order.timeline.length === 0
               ? ` Last scan in ${latest.location}.`
               : null}
           </p>
 
-          {order.status === "expired" || order.status === "cancelled" ? null : (
-            <div className="mt-8 px-1.5">
-              <div className="relative h-1.5 rounded-full bg-border">
-                <span
-                  className="absolute inset-y-0 left-0 rounded-full bg-primary"
-                  style={{ width: `${progress * 100}%` }}
-                />
-                <span
-                  className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-primary ring-4 ring-card"
-                  style={{ left: `calc(${progress * 100}% - 7px)` }}
-                />
-              </div>
-              <div className="mt-3 flex items-center justify-between gap-3 text-xs">
-                <span className="text-muted-foreground">{startLabel}</span>
-                <span className="font-medium text-primary">
-                  {headlineLabel}
-                </span>
-                <span className="text-muted-foreground">{endLabel}</span>
-              </div>
-            </div>
-          )}
+          <OrderProgress status={order.status} className="mt-8" />
 
           {order.timeline.length > 0 ? (
             <ol className="mt-8 space-y-2">
@@ -162,10 +86,7 @@ export function TrackingResult({ order }: { order: TrackedOrder }) {
                     </span>
                     {step.completed && step.at ? (
                       <span className="mt-0.5 block text-xs text-muted-foreground">
-                        {new Intl.DateTimeFormat("en-BD", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        }).format(new Date(step.at))}
+                        {formatOrderDate(step.at)}
                       </span>
                     ) : null}
                   </span>
