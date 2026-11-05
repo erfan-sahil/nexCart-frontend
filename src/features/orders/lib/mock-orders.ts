@@ -1,7 +1,7 @@
 import type { TrackedOrder, TrackingStepId } from "../types";
 
 export const STATUS_COPY: Record<
-  TrackingStepId | "expired",
+  TrackingStepId | "expired" | "cancelled",
   { label: string; summary: string }
 > = {
   placed: {
@@ -27,6 +27,10 @@ export const STATUS_COPY: Record<
   expired: {
     label: "Expired",
     summary: "The payment window closed before this order was confirmed.",
+  },
+  cancelled: {
+    label: "Cancelled",
+    summary: "This order was cancelled and will not be shipped.",
   },
 };
 
@@ -58,6 +62,7 @@ export const SAMPLE_ORDERS: TrackedOrder[] = [
         price: 89,
       },
     ],
+    timeline: [],
     events: [
       {
         id: "e5",
@@ -115,6 +120,7 @@ export const SAMPLE_ORDERS: TrackedOrder[] = [
         price: 179,
       },
     ],
+    timeline: [],
     events: [
       {
         id: "e3",
@@ -158,6 +164,7 @@ export const SAMPLE_ORDERS: TrackedOrder[] = [
         price: 64,
       },
     ],
+    timeline: [],
     events: [
       {
         id: "e4",
@@ -208,6 +215,7 @@ export const SAMPLE_ORDERS: TrackedOrder[] = [
         price: 149,
       },
     ],
+    timeline: [],
     events: [
       {
         id: "e2",

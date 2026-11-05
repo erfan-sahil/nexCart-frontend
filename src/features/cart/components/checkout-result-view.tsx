@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { getOrder } from "@/features/orders/api";
 import {
   formatOrderDate,
+  formatOrderStatusLabel,
   orderStatusSummary,
 } from "@/features/orders/lib/map-order";
 import { formatPrice } from "@/lib/format";
@@ -69,8 +70,8 @@ export function CheckoutResultView() {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Status</dt>
-              <dd className="font-medium capitalize">
-                {order.status.replace(/_/g, " ")}
+              <dd className="font-medium">
+                {formatOrderStatusLabel(order.status)}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
