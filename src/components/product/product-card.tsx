@@ -29,19 +29,22 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden border border-border bg-card",
+        "group relative flex h-full flex-col overflow-hidden border border-border bg-card",
         compact ? "rounded-xl" : "rounded-2xl",
         className,
       )}
     >
+      <Link
+        href={`/products/${product.slug}`}
+        aria-label={product.name}
+        className="absolute inset-0 z-10 rounded-[inherit] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset"
+      />
+
       <div className="relative bg-surface-muted">
-        <Link
-          href={`/products/${product.slug}`}
-          className="relative block aspect-square overflow-hidden"
-        >
+        <div className="relative block aspect-square overflow-hidden">
           <MediaImage
             src={product.image}
-            alt={product.name}
+            alt=""
             sizes={
               compact
                 ? "(max-width: 640px) 46vw, (max-width: 1024px) 22vw, 180px"
@@ -49,7 +52,7 @@ export function ProductCard({
             }
             className="transition duration-500 group-hover:scale-105"
           />
-        </Link>
+        </div>
 
         <div
           className={cn(
@@ -85,7 +88,10 @@ export function ProductCard({
 
         <WishlistToggle
           product={product}
-          className={compact ? "top-1.5 right-1.5 size-7" : undefined}
+          className={cn(
+            "z-20",
+            compact ? "top-1.5 right-1.5 size-7" : undefined,
+          )}
         />
       </div>
 
@@ -98,7 +104,7 @@ export function ProductCard({
         <Link
           href={`/stores/${product.store.slug}`}
           className={cn(
-            "inline-flex min-w-0 items-center font-medium text-muted-foreground transition-colors hover:text-primary",
+            "relative z-20 inline-flex min-w-0 items-center font-medium text-muted-foreground transition-colors hover:text-primary",
             compact ? "gap-1 text-[10px]" : "gap-1.5 text-[11px]",
           )}
         >
@@ -118,18 +124,16 @@ export function ProductCard({
           <span className="truncate">{product.store.name}</span>
         </Link>
 
-        <Link href={`/products/${product.slug}`}>
-          <h3
-            className={cn(
-              "line-clamp-2 font-display font-semibold text-foreground transition-colors group-hover:text-primary",
-              compact
-                ? "min-h-8 text-xs leading-4"
-                : "min-h-10 text-sm leading-5",
-            )}
-          >
-            {product.name}
-          </h3>
-        </Link>
+        <h3
+          className={cn(
+            "line-clamp-2 font-display font-semibold text-foreground transition-colors group-hover:text-primary",
+            compact
+              ? "min-h-8 text-xs leading-4"
+              : "min-h-10 text-sm leading-5",
+          )}
+        >
+          {product.name}
+        </h3>
 
         <div
           className={cn(
@@ -182,7 +186,7 @@ export function ProductCard({
           </p>
           <AddToCartButton
             product={product}
-            className={compact ? "size-7" : undefined}
+            className={cn("relative z-20", compact ? "size-7" : undefined)}
           />
         </div>
       </div>
