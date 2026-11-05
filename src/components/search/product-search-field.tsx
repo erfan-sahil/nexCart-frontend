@@ -221,7 +221,7 @@ export function ProductSearchField({
         ) : null}
         <button
           type="submit"
-          className="m-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-sm font-semibold text-[#fff4f2] transition-colors duration-500 hover:bg-ink hover:text-[#fff4f2]"
+          className="m-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-sm font-semibold text-[#fff4f2] transition-colors duration-500 hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active"
         >
           <Search className="size-4" />
           <span className={cn(hideSubmitLabelOnMobile && "hidden sm:inline")}>

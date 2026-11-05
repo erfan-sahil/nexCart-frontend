@@ -1,6 +1,6 @@
 import type { Order, OrderStatus } from "../api";
 import type { HistoryStatus } from "./order-history";
-import { TRACKING_STEPS, type TrackedItem } from "../types";
+import type { TrackedItem } from "../types";
 
 export function mapOrderStatus(status: OrderStatus): HistoryStatus {
   if (status === "cancelled" || status === "expired") return "cancelled";
@@ -130,46 +130,4 @@ export function orderTrackUrl(order: Order, email: string) {
     email: email.trim().toLowerCase(),
   });
   return `/track-order?${params.toString()}`;
-}
-
-export function orderProgressMeta(status: OrderStatus) {
-  const steps = TRACKING_STEPS;
-
-  if (status === "cancelled" || status === "expired") {
-    return {
-      variant: "cancelled" as const,
-      progress: 0,
-      activeIndex: -1,
-      steps,
-    };
-  }
-
-  let activeIndex = 0;
-
-  if (status === "awaiting_payment") {
-    activeIndex = 0;
-  } else if (
-    status === "confirmed" ||
-    status === "product_accepted" ||
-    status === "shipped_to_warehouse"
-  ) {
-    activeIndex = 1;
-  } else if (status === "shipped") {
-    activeIndex = 2;
-  } else if (
-    status === "out_for_delivery" ||
-    status === "delivery_failed" ||
-    status === "customer_rejected" ||
-    status === "returning_to_warehouse" ||
-    status === "refund_processing" ||
-    status === "refunded"
-  ) {
-    activeIndex = 3;
-  } else if (status === "delivered") {
-    activeIndex = steps.length - 1;
-  }
-
-  const progress = steps.length <= 1 ? 0 : activeIndex / (steps.length - 1);
-
-  return { variant: "active" as const, progress, activeIndex, steps };
 }
