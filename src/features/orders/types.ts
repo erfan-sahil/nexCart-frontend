@@ -1,14 +1,4 @@
-import type { CustomerTimelineStep } from "./api";
-
-export const TRACKING_STEPS = [
-  { id: "placed", label: "Placed" },
-  { id: "confirmed", label: "Confirmed" },
-  { id: "shipped", label: "Shipped" },
-  { id: "out_for_delivery", label: "On the way" },
-  { id: "delivered", label: "Delivered" },
-] as const;
-
-export type TrackingStepId = (typeof TRACKING_STEPS)[number]["id"];
+import type { CustomerTimelineStep, OrderStatus } from "./api";
 
 export type TrackingEvent = {
   id: string;
@@ -29,8 +19,7 @@ export type TrackedItem = {
 export type TrackedOrder = {
   id: string;
   email: string;
-  status: TrackingStepId | "expired" | "cancelled";
-  eta: string;
+  status: OrderStatus;
   carrier: string;
   trackingNumber: string;
   shipTo: string;

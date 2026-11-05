@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Check,
-  CreditCard,
-  MapPin,
-  Package,
-  Truck,
-} from "lucide-react";
+import { ArrowLeft, CreditCard, MapPin, Package, Truck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Container, PageBreadcrumb } from "@/components/common";
@@ -18,27 +11,17 @@ import { getOrder } from "@/features/orders/api";
 import {
   formatOrderDate,
   formatOrderStatusLabel,
-  mapOrderStatus,
   orderIsTrackable,
-  orderProgressMeta,
   orderStatusSummary,
   orderTrackUrl,
 } from "@/features/orders/lib/map-order";
-import type { HistoryStatus } from "@/features/orders/lib/order-history";
 import { formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
+
+import { OrderProgress } from "./order-progress";
+import { OrderStatusBadge } from "./order-status-badge";
 
 type OrderDetailViewProps = {
   orderId: string;
-};
-
-const STATUS_BADGE: Record<HistoryStatus, string> = {
-  placed: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
-  confirmed: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
-  shipped: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
-  out_for_delivery: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
-  delivered: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
-  cancelled: "bg-destructive/10 text-destructive",
 };
 
 function formatShippingAddress(shipping: {
@@ -143,12 +126,9 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
   const trackable = orderIsTrackable(order);
   const trackHref =
     user?.email && trackable ? orderTrackUrl(order, user.email) : null;
-  const historyStatus = mapOrderStatus(order.status);
-  const progress = orderProgressMeta(order.status);
   const summary = orderStatusSummary(order);
   const addressLine = formatShippingAddress(shipping);
   const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
-  const showProgress = progress.variant === "active";
 
   return (
     <Container className="py-8 sm:py-10">
@@ -171,14 +151,7 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
           <ArrowLeft className="size-4" />
           All orders
         </Button>
-        <span
-          className={cn(
-            "inline-flex rounded-full px-3 py-1 text-sm font-medium capitalize",
-            STATUS_BADGE[historyStatus],
-          )}
-        >
-          {formatOrderStatusLabel(order.status)}
-        </span>
+        <OrderStatusBadge status={order.status} size="md" />
       </div>
 
       <article className="mt-4 overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-sm shadow-black/[0.03]">
@@ -199,70 +172,7 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
               {summary}
             </p>
 
-            {showProgress ? (
-              <div className="mt-8">
-                <ol className="hidden gap-2 sm:grid sm:grid-cols-5">
-                  {progress.steps.map((step, index) => {
-                    const completed = index <= progress.activeIndex;
-                    const current = index === progress.activeIndex;
-
-                    return (
-                      <li
-                        key={step.id}
-                        className={cn(
-                          "flex flex-col items-center gap-2 text-center",
-                          !completed && "opacity-50",
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "flex size-8 items-center justify-center rounded-full text-xs font-semibold ring-4 ring-card",
-                            completed
-                              ? current
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-primary/90 text-primary-foreground"
-                              : "bg-muted text-muted-foreground",
-                          )}
-                          aria-hidden
-                        >
-                          {completed ? <Check className="size-4" /> : index + 1}
-                        </span>
-                        <span
-                          className={cn(
-                            "text-[11px] font-medium leading-tight",
-                            current ? "text-primary" : "text-muted-foreground",
-                          )}
-                        >
-                          {step.label}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ol>
-
-                <div className="mt-6 px-1.5 sm:mt-8">
-                  <div className="relative h-1.5 rounded-full bg-border">
-                    <span
-                      className="absolute inset-y-0 left-0 rounded-full bg-primary transition-[width] duration-500"
-                      style={{ width: `${progress.progress * 100}%` }}
-                    />
-                    <span
-                      className="absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full bg-primary ring-4 ring-card"
-                      style={{
-                        left: `calc(${progress.progress * 100}% - 7px)`,
-                      }}
-                    />
-                  </div>
-                  <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
-                    <span>{progress.steps[0]?.label}</span>
-                    <span className="font-medium text-primary">
-                      {formatOrderStatusLabel(order.status)}
-                    </span>
-                    <span>{progress.steps.at(-1)?.label}</span>
-                  </div>
-                </div>
-              </div>
-            ) : null}
+            <OrderProgress status={order.status} className="mt-8" />
 
             {order.deliveryOutcome || order.refundStatus ? (
               <div className="mt-6 rounded-xl border border-amber-500/25 bg-amber-500/8 px-4 py-3 text-sm">

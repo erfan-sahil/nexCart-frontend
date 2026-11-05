@@ -13,7 +13,6 @@ import { useAuthStore } from "@/features/auth/store";
 import { listOrders } from "@/features/orders/api";
 import {
   formatOrderDate,
-  mapOrderStatus,
   orderIsTrackable,
   orderItemsToTracked,
 } from "@/features/orders/lib/map-order";
@@ -22,26 +21,12 @@ import { cn } from "@/lib/utils";
 
 import {
   HISTORY_FILTERS,
-  historyStatusLabel,
   matchesHistoryFilter,
   type HistoryFilter,
   type HistoryOrder,
-  type HistoryStatus,
 } from "../lib/order-history";
 import type { TrackedItem } from "../types";
-
-const STATUS_BADGE: Record<HistoryStatus, string> = {
-  placed: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
-  confirmed: "bg-violet-500/15 text-violet-700 dark:text-violet-300",
-  shipped: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
-  out_for_delivery: "bg-amber-500/15 text-amber-800 dark:text-amber-300",
-  delivered: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
-  cancelled: "bg-destructive/10 text-destructive",
-};
-
-function statusBadge(status: HistoryStatus) {
-  return STATUS_BADGE[status];
-}
+import { OrderStatusBadge } from "./order-status-badge";
 
 export function OrderHistoryView() {
   const authStatus = useAuthStore((state) => state.status);
@@ -61,7 +46,7 @@ export function OrderHistoryView() {
       id: order.id,
       orderNumber: order.orderNumber,
       email: user?.email ?? "",
-      status: mapOrderStatus(order.status),
+      status: order.status,
       placedOn: formatOrderDate(order.createdAt),
       summary: "",
       items: orderItemsToTracked(order),
@@ -174,14 +159,7 @@ export function OrderHistoryView() {
                     <ProductCount count={order.items.length} />
                   </td>
                   <td className="px-4 py-2.5 whitespace-nowrap">
-                    <span
-                      className={cn(
-                        "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
-                        statusBadge(order.status),
-                      )}
-                    >
-                      {historyStatusLabel(order.status)}
-                    </span>
+                    <OrderStatusBadge status={order.status} />
                   </td>
                   <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">
                     {order.placedOn}
