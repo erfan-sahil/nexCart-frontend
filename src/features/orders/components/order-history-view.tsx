@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,7 +16,6 @@ import {
   mapOrderStatus,
   orderIsTrackable,
   orderItemsToTracked,
-  orderStatusSummary,
 } from "@/features/orders/lib/map-order";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -63,7 +63,7 @@ export function OrderHistoryView() {
       email: user?.email ?? "",
       status: mapOrderStatus(order.status),
       placedOn: formatOrderDate(order.createdAt),
-      summary: orderStatusSummary(order),
+      summary: "",
       items: orderItemsToTracked(order),
       trackable: orderIsTrackable(order),
       total: order.totals.grandTotal,
@@ -140,17 +140,20 @@ export function OrderHistoryView() {
           </Button>
         </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[50rem] border-collapse text-left text-sm">
+        <ScrollArea
+          scrollbars="horizontal"
+          className="mt-4 w-full rounded-2xl border border-border bg-card"
+        >
+          <table className="w-full min-w-180 border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-border text-xs tracking-wide text-muted-foreground uppercase">
-                <th className="px-4 py-3 font-medium">Order</th>
-                <th className="px-4 py-3 font-medium">Items</th>
-                <th className="px-4 py-3 text-center font-medium">Products</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Placed</th>
-                <th className="px-4 py-3 text-right font-medium">Total</th>
-                <th className="px-4 py-3 text-right font-medium">
+                <th className="px-4 py-2.5 font-medium">Order</th>
+                <th className="px-4 py-2.5 font-medium">Items</th>
+                <th className="px-4 py-2.5 text-center font-medium">Qty</th>
+                <th className="px-4 py-2.5 font-medium">Status</th>
+                <th className="px-4 py-2.5 font-medium">Placed</th>
+                <th className="px-4 py-2.5 text-right font-medium">Total</th>
+                <th className="px-4 py-2.5 text-right font-medium">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>
@@ -161,47 +164,47 @@ export function OrderHistoryView() {
                   key={order.id}
                   className="border-b border-border align-middle last:border-b-0"
                 >
-                  <td className="px-4 py-3 font-medium whitespace-nowrap">
+                  <td className="px-4 py-2.5 font-medium whitespace-nowrap">
                     {order.orderNumber ?? order.id}
                   </td>
-                  <td className="w-72 px-4 py-3">
+                  <td className="max-w-64 px-4 py-2.5">
                     <ItemList items={order.items} />
                   </td>
-                  <td className="px-4 py-3 text-center whitespace-nowrap">
+                  <td className="px-4 py-2.5 text-center whitespace-nowrap tabular-nums text-muted-foreground">
                     <ProductCount count={order.items.length} />
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
+                  <td className="px-4 py-2.5 whitespace-nowrap">
                     <span
                       className={cn(
-                        "inline-flex rounded-full px-2.5 py-0.5 font-medium",
+                        "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium",
                         statusBadge(order.status),
                       )}
                     >
                       {historyStatusLabel(order.status)}
                     </span>
-                    <p className="mt-1 text-muted-foreground">
-                      {order.summary}
-                    </p>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
+                  <td className="px-4 py-2.5 whitespace-nowrap text-muted-foreground">
                     {order.placedOn}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium whitespace-nowrap tabular-nums">
+                  <td className="px-4 py-2.5 text-right font-medium whitespace-nowrap tabular-nums">
                     {formatPrice(order.total ?? 0)}
                   </td>
-                  <td className="px-4 py-3 text-right whitespace-nowrap">
-                    <Link
-                      href={`/orders/${order.id}`}
-                      className="font-medium text-primary hover:underline"
+                  <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                    <Button
+                      nativeButton={false}
+                      variant="outline"
+                      size="sm"
+                      render={<Link href={`/orders/${order.id}`} />}
                     >
                       View
-                    </Link>
+                      <ChevronRight data-icon="inline-end" />
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollArea>
       )}
     </Container>
   );
@@ -217,23 +220,23 @@ function ItemList({ items }: { items: TrackedItem[] }) {
       {items.map((item) => (
         <li
           key={item.slug + item.name}
-          className="flex h-10 items-center gap-2 pr-2"
+          className="flex h-9 items-center gap-2 pr-2"
         >
           {item.image ? (
-            <span className="relative size-8 shrink-0 overflow-hidden rounded-md bg-surface-muted">
+            <span className="relative size-7 shrink-0 overflow-hidden rounded-md bg-surface-muted">
               <Image
                 src={item.image}
                 alt=""
                 fill
-                sizes="32px"
+                sizes="28px"
                 className="object-cover"
               />
             </span>
           ) : (
-            <span className="size-8 shrink-0 rounded-md bg-surface-muted" />
+            <span className="size-7 shrink-0 rounded-md bg-surface-muted" />
           )}
           <span className="min-w-0 truncate">{item.name}</span>
-          <span className="shrink-0 text-muted-foreground">
+          <span className="shrink-0 text-muted-foreground tabular-nums">
             ×{item.quantity}
           </span>
         </li>
@@ -243,7 +246,7 @@ function ItemList({ items }: { items: TrackedItem[] }) {
 
   if (items.length < 2) return list;
 
-  return <ScrollArea className="h-10">{list}</ScrollArea>;
+  return <ScrollArea className="h-9">{list}</ScrollArea>;
 }
 
 function OrderFilterTabs({
