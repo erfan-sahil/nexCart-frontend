@@ -5,47 +5,63 @@ import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 
 const sections = [
-  { id: "window", label: "Return window" },
-  { id: "start", label: "How to start" },
+  { id: "policy", label: "When refunds apply" },
+  { id: "flow", label: "How it works" },
   { id: "refund", label: "Refunds" },
-  { id: "excluded", label: "What cannot be returned" },
+  { id: "excluded", label: "Not allowed" },
 ] as const;
 
-const highlights = [
-  { value: "30 days", label: "From the delivery date" },
-  { value: "Unused", label: "In the original packaging" },
-  { value: "Same method", label: "Refund to the original payment" },
+const policyRows = [
+  {
+    situation: "Product not yet delivered",
+    allowed: false,
+    note: "No refund yet — wait for delivery outcome.",
+  },
+  {
+    situation: "Customer rejects during delivery",
+    allowed: true,
+    note: "Yes, after NexCart warehouse receives and accepts the return.",
+  },
+  {
+    situation: "Courier fails delivery",
+    allowed: true,
+    note: "Yes, after warehouse receipt and acceptance.",
+  },
+  {
+    situation: "Customer accepts delivery",
+    allowed: false,
+    note: "No. Accepting delivery ends return eligibility.",
+  },
+  {
+    situation: "Return requested after accepting",
+    allowed: false,
+    note: "Not allowed.",
+  },
 ] as const;
-
-const eligible = [
-  "The request is within 30 days of delivery.",
-  "The item is unused and still in its original packaging.",
-  "You include the order number from your receipt or order history.",
-];
 
 const steps = [
   {
-    title: "Find the order",
-    body: "Open order history while signed in, or use the order number on your receipt. That number is required for a return.",
+    title: "Delivery fails or you refuse the package",
+    body: "The courier records a failed delivery or your rejection of specific items. A refund is not started yet.",
   },
   {
-    title: "Send the request",
-    body: "Contact support, choose A return, and include the order number plus which item you are sending back.",
+    title: "Package returns to NexCart",
+    body: "The courier brings rejected or undelivered items back to the NexCart warehouse.",
   },
   {
-    title: "Pack the item",
-    body: "Keep it unused and in the original packaging. Support replies with how to send it once the request is accepted.",
+    title: "Warehouse inspects the goods",
+    body: "NexCart receives and inspects the return. Only then does refund processing begin.",
   },
   {
-    title: "Refund is issued",
-    body: "After the return is accepted, the refund goes back to the original payment method. You get an email when that happens.",
+    title: "Refund for rejected items only",
+    body: "If you kept some products, only the rejected merchandise is refunded. Delivery fee is refunded only when every item is returned.",
   },
 ];
 
 const excluded = [
-  "Perishable groceries",
-  "Opened beauty products",
-  "Items marked final sale",
+  "Any return after you accept delivery",
+  "Customer-initiated returns from order history",
+  "Refunds before warehouse acceptance of the returned goods",
 ];
 
 export function ReturnsView() {
@@ -62,32 +78,18 @@ export function ReturnsView() {
           </p>
           <h1 className="mt-1 text-3xl sm:text-4xl">Returns & refunds</h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Most items can be returned within 30 days of delivery. Start from
-            your order number, and the refund goes back to the way you paid.
+            NexCart supports returns only before successful delivery acceptance.
+            Once you accept the product, you cannot request a return or refund.
           </p>
         </div>
         <Button
           nativeButton={false}
-          render={<Link href="/contact" />}
+          render={<Link href="/orders" />}
           className="auth-orange-button shrink-0 px-6"
         >
-          Request a return
+          View orders
         </Button>
       </div>
-
-      <ul className="mt-8 grid gap-3 sm:grid-cols-3">
-        {highlights.map((item) => (
-          <li
-            key={item.label}
-            className="rounded-2xl border border-border bg-card px-5 py-4"
-          >
-            <p className="font-display text-3xl tracking-tight text-primary">
-              {item.value}
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">{item.label}</p>
-          </li>
-        ))}
-      </ul>
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
         <nav className="no-scrollbar flex gap-2 overflow-x-auto lg:sticky lg:top-44 lg:flex-col lg:overflow-visible">
@@ -103,28 +105,57 @@ export function ReturnsView() {
         </nav>
 
         <div className="space-y-10">
-          <section id="window" className="scroll-mt-36">
+          <section id="policy" className="scroll-mt-36">
             <h2 className="font-display text-2xl tracking-tight">
-              Return window
+              When refunds apply
             </h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              A return is accepted when all of these are true.
+              Refunds start only after the physical return is accepted at the
+              NexCart warehouse.
             </p>
-            <ul className="mt-4 space-y-3">
-              {eligible.map((item) => (
-                <li key={item} className="flex gap-3 text-sm leading-6">
-                  <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-soft text-primary">
-                    <Check className="size-3" />
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-border bg-muted/40 text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Situation</th>
+                    <th className="px-4 py-3 font-medium">Refund</th>
+                    <th className="hidden px-4 py-3 font-medium sm:table-cell">
+                      Note
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {policyRows.map((row) => (
+                    <tr
+                      key={row.situation}
+                      className="border-b border-border last:border-b-0"
+                    >
+                      <td className="px-4 py-3 align-top font-medium">
+                        {row.situation}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <span className="inline-flex items-center gap-1.5">
+                          {row.allowed ? (
+                            <Check className="size-3.5 text-primary" />
+                          ) : (
+                            <X className="size-3.5 text-muted-foreground" />
+                          )}
+                          {row.allowed ? "Yes" : "No"}
+                        </span>
+                      </td>
+                      <td className="hidden px-4 py-3 align-top text-muted-foreground sm:table-cell">
+                        {row.note}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
 
-          <section id="start" className="scroll-mt-36">
+          <section id="flow" className="scroll-mt-36">
             <h2 className="font-display text-2xl tracking-tight">
-              How to start a return
+              How it works
             </h2>
             <ol className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
               {steps.map((step, index) => (
@@ -147,25 +178,24 @@ export function ReturnsView() {
           </section>
 
           <section id="refund" className="scroll-mt-36">
-            <h2 className="font-display text-2xl tracking-tight">
-              When the refund arrives
-            </h2>
+            <h2 className="font-display text-2xl tracking-tight">Refunds</h2>
             <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               <p>
-                The refund is issued after the return is accepted. It goes back
-                to the original payment method, and you receive an email when
-                that happens.
+                Partial rejection refunds only the refused products (and a fair
+                share of any coupon). Items you accept stay as a completed
+                purchase.
               </p>
               <p>
-                If something arrived damaged, contact support with the order
-                number even when the item is outside the usual return rules.
+                Track refund progress from order history or track order. Contact
+                support only if delivery failed and you need help locating the
+                order.
               </p>
             </div>
           </section>
 
           <section id="excluded" className="scroll-mt-36">
             <h2 className="font-display text-2xl tracking-tight">
-              What cannot be returned
+              Not allowed
             </h2>
             <ul className="mt-4 space-y-3">
               {excluded.map((item) => (
@@ -181,27 +211,29 @@ export function ReturnsView() {
 
           <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-base font-medium">Ready to send it back?</h2>
+              <h2 className="text-base font-medium">
+                Need help with an order?
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Use the order number from your history. Support replies by
-                email.
+                Check tracking for delivery and refund status, or contact
+                support with your order number.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
                 nativeButton={false}
-                render={<Link href="/contact" />}
+                render={<Link href="/track-order" />}
                 className="h-10 rounded-full px-5 font-semibold"
               >
-                Contact us
+                Track order
               </Button>
               <Button
                 variant="outline"
                 nativeButton={false}
-                render={<Link href="/orders" />}
+                render={<Link href="/contact" />}
                 className="h-10 rounded-full px-5"
               >
-                Order history
+                Contact us
               </Button>
             </div>
           </section>

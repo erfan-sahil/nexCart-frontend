@@ -9,10 +9,14 @@ import { useAuthStore } from "@/features/auth/store";
 import { getOrder } from "@/features/orders/api";
 import {
   formatOrderDate,
+  formatOrderStatusLabel,
   orderItemsToTracked,
+  orderIsTrackable,
   orderStatusSummary,
+  orderTrackUrl,
 } from "@/features/orders/lib/map-order";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 type OrderDetailViewProps = {
   orderId: string;
@@ -20,6 +24,7 @@ type OrderDetailViewProps = {
 
 export function OrderDetailView({ orderId }: OrderDetailViewProps) {
   const authStatus = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
 
   const orderQuery = useQuery({
     queryKey: ["order", orderId],
@@ -78,6 +83,9 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
   const order = orderQuery.data;
   const items = orderItemsToTracked(order);
   const shipping = order.shipping;
+  const trackable = orderIsTrackable(order);
+  const trackHref =
+    user?.email && trackable ? orderTrackUrl(order, user.email) : null;
 
   return (
     <Container className="py-8 sm:py-10">
@@ -99,14 +107,59 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
             Placed {formatOrderDate(order.createdAt)}
           </p>
         </div>
-        <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium capitalize">
-          {order.status.replace(/_/g, " ")}
+        <span
+          className={cn(
+            "rounded-full px-3 py-1 text-sm font-medium capitalize",
+            order.status === "cancelled" ||
+              order.status === "delivery_failed" ||
+              order.status === "customer_rejected"
+              ? "bg-destructive/10 text-destructive"
+              : order.status === "refund_processing" ||
+                  order.status === "refunded" ||
+                  order.status === "returning_to_warehouse"
+                ? "bg-amber-500/15 text-amber-800"
+                : "bg-brand-soft",
+          )}
+        >
+          {formatOrderStatusLabel(order.status)}
         </span>
       </div>
 
       <p className="mt-4 text-sm text-muted-foreground">
         {orderStatusSummary(order)}
       </p>
+
+      {order.deliveryOutcome || order.refundStatus ? (
+        <div className="mt-4 rounded-2xl border border-border bg-card px-4 py-3 text-sm">
+          {order.deliveryOutcome ? (
+            <p>
+              <span className="text-muted-foreground">Delivery: </span>
+              {formatOrderStatusLabel(order.deliveryOutcome)}
+            </p>
+          ) : null}
+          {order.refundStatus ? (
+            <p className={order.deliveryOutcome ? "mt-1" : undefined}>
+              <span className="text-muted-foreground">Refund: </span>
+              {formatOrderStatusLabel(order.refundStatus)}
+            </p>
+          ) : null}
+          {order.status === "delivered" ? (
+            <p className="mt-2 text-muted-foreground">
+              Accepting delivery ends return eligibility for this order.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {trackHref ? (
+        <Button
+          nativeButton={false}
+          render={<Link href={trackHref} />}
+          className="auth-orange-button mt-4"
+        >
+          Track shipment
+        </Button>
+      ) : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-border bg-card p-5">
@@ -179,6 +232,12 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
                 <dt>Total</dt>
                 <dd>{formatPrice(order.totals.grandTotal)}</dd>
               </div>
+              {(order.totals.amountRefunded ?? 0) > 0 ? (
+                <div className="flex justify-between text-primary">
+                  <dt>Refunded</dt>
+                  <dd>{formatPrice(order.totals.amountRefunded ?? 0)}</dd>
+                </div>
+              ) : null}
               {order.totals.balanceDue > 0 ? (
                 <div className="flex justify-between text-primary">
                   <dt>Balance due</dt>

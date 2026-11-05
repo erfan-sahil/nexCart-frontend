@@ -1,3 +1,5 @@
+import type { CustomerTimelineStep } from "./api";
+
 export const TRACKING_STEPS = [
   { id: "placed", label: "Placed" },
   { id: "confirmed", label: "Confirmed" },
@@ -27,13 +29,14 @@ export type TrackedItem = {
 export type TrackedOrder = {
   id: string;
   email: string;
-  status: TrackingStepId | "expired";
+  status: TrackingStepId | "expired" | "cancelled";
   eta: string;
   carrier: string;
   trackingNumber: string;
   shipTo: string;
   paymentLabel: string;
   total?: number;
+  timeline: CustomerTimelineStep[];
   events: TrackingEvent[];
   items: TrackedItem[];
 };

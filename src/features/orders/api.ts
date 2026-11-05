@@ -5,9 +5,31 @@ import type { ApiSuccess, PaginationMeta } from "@/lib/api/types";
 export type OrderPaymentMethod = "prepaid" | "cod";
 
 export type OrderStatus =
-  "awaiting_payment" | "confirmed" | "shipped" | "delivered" | "expired";
+  | "awaiting_payment"
+  | "confirmed"
+  | "product_accepted"
+  | "shipped_to_warehouse"
+  | "shipped"
+  | "out_for_delivery"
+  | "delivered"
+  | "delivery_failed"
+  | "customer_rejected"
+  | "returning_to_warehouse"
+  | "refund_processing"
+  | "refunded"
+  | "expired"
+  | "cancelled";
 
 export type OrderPaymentStatus = "unpaid" | "partially_paid" | "paid";
+
+export type OrderDeliveryOutcome =
+  | null
+  | "out_for_delivery"
+  | "delivered"
+  | "delivery_failed"
+  | "customer_rejected"
+  | "returning_to_warehouse"
+  | "returned_to_warehouse";
 
 export type OrderShipping = {
   recipientName: string;
@@ -40,6 +62,7 @@ export type OrderTotals = {
   grandTotal: number;
   amountDueNow: number;
   amountPaid: number;
+  amountRefunded?: number;
   balanceDue: number;
   refundableAmount: number;
   currency: string;
@@ -56,6 +79,8 @@ export type Order = {
   note: string;
   items: OrderItem[];
   totals: OrderTotals;
+  deliveryOutcome?: OrderDeliveryOutcome;
+  refundStatus?: string | null;
   stockHoldExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -140,6 +165,13 @@ export type OrderTrackingItem = {
   unitPrice: number;
 };
 
+export type CustomerTimelineStep = {
+  id: string;
+  label: string;
+  at: string | null;
+  completed: boolean;
+};
+
 export type OrderTracking = {
   orderNumber: string;
   status: OrderStatus;
@@ -153,8 +185,12 @@ export type OrderTracking = {
   shippedAt: string | null;
   deliveredAt: string | null;
   fulfillmentStartedAt: string | null;
+  timeline: CustomerTimelineStep[];
+  deliveryOutcome?: OrderDeliveryOutcome;
+  refundStatus?: string | null;
   grandTotal: number;
   currency: string;
+  amountRefunded?: number;
   items: OrderTrackingItem[];
 };
 
