@@ -2,14 +2,18 @@ import type { ProductSpecification } from "@/types";
 
 type ProductSpecsProps = {
   specifications: ProductSpecification[];
+  title?: string;
 };
 
-export function ProductSpecs({ specifications }: ProductSpecsProps) {
+export function ProductSpecs({
+  specifications,
+  title = "Details",
+}: ProductSpecsProps) {
   if (specifications.length === 0) return null;
 
   return (
     <section className="mt-5">
-      <h2 className="text-sm font-semibold">Specifications</h2>
+      <h2 className="text-sm font-semibold">{title}</h2>
       <dl className="mt-2 grid gap-px overflow-hidden rounded-2xl border border-border bg-border">
         {specifications.map((item) => (
           <div

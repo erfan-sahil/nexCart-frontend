@@ -43,6 +43,7 @@ export type CatalogProduct = {
   slug: string;
   shortDescription: string;
   description: string;
+  features: string[];
   images: CatalogProductImage[];
   thumbnail: CatalogProductImage | null;
   attributes: CatalogAttribute[];

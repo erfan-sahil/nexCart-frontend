@@ -6,7 +6,16 @@ import { MAX_CART_QUANTITY, type CartLine } from "./types";
 
 type CartState = {
   lines: CartLine[];
-  add: (product: Product, quantity?: number) => boolean;
+  add: (
+    product: Product,
+    quantity?: number,
+    variant?: {
+      id: string;
+      price: number;
+      originalPrice?: number;
+      inStock?: boolean;
+    },
+  ) => boolean;
   setQuantity: (variantId: string, quantity: number) => void;
   remove: (variantId: string) => void;
   clear: () => void;
@@ -18,12 +27,20 @@ function clampQuantity(quantity: number) {
 
 export const useCartStore = create<CartState>((set) => ({
   lines: [],
-  add: (product, quantity = 1) => {
-    const variantId = product.defaultVariantId;
+  add: (product, quantity = 1, variant) => {
+    const variantId = variant?.id ?? product.defaultVariantId;
 
     if (!variantId) {
       return false;
     }
+
+    const lineProduct: Product = {
+      ...product,
+      defaultVariantId: variantId,
+      price: variant?.price ?? product.price,
+      originalPrice: variant?.originalPrice ?? product.originalPrice,
+      inStock: variant?.inStock ?? product.inStock,
+    };
 
     set((state) => {
       const existing = state.lines.find((line) => line.variantId === variantId);
@@ -36,7 +53,7 @@ export const useCartStore = create<CartState>((set) => ({
               variantId,
               productId: product.id,
               quantity: clampQuantity(quantity),
-              product,
+              product: lineProduct,
             },
           ],
         };
@@ -48,7 +65,7 @@ export const useCartStore = create<CartState>((set) => ({
             ? {
                 ...line,
                 quantity: clampQuantity(line.quantity + quantity),
-                product,
+                product: lineProduct,
               }
             : line,
         ),
