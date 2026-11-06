@@ -67,6 +67,7 @@ export function toProduct(dto: CatalogProduct): Product {
     listedAt: dto.publishedAt ?? dto.createdAt,
     inStock: dto.offer.inStock,
     defaultVariantId: dto.offer.defaultVariantId,
+    variantCount: dto.offer.variantCount,
   };
 }
 
@@ -93,9 +94,28 @@ export function toProductDetail(
     }))
     .filter((item) => item.value);
 
+  const storedFeatures = dto.features ?? [];
+  const features =
+    storedFeatures.length > 0
+      ? storedFeatures
+      : dto.description.includes("\n")
+        ? dto.description
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean)
+        : [];
+
+  const summary = dto.shortDescription.trim();
+  const legacyBody = features.length === 0 ? dto.description.trim() : "";
+  const description =
+    summary && legacyBody && summary !== legacyBody
+      ? `${summary}\n\n${legacyBody}`
+      : summary || legacyBody;
+
   return {
     ...product,
-    description: dto.description || dto.shortDescription,
+    description,
+    features,
     images: images.length > 0 ? images : product.image ? [product.image] : [],
     specifications,
   };

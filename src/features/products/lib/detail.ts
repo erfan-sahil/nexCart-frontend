@@ -16,6 +16,7 @@ export function getProductDetail(slug: string): ProductDetail | undefined {
   return {
     ...product,
     description,
+    features: [],
     images,
     specifications: extra?.specifications ?? [
       { label: "Seller", value: product.store.name },

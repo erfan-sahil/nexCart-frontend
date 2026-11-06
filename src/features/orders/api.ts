@@ -52,6 +52,7 @@ export type OrderItem = {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  imageUrl?: string;
 };
 
 export type OrderTotals = {

@@ -1,4 +1,5 @@
 import type { BreadcrumbItem } from "@/components/common/page-breadcrumb";
+import { formatPrice } from "@/lib/format";
 
 export const PRODUCT_COLLECTIONS = [
   "bestsellers",
@@ -22,14 +23,32 @@ export const PRODUCT_SORTS = [
 
 export type ProductSort = (typeof PRODUCT_SORTS)[number];
 
-export const PRICE_FILTERS = [
-  { id: "0-50", label: "Under $50", min: 0, max: 50 },
-  { id: "50-100", label: "$50 – $100", min: 50, max: 100 },
-  { id: "100-200", label: "$100 – $200", min: 100, max: 200 },
-  { id: "200-", label: "$200 & up", min: 200, max: Number.POSITIVE_INFINITY },
+const PRICE_BOUNDS = [
+  { id: "0-100", min: 0, max: 100 },
+  { id: "100-500", min: 100, max: 500 },
+  { id: "500-1000", min: 500, max: 1000 },
+  { id: "1000-", min: 1000, max: Number.POSITIVE_INFINITY },
 ] as const;
 
-export type PriceFilterId = (typeof PRICE_FILTERS)[number]["id"];
+function priceFilterLabel(min: number, max: number) {
+  if (min <= 0) return `Under ${formatPrice(max)}`;
+  if (!Number.isFinite(max)) return `${formatPrice(min)} & up`;
+  return `${formatPrice(min)} – ${formatPrice(max)}`;
+}
+
+export type PriceFilterId = (typeof PRICE_BOUNDS)[number]["id"];
+
+export const PRICE_FILTERS: {
+  id: PriceFilterId;
+  label: string;
+  min: number;
+  max: number;
+}[] = PRICE_BOUNDS.map((bound) => ({
+  id: bound.id,
+  min: bound.min,
+  max: bound.max,
+  label: priceFilterLabel(bound.min, bound.max),
+}));
 
 export const RATING_FILTERS = [
   { value: 4, label: "4 stars & up" },

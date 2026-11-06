@@ -63,7 +63,7 @@ export function ProductsSort({ query }: ProductsSortProps) {
         </PopoverTrigger>
         <PopoverContent
           align="end"
-          className="w-64 gap-4 p-3 shadow-none ring-border"
+          className="w-72 gap-4 p-3 shadow-none ring-border"
         >
           <div>
             <p className="px-2.5 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">

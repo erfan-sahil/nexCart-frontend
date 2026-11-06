@@ -1,7 +1,9 @@
 export { ProductBuyBox } from "./product-buy-box";
 export { ProductGallery } from "./product-gallery";
 export { ProductReviews } from "./product-reviews";
+export { ProductFeatures } from "./product-features";
 export { ProductSpecs } from "./product-specs";
+export { ProductVariantPicker } from "./product-variant-picker";
 export { ProductsEmpty } from "./products-empty";
 export { ProductsPagination } from "./products-pagination";
 export { ProductsSearch } from "./products-search";

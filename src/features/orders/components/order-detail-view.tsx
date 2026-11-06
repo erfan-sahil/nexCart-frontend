@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, CreditCard, MapPin, Package, Truck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { Container, PageBreadcrumb } from "@/components/common";
+import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/features/auth/store";
 import { getOrder } from "@/features/orders/api";
@@ -16,6 +16,7 @@ import {
   orderTrackUrl,
 } from "@/features/orders/lib/map-order";
 import { formatPrice } from "@/lib/format";
+import { mediaUrl } from "@/lib/media";
 
 import { OrderProgress } from "./order-progress";
 import { OrderStatusBadge } from "./order-status-badge";
@@ -228,13 +229,22 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
             </p>
             <ul className="mt-4 max-h-72 space-y-3 overflow-y-auto pr-1">
               {order.items.map((item) => {
+                const image = mediaUrl(item.imageUrl);
                 const row = (
                   <>
                     <span className="relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-muted ring-1 ring-border/60">
-                      <Package
-                        className="size-5 text-muted-foreground/70"
-                        aria-hidden
-                      />
+                      {image ? (
+                        <MediaImage
+                          src={image}
+                          alt={item.productName}
+                          sizes="56px"
+                        />
+                      ) : (
+                        <Package
+                          className="size-5 text-muted-foreground/70"
+                          aria-hidden
+                        />
+                      )}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="line-clamp-2 text-sm font-medium leading-snug">

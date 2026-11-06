@@ -1,13 +1,23 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/features/cart";
 import { WishlistToggle } from "@/features/wishlist";
 import { discountPercent, formatPrice } from "@/lib/format";
 import type { ProductDetail } from "@/types";
+
+import { listProductVariants } from "../api/variants";
+import {
+  defaultVariant,
+  findVariant,
+  selectionFromVariant,
+  variantAxes,
+} from "../lib/variant-selection";
+import { ProductVariantPicker } from "./product-variant-picker";
 
 type ProductBuyBoxProps = {
   product: ProductDetail;
@@ -16,27 +26,106 @@ type ProductBuyBoxProps = {
 export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
-  const off = discountPercent(product.price, product.originalPrice);
+  const [userSelection, setUserSelection] = useState<Record<
+    string,
+    string
+  > | null>(null);
 
-  const unavailable = product.inStock === false || !product.defaultVariantId;
+  const hasOptions = (product.variantCount ?? 0) > 1;
+
+  const variantsQuery = useQuery({
+    queryKey: ["product-variants", product.id],
+    queryFn: () => listProductVariants(product.id),
+    enabled: hasOptions,
+  });
+
+  const variants = useMemo(
+    () => variantsQuery.data?.items ?? [],
+    [variantsQuery.data?.items],
+  );
+
+  const axes = useMemo(() => variantAxes(variants), [variants]);
+
+  const defaultSelection = useMemo(() => {
+    const initial = defaultVariant(variants);
+    return initial ? selectionFromVariant(initial) : {};
+  }, [variants]);
+
+  const selection = userSelection ?? defaultSelection;
+
+  const setSelection = useCallback((next: Record<string, string>) => {
+    setUserSelection(next);
+  }, []);
+
+  const selected = useMemo(
+    () => findVariant(variants, selection),
+    [variants, selection],
+  );
+
+  const displayPrice = selected?.price ?? product.price;
+  const displayOriginal =
+    selected?.originalPrice ??
+    (product.originalPrice && product.originalPrice > displayPrice
+      ? product.originalPrice
+      : undefined);
+  const off = discountPercent(displayPrice, displayOriginal);
+  const unavailable =
+    hasOptions && variantsQuery.isSuccess
+      ? !selected || selected.stock <= 0
+      : product.inStock === false || !product.defaultVariantId;
 
   function addToCart() {
-    if (unavailable) return;
-    const ok = useCartStore.getState().add(product, quantity);
-    if (!ok) return;
+    if (unavailable) {
+      return;
+    }
+
+    const ok = useCartStore.getState().add(
+      product,
+      quantity,
+      selected
+        ? {
+            id: selected.id,
+            price: selected.price,
+            originalPrice: selected.originalPrice,
+            inStock: selected.stock > 0,
+          }
+        : undefined,
+    );
+
+    if (!ok) {
+      return;
+    }
+
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
   }
 
   return (
     <div className="mt-4 space-y-3">
+      {hasOptions ? (
+        variantsQuery.isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading options…</p>
+        ) : variantsQuery.isError ? (
+          <p className="text-sm text-destructive" role="alert">
+            Options could not be loaded.
+          </p>
+        ) : (
+          <ProductVariantPicker
+            axes={axes}
+            variants={variants}
+            selection={selection}
+            onChange={setSelection}
+          />
+        )
+      ) : null}
+
       <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
         <p className="font-display text-3xl tracking-tight text-foreground">
-          {formatPrice(product.price)}
+          {formatPrice(displayPrice)}
         </p>
-        {product.originalPrice ? (
+        {displayOriginal ? (
           <p className="pb-1 text-sm text-muted-foreground line-through">
-            {formatPrice(product.originalPrice)}
+            {formatPrice(displayOriginal)}
           </p>
         ) : null}
         {off > 0 ? (
@@ -45,6 +134,12 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           </span>
         ) : null}
       </div>
+
+      {selected && selected.stock > 0 && selected.stock <= 5 ? (
+        <p className="text-xs text-muted-foreground">
+          Only {selected.stock} left in this option
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="inline-flex items-center rounded-full border border-border bg-card">
@@ -73,7 +168,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         <Button
           className="auth-orange-button h-11 min-w-40 flex-1 px-6"
           onClick={addToCart}
-          disabled={unavailable}
+          disabled={unavailable || variantsQuery.isLoading}
         >
           <ShoppingBag className="size-4" />
           {unavailable ? "Out of stock" : added ? "Added" : "Add to cart"}

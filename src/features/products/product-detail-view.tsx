@@ -10,6 +10,7 @@ import { productsHref } from "./lib/query";
 import { ProductBuyBox } from "./components/product-buy-box";
 import { ProductGallery } from "./components/product-gallery";
 import { ProductReviews } from "./components/product-reviews";
+import { ProductFeatures } from "./components/product-features";
 import { ProductSpecs } from "./components/product-specs";
 import { ProductRatingLink } from "@/features/reviews";
 import { ProductReportSection } from "@/features/reports";
@@ -81,15 +82,22 @@ export function ProductDetailView({
             badge={product.badge}
           />
 
-          <ProductBuyBox product={product} />
+          <ProductBuyBox key={product.id} product={product} />
 
-          <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
-            {product.description}
-          </p>
+          {product.description ? (
+            <p className="mt-4 max-w-xl text-sm leading-6 whitespace-pre-line text-muted-foreground">
+              {product.description}
+            </p>
+          ) : null}
+
+          <ProductFeatures features={product.features} />
 
           <ProductReportSection productId={product.id} />
 
-          <ProductSpecs specifications={product.specifications} />
+          <ProductSpecs
+            specifications={product.specifications}
+            title={product.features.length > 0 ? "Details" : "Specifications"}
+          />
         </div>
       </div>
 

@@ -25,6 +25,7 @@ export type Product = {
   inStock?: boolean;
   /** Default sellable SKU for checkout */
   defaultVariantId?: string | null;
+  variantCount?: number;
 };
 
 export type ProductSpecification = {
@@ -34,6 +35,7 @@ export type ProductSpecification = {
 
 export type ProductDetail = Product & {
   description: string;
+  features: string[];
   images: string[];
   specifications: ProductSpecification[];
 };
