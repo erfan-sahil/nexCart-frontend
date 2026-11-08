@@ -15,13 +15,26 @@ import { fieldErrorResolver } from "../lib/resolver";
 import { validateLogin, type LoginValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
+import { AuthDivider } from "./auth-divider";
+import { GoogleSignInButton } from "./google-sign-in-button";
 import { PasswordField, TextField } from "./text-field";
+
+const GOOGLE_AUTH_ERROR_MESSAGES: Record<string, string> = {
+  google_auth: "Google sign-in failed. Please try again.",
+  google_denied: "Google sign-in was cancelled.",
+};
 
 type LoginFormProps = {
   nextPath?: string;
+  oauthError?: string | null;
+  oauthMessage?: string | null;
 };
 
-export function LoginForm({ nextPath = "/" }: LoginFormProps) {
+export function LoginForm({
+  nextPath = "/",
+  oauthError = null,
+  oauthMessage = null,
+}: LoginFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const {
@@ -33,6 +46,10 @@ export function LoginForm({ nextPath = "/" }: LoginFormProps) {
     defaultValues: { email: "", password: "" },
     resolver: fieldErrorResolver(validateLogin),
   });
+
+  const oauthErrorMessage =
+    oauthMessage ||
+    (oauthError ? GOOGLE_AUTH_ERROR_MESSAGES[oauthError] : null);
 
   const signIn = useMutation({
     mutationFn: login,
@@ -79,6 +96,11 @@ export function LoginForm({ nextPath = "/" }: LoginFormProps) {
             {errors.root.message}
           </p>
         ) : null}
+        {!errors.root?.message && oauthErrorMessage ? (
+          <p role="alert" className="text-sm text-destructive">
+            {oauthErrorMessage}
+          </p>
+        ) : null}
         <TextField
           type="email"
           label="Email"
@@ -110,6 +132,10 @@ export function LoginForm({ nextPath = "/" }: LoginFormProps) {
           {signIn.isPending ? "Signing in..." : "Sign in"}
         </Button>
       </form>
+
+      <AuthDivider />
+
+      <GoogleSignInButton callbackUrl={nextPath} />
 
       <p className="text-sm text-muted-foreground">
         New to NexCart?{" "}

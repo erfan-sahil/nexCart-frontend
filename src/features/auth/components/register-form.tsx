@@ -15,6 +15,8 @@ import { fieldErrorResolver } from "../lib/resolver";
 import { validateRegister, type RegisterValues } from "../lib/validation";
 import { sessionQueryKey } from "../query";
 import { useAuthStore } from "../store";
+import { AuthDivider } from "./auth-divider";
+import { GoogleSignInButton } from "./google-sign-in-button";
 import { PhoneField } from "./phone-field";
 import { PasswordField, TextField } from "./text-field";
 
@@ -156,6 +158,10 @@ export function RegisterForm({ nextPath = "/" }: RegisterFormProps) {
           {createAccount.isPending ? "Creating account..." : "Create account"}
         </Button>
       </form>
+
+      <AuthDivider />
+
+      <GoogleSignInButton callbackUrl={nextPath} />
 
       <p className="text-sm text-muted-foreground">
         Already have an account?{" "}

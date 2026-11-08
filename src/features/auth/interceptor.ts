@@ -16,6 +16,7 @@ const skipRefresh = [
   "/auth/register",
   "/auth/refresh",
   "/auth/logout",
+  "/auth/google",
 ];
 
 let installed = false;
