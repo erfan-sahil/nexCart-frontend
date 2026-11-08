@@ -13,7 +13,6 @@ import {
 } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 
@@ -231,14 +230,14 @@ export function ApplicationForm({
   return (
     <FormProvider {...form}>
       <div className="mt-8 grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
-        <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
-          <ScrollArea scrollbars="horizontal" className="w-full lg:hidden">
+        <aside className="min-w-0 max-w-full lg:sticky lg:top-28 lg:self-start">
+          <div className="no-scrollbar -mx-4 overflow-x-auto px-4 pb-0.5 sm:-mx-6 sm:px-6 lg:hidden">
             <ApplicationStepNav
               step={step}
               onStepChange={setStep}
               layout="horizontal"
             />
-          </ScrollArea>
+          </div>
           <div className="hidden lg:block">
             <ApplicationStepNav
               step={step}
@@ -337,7 +336,7 @@ function ApplicationStepNav({
     <ol
       className={cn(
         "flex gap-2",
-        horizontal ? "w-max min-w-full pb-1" : "flex-col gap-1",
+        horizontal ? "w-max min-w-full" : "flex-col gap-1",
       )}
     >
       {STEPS.map((item, index) => {

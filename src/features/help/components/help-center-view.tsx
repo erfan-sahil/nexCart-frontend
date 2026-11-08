@@ -79,28 +79,28 @@ export function HelpCenterView() {
         items={[{ label: "Home", href: "/" }, { label: "Help center" }]}
       />
 
-      <div className="mt-6 max-w-2xl">
+      <div className="mt-6 w-full min-w-0 max-w-2xl">
         <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
           Support
         </p>
-        <h1 className="mt-1 text-3xl sm:text-4xl">Help center</h1>
+        <h1 className="mt-1 text-3xl text-balance sm:text-4xl">Help center</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Answers for orders, returns, your account, and selling on NexCart.
         </p>
       </div>
 
-      <div className="relative mt-6 max-w-2xl">
+      <div className="relative mt-6 w-full min-w-0 max-w-2xl">
         <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={query}
           placeholder="Search help"
           aria-label="Search help"
-          className="h-12 rounded-2xl border-border bg-card pr-4 pl-10 text-sm"
+          className="h-12 w-full min-w-0 rounded-2xl border-border bg-card pr-4 pl-10 text-sm"
           onChange={(event) => setQuery(event.target.value)}
         />
       </div>
 
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-6 grid w-full min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {shortcuts.map(({ href, label, hint, icon: Icon }) => (
           <li key={href}>
             <Link
@@ -121,9 +121,9 @@ export function HelpCenterView() {
         ))}
       </ul>
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[13.5rem_minmax(0,1fr)] lg:gap-10">
-        <aside className="lg:sticky lg:top-44 lg:self-start">
-          <div className="no-scrollbar flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
+      <div className="mt-8 grid w-full min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,13.5rem)_minmax(0,1fr)] lg:gap-10">
+        <aside className="min-w-0 max-w-full lg:sticky lg:top-44 lg:self-start">
+          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 sm:-mx-6 sm:px-6 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
             <TopicButton
               active={topic === "all"}
               label="All topics"
@@ -145,13 +145,13 @@ export function HelpCenterView() {
           </div>
         </aside>
 
-        <div>
+        <div className="min-w-0 w-full">
           <p className="text-sm text-muted-foreground">
             {articles.length} {articles.length === 1 ? "article" : "articles"}
           </p>
 
           {articles.length === 0 ? (
-            <div className="mt-4 rounded-2xl border border-dashed border-border px-6 py-12 text-center">
+            <div className="mt-4 w-full min-w-0 rounded-2xl border border-dashed border-border px-4 py-12 text-center sm:px-6">
               <h2 className="text-xl">No matching articles</h2>
               <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
                 Try another word, or send a message and support will pick it up.
@@ -165,7 +165,7 @@ export function HelpCenterView() {
               </Button>
             </div>
           ) : (
-            <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="mt-4 w-full min-w-0 overflow-hidden rounded-2xl border border-border bg-card">
               {articles.map((article) => {
                 const open = openId === article.id;
 
@@ -173,22 +173,22 @@ export function HelpCenterView() {
                   <article
                     key={article.id}
                     className={cn(
-                      "border-b border-border transition-colors last:border-b-0 hover:bg-brand-soft",
+                      "min-w-0 border-b border-border transition-colors last:border-b-0 hover:bg-brand-soft",
                       open && "bg-brand-soft",
                     )}
                   >
-                    <h2>
+                    <h2 className="min-w-0">
                       <button
                         type="button"
-                        className="flex w-full cursor-pointer items-start justify-between gap-4 px-4 py-4 text-left sm:px-5"
+                        className="flex w-full min-w-0 cursor-pointer items-start justify-between gap-3 px-4 py-4 text-left sm:gap-4 sm:px-5"
                         aria-expanded={open}
                         onClick={() => setOpenId(open ? null : article.id)}
                       >
-                        <span>
+                        <span className="min-w-0 flex-1">
                           <span className="block text-xs font-medium tracking-wide text-primary uppercase">
                             {topicLabel(article.topic)}
                           </span>
-                          <span className="mt-1 block text-base font-medium">
+                          <span className="mt-1 block text-base font-medium wrap-break-word text-pretty">
                             {article.question}
                           </span>
                         </span>
@@ -201,14 +201,14 @@ export function HelpCenterView() {
                       </button>
                     </h2>
                     {open ? (
-                      <div className="px-4 pb-5 sm:px-5">
-                        <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+                      <div className="min-w-0 px-4 pb-5 sm:px-5">
+                        <p className="text-sm leading-6 wrap-break-word text-muted-foreground text-pretty">
                           {article.answer}
                         </p>
                         {article.href && article.hrefLabel ? (
                           <Link
                             href={article.href}
-                            className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
+                            className="mt-3 inline-flex max-w-full text-sm font-medium wrap-break-word text-primary hover:underline"
                           >
                             {article.hrefLabel}
                           </Link>
@@ -223,14 +223,14 @@ export function HelpCenterView() {
         </div>
       </div>
 
-      <section className="mt-8 flex flex-col gap-4 rounded-2xl border border-border bg-card px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="flex items-start gap-3">
+      <section className="mt-8 flex w-full min-w-0 flex-col gap-4 rounded-2xl border border-border bg-card px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="flex min-w-0 items-start gap-3">
           <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-primary">
             <Mail className="size-4" />
           </span>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-base font-medium">Still need help?</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-pretty text-muted-foreground">
               Send a note and support replies by email.
             </p>
           </div>
@@ -238,7 +238,7 @@ export function HelpCenterView() {
         <Button
           nativeButton={false}
           render={<Link href="/contact" />}
-          className="h-10 rounded-full px-5 font-semibold"
+          className="h-10 w-full shrink-0 rounded-full px-5 font-semibold sm:w-auto"
         >
           Contact us
         </Button>
@@ -262,7 +262,7 @@ function TopicButton({
     <button
       type="button"
       className={cn(
-        "inline-flex shrink-0 cursor-pointer items-center justify-between gap-3 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors lg:w-full lg:rounded-xl",
+        "inline-flex max-w-full shrink-0 cursor-pointer items-center justify-between gap-3 rounded-full border px-3.5 py-2 text-sm font-medium transition-colors lg:w-full lg:max-w-none lg:rounded-xl",
         active
           ? "border-primary bg-brand-soft text-primary"
           : "border-border bg-card text-foreground hover:bg-muted",
@@ -270,7 +270,7 @@ function TopicButton({
       aria-pressed={active}
       onClick={onClick}
     >
-      <span>{label}</span>
+      <span className="min-w-0 text-left">{label}</span>
       <span
         className={cn(
           "text-xs",
