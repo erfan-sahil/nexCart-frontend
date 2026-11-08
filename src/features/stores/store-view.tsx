@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, MapPin, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
+import { Container, PageBreadcrumb } from "@/components/common";
 import { ProductGrid } from "@/components/product";
 import type { StoreProfile } from "@/features/catalog";
 import { formatCount } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { StoreDetails } from "./store-details";
+import { StoreHero } from "./store-hero";
 import type { Product } from "@/types";
 
 type StoreViewProps = {
@@ -17,20 +19,6 @@ type StoreViewProps = {
   notice?: string;
 };
 
-function formatJoined(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
-
-function ratingLabel(rating: number) {
-  return Number.isInteger(rating) ? String(rating) : rating.toFixed(1);
-}
-
 export function StoreView({
   store,
   products,
@@ -39,16 +27,6 @@ export function StoreView({
   totalPages,
   notice,
 }: StoreViewProps) {
-  const joined = formatJoined(store.joinedAt);
-  const images = [
-    store.banner
-      ? { src: store.banner, label: "Banner", alt: `${store.name} banner` }
-      : null,
-    store.logo
-      ? { src: store.logo, label: "Logo", alt: `${store.name} logo` }
-      : null,
-  ].filter((image) => image !== null);
-
   return (
     <Container className="py-8 sm:py-10">
       <PageBreadcrumb
@@ -59,169 +37,10 @@ export function StoreView({
         ]}
       />
 
-      <article className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
-        <div className="relative h-40 bg-surface-muted sm:h-56">
-          <MediaImage
-            src={store.banner}
-            alt={store.banner ? `${store.name} banner` : ""}
-            sizes="(max-width: 1280px) 100vw, 80rem"
-            priority
-          />
-        </div>
-
-        <div className="px-4 pb-6 sm:px-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <span className="relative -mt-10 flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-surface-muted text-2xl font-semibold ring-4 ring-card sm:size-24">
-              <MediaImage
-                src={store.logo}
-                alt={store.logo ? `${store.name} logo` : ""}
-                sizes="96px"
-              />
-              {store.logo ? null : store.name.slice(0, 1)}
-            </span>
-
-            <div className="min-w-0 flex-1 pb-1">
-              <h1 className="text-3xl text-foreground sm:text-4xl">
-                {store.name}
-              </h1>
-              <p className="mt-2 inline-flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <Star className="size-3.5 fill-primary text-primary" />
-                  <span className="font-medium text-foreground">
-                    {ratingLabel(store.rating)}
-                  </span>
-                  <span>({formatCount(store.reviewCount)})</span>
-                </span>
-                {joined ? <span>Joined {joined}</span> : null}
-              </p>
-            </div>
-          </div>
-
-          {store.description ? (
-            <p className="mt-5 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-base">
-              {store.description}
-            </p>
-          ) : null}
-
-          <dl className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-5 sm:max-w-lg">
-            <div>
-              <dt className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Products
-              </dt>
-              <dd className="mt-1 text-xl font-semibold tabular-nums">
-                {formatCount(store.productCount)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Orders
-              </dt>
-              <dd className="mt-1 text-xl font-semibold tabular-nums">
-                {formatCount(store.orderCount)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Rating
-              </dt>
-              <dd className="mt-1 text-xl font-semibold tabular-nums">
-                {ratingLabel(store.rating)}
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </article>
-
-      {images.length > 0 ? (
-        <section className="mt-8">
-          <h2 className="text-2xl sm:text-3xl">Store images</h2>
-          <div
-            className={cn(
-              "mt-4 grid gap-4",
-              images.length > 1 ? "sm:grid-cols-2" : "max-w-3xl",
-            )}
-          >
-            {images.map((image) => (
-              <figure
-                key={image.label}
-                className="overflow-hidden rounded-2xl border border-border bg-card"
-              >
-                <div className="relative h-44 bg-surface-muted sm:h-56">
-                  <MediaImage
-                    src={image.src}
-                    alt={image.alt}
-                    sizes="(max-width: 768px) 100vw, 40rem"
-                  />
-                </div>
-                <figcaption className="px-4 py-3 text-sm font-medium">
-                  {image.label}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="mt-8 grid gap-4 lg:grid-cols-2">
-        <InfoCard title="Store details">
-          {store.address ? (
-            <p className="flex items-start gap-2 text-sm leading-6 text-muted-foreground">
-              <MapPin className="mt-1 size-4 shrink-0 text-primary" />
-              <span>{store.address}</span>
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              This store has not added a public address.
-            </p>
-          )}
-          {store.email || store.phone ? (
-            <dl className="mt-4 space-y-2 text-sm">
-              {store.email ? (
-                <div className="flex gap-3">
-                  <dt className="w-16 shrink-0 text-muted-foreground">Email</dt>
-                  <dd>
-                    <a
-                      href={`mailto:${store.email}`}
-                      className="font-medium text-foreground hover:text-primary"
-                    >
-                      {store.email}
-                    </a>
-                  </dd>
-                </div>
-              ) : null}
-              {store.phone ? (
-                <div className="flex gap-3">
-                  <dt className="w-16 shrink-0 text-muted-foreground">Phone</dt>
-                  <dd>
-                    <a
-                      href={`tel:${store.phone}`}
-                      className="font-medium text-foreground hover:text-primary"
-                    >
-                      {store.phone}
-                    </a>
-                  </dd>
-                </div>
-              ) : null}
-            </dl>
-          ) : null}
-        </InfoCard>
-
-        {store.shippingPolicy ? (
-          <InfoCard title="Shipping">
-            <p className="text-sm leading-6 whitespace-pre-line text-muted-foreground">
-              {store.shippingPolicy}
-            </p>
-          </InfoCard>
-        ) : null}
-
-        {store.returnPolicy ? (
-          <InfoCard title="Returns">
-            <p className="text-sm leading-6 whitespace-pre-line text-muted-foreground">
-              {store.returnPolicy}
-            </p>
-          </InfoCard>
-        ) : null}
-      </section>
+      <div className="mt-6">
+        <StoreHero store={store} />
+        <StoreDetails store={store} />
+      </div>
 
       <section className="mt-12">
         <h2 className="text-2xl sm:text-3xl">Products</h2>
@@ -270,21 +89,6 @@ export function StoreView({
         />
       </section>
     </Container>
-  );
-}
-
-function InfoCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-2xl border border-border bg-card p-5">
-      <h2 className="font-display text-lg font-semibold">{title}</h2>
-      <div className="mt-3">{children}</div>
-    </section>
   );
 }
 

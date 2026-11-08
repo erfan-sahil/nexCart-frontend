@@ -166,6 +166,8 @@ export type StoreProfile = {
   email: string;
   phone: string;
   address: string;
+  location: string;
+  categories: { id: string; name: string; slug: string }[];
   returnPolicy: string;
   shippingPolicy: string;
 };
@@ -188,6 +190,11 @@ export function toStoreProfile(dto: CatalogStoreDetail): StoreProfile {
     email: dto.contact.email.trim(),
     phone: dto.contact.phone.trim(),
     address: formatStoreAddress(dto.address),
+    location: [dto.address.city, dto.address.country]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(", "),
+    categories: dto.categories ?? [],
     returnPolicy: dto.returnPolicy.trim(),
     shippingPolicy: dto.shippingPolicy.trim(),
   };
