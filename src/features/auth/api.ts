@@ -2,6 +2,8 @@ import { api } from "@/lib/api/client";
 import { ApiError, toApiError } from "@/lib/api/errors";
 import type { ApiSuccess } from "@/lib/api/types";
 
+import { hydrateAuthFromHash } from "./lib/oauth-hash";
+import { safeNextPath } from "./lib/next-path";
 import { sessionFromStore, useAuthStore } from "./store";
 import type {
   AuthSession,
@@ -11,6 +13,9 @@ import type {
   RegisterPayload,
   UpdateProfilePayload,
 } from "./types";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 
 async function postSession(
   path: string,
@@ -121,7 +126,42 @@ export async function logout() {
   useAuthStore.getState().clearSession();
 }
 
+async function sessionFromOAuthHash() {
+  if (!hydrateAuthFromHash()) {
+    return null;
+  }
+
+  try {
+    const profile = await getMe();
+    const { accessToken, expiresAt } = useAuthStore.getState();
+
+    if (!accessToken || !expiresAt) {
+      return null;
+    }
+
+    const session: AuthSession = {
+      user: profile.user,
+      sessionId: profile.sessionId,
+      accessToken,
+      tokenType: "Bearer",
+      expiresIn: Math.max(0, Math.floor((expiresAt - Date.now()) / 1000)),
+    };
+
+    useAuthStore.getState().setSession(session);
+    return session;
+  } catch {
+    useAuthStore.getState().clearSession();
+    return null;
+  }
+}
+
 export async function restoreSession() {
+  const oauthSession = await sessionFromOAuthHash();
+
+  if (oauthSession) {
+    return oauthSession;
+  }
+
   try {
     return await refreshSession();
   } catch (error) {
@@ -131,4 +171,15 @@ export async function restoreSession() {
 
     throw error;
   }
+}
+
+export function getGoogleAuthUrl(callbackUrl?: string) {
+  const url = new URL(`${API_BASE_URL}/auth/google`);
+  const next = safeNextPath(callbackUrl);
+
+  if (next !== "/") {
+    url.searchParams.set("callbackUrl", next);
+  }
+
+  return url.toString();
 }

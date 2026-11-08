@@ -9,12 +9,25 @@ export const metadata: Metadata = {
 };
 
 type LoginPageProps = {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{
+    next?: string | string[];
+    error?: string | string[];
+    message?: string | string[];
+  }>;
 };
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
-  const next = Array.isArray(params.next) ? params.next[0] : params.next;
 
-  return <LoginForm nextPath={safeNextPath(next)} />;
+  return (
+    <LoginForm
+      nextPath={safeNextPath(firstParam(params.next))}
+      oauthError={firstParam(params.error) ?? null}
+      oauthMessage={firstParam(params.message) ?? null}
+    />
+  );
 }
