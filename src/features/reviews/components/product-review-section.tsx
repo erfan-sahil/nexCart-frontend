@@ -13,7 +13,7 @@ import {
   REVIEW_BODY_MAX,
   REVIEW_BODY_MIN,
   REVIEW_BODY_SCROLL_CLASS,
-  REVIEW_INPUT_SCROLL_CLASS,
+  REVIEW_INPUT_TEXTAREA_CLASS,
   REPLY_BUBBLE_CLASS,
   REVIEW_BUBBLE_CLASS,
   REVIEWS_PANEL_CLASS,
@@ -39,6 +39,7 @@ import {
   ExpandableReplyInput,
 } from "./expandable-reply-input";
 import { ReviewCommentMenu } from "./review-comment-menu";
+import { ReviewInputScroll } from "./review-input-scroll";
 
 type ProductReviewSectionProps = {
   productId: string;
@@ -152,22 +153,17 @@ function CommentField({
   return (
     <label htmlFor={id} className="mt-4 block text-sm font-medium">
       {label}
-      <ScrollArea
-        className={cn(
-          "mt-1.5 rounded-lg border border-input",
-          REVIEW_INPUT_SCROLL_CLASS,
-        )}
-      >
+      <ReviewInputScroll className="mt-1.5">
         <textarea
           id={id}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           rows={rows}
           maxLength={REVIEW_BODY_MAX}
-          className="min-h-24 w-full resize-none border-0 bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-0"
+          className={REVIEW_INPUT_TEXTAREA_CLASS}
           placeholder={placeholder}
         />
-      </ScrollArea>
+      </ReviewInputScroll>
     </label>
   );
 }
@@ -340,7 +336,6 @@ function ReplyComposer({
           onChange={setBody}
           disabled={createReply.isPending}
           placeholder="Write a reply…"
-          autoFocus
         />
       </ExpandableReplyBox>
       {error ? (
@@ -412,20 +407,15 @@ function ReplyItem({
       </div>
       {editing ? (
         <form onSubmit={save} className="mt-2">
-          <ScrollArea
-            className={cn(
-              "rounded-lg border border-input",
-              REVIEW_INPUT_SCROLL_CLASS,
-            )}
-          >
+          <ReviewInputScroll>
             <textarea
               value={body}
               onChange={(event) => setBody(event.target.value)}
               rows={3}
               maxLength={REVIEW_BODY_MAX}
-              className="min-h-24 w-full resize-none border-0 bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-0"
+              className={REVIEW_INPUT_TEXTAREA_CLASS}
             />
-          </ScrollArea>
+          </ReviewInputScroll>
           {error ? (
             <p className="mt-1 text-sm text-destructive">{error}</p>
           ) : null}
@@ -536,20 +526,15 @@ function ReviewItem({
               <legend className="text-sm font-medium">Your rating</legend>
               <RatingPicker value={rating} onChange={setRating} />
             </fieldset>
-            <ScrollArea
-              className={cn(
-                "mt-3 rounded-lg border border-input",
-                REVIEW_INPUT_SCROLL_CLASS,
-              )}
-            >
+            <ReviewInputScroll className="mt-3">
               <textarea
                 value={body}
                 onChange={(event) => setBody(event.target.value)}
                 rows={4}
                 maxLength={REVIEW_BODY_MAX}
-                className="min-h-24 w-full resize-none border-0 bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-0"
+                className={REVIEW_INPUT_TEXTAREA_CLASS}
               />
-            </ScrollArea>
+            </ReviewInputScroll>
             {error ? (
               <p className="mt-1 text-sm text-destructive">{error}</p>
             ) : null}

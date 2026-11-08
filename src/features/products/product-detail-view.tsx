@@ -92,7 +92,10 @@ export function ProductDetailView({
 
           <ProductFeatures features={product.features} />
 
-          <ProductReportSection productId={product.id} />
+          <ProductReportSection
+            productId={product.id}
+            productName={product.name}
+          />
 
           <ProductSpecs
             specifications={product.specifications}

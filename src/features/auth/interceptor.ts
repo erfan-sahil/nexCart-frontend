@@ -54,6 +54,9 @@ export function setupAuthInterceptor(client: QueryClient) {
       try {
         const session = await refreshSession();
         queryClient?.setQueryData(sessionQueryKey, session);
+        if (!session.accessToken) {
+          return Promise.reject(error);
+        }
         config.headers.Authorization = `Bearer ${session.accessToken}`;
         return api(config);
       } catch (refreshError) {

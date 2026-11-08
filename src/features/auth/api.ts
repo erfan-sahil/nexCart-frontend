@@ -73,6 +73,14 @@ export function refreshSession() {
           state.clearSession();
         }
 
+        // Rate limit is temporary; keep the in-memory session and let the user retry.
+        if (apiError.status === 429) {
+          const current = sessionFromStore();
+          if (current) {
+            return current;
+          }
+        }
+
         throw apiError;
       })
       .finally(() => {
@@ -165,7 +173,10 @@ export async function restoreSession() {
   try {
     return await refreshSession();
   } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
+    if (
+      error instanceof ApiError &&
+      (error.status === 401 || error.status === 429)
+    ) {
       return sessionFromStore();
     }
 

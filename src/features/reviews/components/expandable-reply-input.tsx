@@ -60,6 +60,15 @@ export function ExpandableReplyInput({
 }: ExpandableReplyInputProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [viewportHeight, setViewportHeight] = useState(MIN_VIEWPORT_PX);
+  const [usePlainScroll, setUsePlainScroll] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)");
+    const update = () => setUsePlainScroll(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const element = ref.current;
@@ -76,23 +85,41 @@ export function ExpandableReplyInput({
     );
   }, [value]);
 
+  const field = (
+    <Textarea
+      ref={ref}
+      id={id}
+      value={value}
+      disabled={disabled}
+      rows={1}
+      maxLength={REVIEW_BODY_MAX}
+      placeholder={placeholder}
+      onChange={(event) => onChange(event.target.value)}
+      autoFocus={autoFocus}
+      className={cn(
+        "min-h-9 resize-none overflow-hidden rounded-none border-0 bg-transparent py-2 shadow-none focus-visible:ring-0 dark:bg-transparent",
+        className,
+      )}
+    />
+  );
+
+  if (usePlainScroll) {
+    return (
+      <div
+        className="w-full overflow-y-auto"
+        style={{ maxHeight: MAX_VIEWPORT_PX }}
+      >
+        {field}
+      </div>
+    );
+  }
+
   return (
     <ScrollArea
       className={cn("w-full", className)}
       style={{ height: viewportHeight }}
     >
-      <Textarea
-        ref={ref}
-        id={id}
-        value={value}
-        disabled={disabled}
-        rows={1}
-        maxLength={REVIEW_BODY_MAX}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-        autoFocus={autoFocus}
-        className="min-h-9 resize-none overflow-hidden rounded-none border-0 bg-transparent py-2 shadow-none focus-visible:ring-0 dark:bg-transparent"
-      />
+      {field}
     </ScrollArea>
   );
 }

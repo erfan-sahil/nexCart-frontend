@@ -13,6 +13,7 @@ import {
 } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 
@@ -230,39 +231,22 @@ export function ApplicationForm({
   return (
     <FormProvider {...form}>
       <div className="mt-8 grid gap-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
-        <ol className="flex gap-2 overflow-x-auto lg:sticky lg:top-28 lg:flex-col lg:gap-1">
-          {STEPS.map((item, index) => {
-            const active = index === step;
-
-            return (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => setStep(index)}
-                  className={cn(
-                    "flex w-full cursor-pointer items-center gap-3 rounded-full px-3 py-2 text-left text-sm transition-colors",
-                    active
-                      ? "bg-brand-soft font-medium text-foreground"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-current={active ? "step" : undefined}
-                >
-                  <span
-                    className={cn(
-                      "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs",
-                      active
-                        ? "bg-primary text-[#fff4f2]"
-                        : "bg-muted text-muted-foreground",
-                    )}
-                  >
-                    {index + 1}
-                  </span>
-                  {item.label}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+        <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
+          <ScrollArea scrollbars="horizontal" className="w-full lg:hidden">
+            <ApplicationStepNav
+              step={step}
+              onStepChange={setStep}
+              layout="horizontal"
+            />
+          </ScrollArea>
+          <div className="hidden lg:block">
+            <ApplicationStepNav
+              step={step}
+              onStepChange={setStep}
+              layout="vertical"
+            />
+          </div>
+        </aside>
 
         <form
           className="rounded-3xl border border-border bg-card p-5 sm:p-8"
@@ -335,6 +319,64 @@ export function ApplicationForm({
         </form>
       </div>
     </FormProvider>
+  );
+}
+
+function ApplicationStepNav({
+  step,
+  onStepChange,
+  layout,
+}: {
+  step: number;
+  onStepChange: (index: number) => void;
+  layout: "horizontal" | "vertical";
+}) {
+  const horizontal = layout === "horizontal";
+
+  return (
+    <ol
+      className={cn(
+        "flex gap-2",
+        horizontal ? "w-max min-w-full pb-1" : "flex-col gap-1",
+      )}
+    >
+      {STEPS.map((item, index) => {
+        const active = index === step;
+
+        return (
+          <li key={item.id} className={horizontal ? "shrink-0" : undefined}>
+            <button
+              type="button"
+              onClick={() => onStepChange(index)}
+              className={cn(
+                "flex cursor-pointer items-center gap-2.5 rounded-full px-3 py-2 text-left text-sm transition-colors sm:gap-3",
+                horizontal
+                  ? "w-max max-w-none shrink-0 whitespace-nowrap"
+                  : "w-full",
+                active
+                  ? "bg-brand-soft font-medium text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              aria-current={active ? "step" : undefined}
+            >
+              <span
+                className={cn(
+                  "inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs",
+                  active
+                    ? "bg-primary text-[#fff4f2]"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {index + 1}
+              </span>
+              <span className={horizontal ? undefined : "min-w-0"}>
+                {item.label}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 

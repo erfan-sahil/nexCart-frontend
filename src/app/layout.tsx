@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 
 import { QueryProvider } from "@/components/providers/query-provider";
+import { RootHeadScripts } from "@/components/providers/root-head-scripts";
 import { AuthProvider } from "@/features/auth/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { getSiteUrl, siteConfig } from "@/lib/site";
-import { themeInitScript } from "@/lib/theme";
 
 import "./globals.css";
 
@@ -104,6 +104,8 @@ export const metadata: Metadata = {
   },
 };
 
+const rootJsonLd = JSON.stringify([websiteJsonLd, organizationJsonLd]);
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -112,13 +114,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([websiteJsonLd, organizationJsonLd]),
-          }}
-        />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <RootHeadScripts jsonLd={rootJsonLd} />
         <QueryProvider>
           <AuthProvider>
             <ThemeProvider>{children}</ThemeProvider>
