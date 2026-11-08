@@ -4,6 +4,7 @@ import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/features/auth/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { getSiteUrl, siteConfig } from "@/lib/site";
 import { themeInitScript } from "@/lib/theme";
 
 import "./globals.css";
@@ -23,13 +24,84 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "NexCart — Shop from thousands of stores",
-    template: "%s · NexCart",
+const siteUrl = getSiteUrl();
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.name,
+  url: siteUrl,
+  description: siteConfig.description,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${siteUrl}/products?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
   },
-  description:
-    "NexCart is a multi-vendor marketplace for independent stores, flash deals, and everyday essentials.",
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteConfig.name,
+  url: siteUrl,
+  logo: `${siteUrl}${siteConfig.logoPath}`,
+  description: siteConfig.description,
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteConfig.title,
+    template: `%s · ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: [...siteConfig.keywords],
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.logoPath,
+        alt: `${siteConfig.name} — fast shopping marketplace`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.logoPath],
+  },
+  icons: {
+    icon: [{ url: siteConfig.faviconPath, type: "image/png" }],
+    apple: [{ url: siteConfig.faviconPath, type: "image/png" }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -40,6 +112,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([websiteJsonLd, organizationJsonLd]),
+          }}
+        />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <QueryProvider>
           <AuthProvider>
