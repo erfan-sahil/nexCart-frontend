@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Check, ChevronDown, Flag } from "lucide-react";
+import { Check, ChevronDown, Flag, Shield } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -34,6 +33,7 @@ import { useCreateProductReport, useMyProductReport } from "../query";
 
 type ProductReportSectionProps = {
   productId: string;
+  productName?: string;
   className?: string;
 };
 
@@ -57,8 +57,42 @@ function validate(type: ProductReportType | "", message: string) {
   return errors;
 }
 
-const reportTriggerClass =
-  "inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-transparent px-3 text-sm font-medium text-muted-foreground transition-colors hover:border-destructive/40 hover:bg-destructive/5 hover:text-destructive";
+const reportTriggerClass = cn(
+  "inline-flex h-9 items-center gap-2 rounded-xl border border-destructive/25 bg-destructive/5 px-3 text-sm font-medium text-destructive transition-colors",
+  "hover:border-destructive/40 hover:bg-destructive/10",
+  "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-destructive/25",
+);
+
+function ReportProductTrigger({
+  onClick,
+  href,
+}: {
+  onClick?: () => void;
+  href?: string;
+}) {
+  const inner = (
+    <>
+      <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-md bg-destructive/15">
+        <Flag className="size-3 text-destructive" strokeWidth={2} aria-hidden />
+      </span>
+      Report this product
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={reportTriggerClass}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" className={reportTriggerClass} onClick={onClick}>
+      {inner}
+    </button>
+  );
+}
 
 function IssueTypeField({
   value,
@@ -159,6 +193,7 @@ function IssueTypeField({
 
 export function ProductReportSection({
   productId,
+  productName,
   className,
 }: ProductReportSectionProps) {
   const pathname = usePathname();
@@ -231,7 +266,7 @@ export function ProductReportSection({
   ) {
     return (
       <div className={cn("mt-6", className)}>
-        <span className="block h-9 w-40 animate-pulse rounded-lg bg-muted" />
+        <span className="block h-9 w-44 animate-pulse rounded-xl bg-muted" />
       </div>
     );
   }
@@ -250,43 +285,61 @@ export function ProductReportSection({
   if (status === "anonymous") {
     return (
       <div className={cn("mt-6", className)}>
-        <Link href={loginHref} className={reportTriggerClass}>
-          <Flag className="size-3.5" aria-hidden />
-          Report this product
-        </Link>
+        <ReportProductTrigger href={loginHref} />
       </div>
     );
   }
 
   return (
     <div className={cn("mt-6", className)}>
-      <button
-        type="button"
-        className={reportTriggerClass}
-        onClick={() => setOpen(true)}
-      >
-        <Flag className="size-3.5" aria-hidden />
-        Report this product
-      </button>
+      <ReportProductTrigger onClick={() => setOpen(true)} />
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent>
+        <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-md">
           <form onSubmit={onSubmit}>
-            <div className="relative border-b border-border px-5 py-4">
-              <DialogClose disabled={createReport.isPending} />
-              <DialogHeader className="pr-8">
-                <div className="mb-3 flex size-10 items-center justify-center rounded-full bg-destructive/10 ring-1 ring-destructive/15">
-                  <Flag className="size-4 text-destructive" aria-hidden />
+            <div className="relative border-b border-border/80 bg-muted/80 px-5 py-4">
+              <DialogClose
+                disabled={createReport.isPending}
+                className="top-3.5 right-3.5 z-10 hover:bg-background/80"
+              />
+              <div className="flex gap-4 pr-9">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-background shadow-sm ring-1 ring-destructive/20">
+                  <Flag
+                    className="size-5 text-destructive"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
                 </div>
-                <DialogTitle>Report this product</DialogTitle>
-                <DialogDescription>
-                  Choose the issue and describe what you noticed. Reports stay
-                  with NexCart staff and the store.
-                </DialogDescription>
-              </DialogHeader>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[11px] font-semibold tracking-[0.14em] text-destructive uppercase">
+                    Listing safety
+                  </p>
+                  <DialogTitle className="mt-1 text-left text-xl leading-tight tracking-tight">
+                    Report this product
+                  </DialogTitle>
+                  {productName ? (
+                    <p
+                      className="mt-1.5 truncate text-sm text-muted-foreground"
+                      title={productName}
+                    >
+                      {productName}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-4 px-5 py-5">
+            <div className="space-y-5 bg-popover px-5 py-5">
+              <DialogDescription className="flex max-w-none items-start gap-2.5 rounded-xl border border-border/80 bg-muted/40 px-3.5 py-3 text-left text-xs leading-5 text-muted-foreground">
+                <Shield
+                  className="mt-0.5 size-3.5 shrink-0 text-primary"
+                  aria-hidden
+                />
+                <span>
+                  Choose the issue and describe what you noticed. Only NexCart
+                  staff and the store can read your report.
+                </span>
+              </DialogDescription>
               <div className="space-y-2">
                 <Label htmlFor="report-type">Issue type</Label>
                 <IssueTypeField
@@ -344,11 +397,11 @@ export function ProductReportSection({
               ) : null}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:justify-stretch">
               <Button
                 type="button"
                 variant="outline"
-                className="h-10 rounded-xl border-border bg-background px-4 text-foreground hover:bg-muted"
+                className="h-10 rounded-xl border-border bg-background px-4 text-foreground hover:bg-muted sm:flex-1"
                 disabled={createReport.isPending}
                 onClick={() => handleOpenChange(false)}
               >
@@ -356,7 +409,7 @@ export function ProductReportSection({
               </Button>
               <Button
                 type="submit"
-                className="h-10 rounded-xl bg-destructive px-4 text-white hover:bg-destructive/90 focus-visible:border-destructive/40 focus-visible:ring-destructive/25"
+                className="h-10 rounded-xl bg-destructive px-4 text-white hover:bg-destructive/90 focus-visible:border-destructive/40 focus-visible:ring-destructive/25 sm:flex-1"
                 disabled={createReport.isPending}
               >
                 {createReport.isPending ? "Submitting…" : "Submit report"}

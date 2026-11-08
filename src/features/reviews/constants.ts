@@ -20,3 +20,7 @@ export const REVIEW_BODY_SCROLL_CLASS = "max-h-36";
 
 /** Composer / edit textarea scroll region height. */
 export const REVIEW_INPUT_SCROLL_CLASS = "h-28";
+
+/** 16px on mobile avoids iOS focus zoom; matches sm text on larger screens. */
+export const REVIEW_INPUT_TEXTAREA_CLASS =
+  "min-h-24 w-full resize-none border-0 bg-transparent px-3 py-2 text-base outline-none focus-visible:ring-0 md:text-sm";

@@ -32,7 +32,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug).catch(() => null);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
