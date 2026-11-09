@@ -1,5 +1,6 @@
 import { api } from "@/lib/api/client";
 import type { ApiSuccess, PaginationMeta } from "@/lib/api/types";
+import { mediaUrl } from "@/lib/media";
 
 import type { SellableVariant } from "../types/variant";
 
@@ -12,6 +13,7 @@ type VariantDto = {
   currentPrice: number;
   stock: number;
   isDefault: boolean;
+  image: { url: string } | null;
   attributes: {
     attributeId: string;
     name: string;
@@ -32,6 +34,7 @@ function toSellableVariant(dto: VariantDto): SellableVariant {
     originalPrice,
     stock: dto.stock,
     isDefault: dto.isDefault,
+    image: mediaUrl(dto.image?.url) || null,
     attributes: dto.attributes
       .filter((attribute) => attribute.role === "variant")
       .map((attribute) => ({
