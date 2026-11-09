@@ -66,13 +66,50 @@ export function findVariant(
   return (
     variants.find((variant) =>
       entries.every(([attributeId, optionId]) =>
-        variant.attributes.some(
-          (attribute) =>
-            attribute.attributeId === attributeId &&
-            attribute.options.some((option) => option.id === optionId),
-        ),
+        hasOption(variant, attributeId, optionId),
       ),
     ) ?? null
+  );
+}
+
+function hasOption(
+  variant: SellableVariant,
+  attributeId: string,
+  optionId: string,
+) {
+  return variant.attributes.some(
+    (attribute) =>
+      attribute.attributeId === attributeId &&
+      attribute.options.some((option) => option.id === optionId),
+  );
+}
+
+/**
+ * Image for a selection: the exact variant's image, or else the image of any
+ * variant sharing the option the shopper just picked (e.g. the chosen color).
+ */
+export function variantImageFor(
+  variants: SellableVariant[],
+  selection: Record<string, string>,
+  changedAttributeId: string,
+) {
+  const exact = findVariant(variants, selection)?.image;
+
+  if (exact) {
+    return exact;
+  }
+
+  const optionId = selection[changedAttributeId];
+
+  if (!optionId) {
+    return null;
+  }
+
+  return (
+    variants.find(
+      (variant) =>
+        variant.image && hasOption(variant, changedAttributeId, optionId),
+    )?.image ?? null
   );
 }
 
@@ -88,11 +125,7 @@ export function optionAvailable(
     (variant) =>
       variant.stock > 0 &&
       Object.entries(next).every(([id, value]) =>
-        variant.attributes.some(
-          (attribute) =>
-            attribute.attributeId === id &&
-            attribute.options.some((option) => option.id === value),
-        ),
+        hasOption(variant, id, value),
       ),
   );
 }

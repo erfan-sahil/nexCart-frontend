@@ -19,6 +19,8 @@ export type SellableVariant = {
   originalPrice?: number;
   stock: number;
   isDefault: boolean;
+  /** Absolute URL of the product image linked to this variant. */
+  image: string | null;
   attributes: ProductVariantAttribute[];
 };
 

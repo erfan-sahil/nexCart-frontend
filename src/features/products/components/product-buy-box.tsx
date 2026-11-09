@@ -16,7 +16,9 @@ import {
   findVariant,
   selectionFromVariant,
   variantAxes,
+  variantImageFor,
 } from "../lib/variant-selection";
+import { useProductMedia } from "./product-media-context";
 import { ProductVariantPicker } from "./product-variant-picker";
 
 type ProductBuyBoxProps = {
@@ -30,6 +32,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
     string,
     string
   > | null>(null);
+  const { showImage } = useProductMedia();
 
   const hasOptions = (product.variantCount ?? 0) > 1;
 
@@ -53,9 +56,27 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
 
   const selection = userSelection ?? defaultSelection;
 
-  const setSelection = useCallback((next: Record<string, string>) => {
-    setUserSelection(next);
-  }, []);
+  const setSelection = useCallback(
+    (next: Record<string, string>) => {
+      const changed = Object.keys(next).find(
+        (attributeId) => next[attributeId] !== selection[attributeId],
+      );
+
+      if (changed) {
+        const nextImage = variantImageFor(variants, next, changed);
+
+        if (
+          nextImage &&
+          nextImage !== variantImageFor(variants, selection, changed)
+        ) {
+          showImage(nextImage);
+        }
+      }
+
+      setUserSelection(next);
+    },
+    [variants, selection, showImage],
+  );
 
   const selected = useMemo(
     () => findVariant(variants, selection),

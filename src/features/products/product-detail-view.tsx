@@ -9,6 +9,7 @@ import type { Product, ProductDetail } from "@/types";
 import { productsHref } from "./lib/query";
 import { ProductBuyBox } from "./components/product-buy-box";
 import { ProductGallery } from "./components/product-gallery";
+import { ProductMediaProvider } from "./components/product-media-context";
 import { ProductReviews } from "./components/product-reviews";
 import { ProductFeatures } from "./components/product-features";
 import { ProductSpecs } from "./components/product-specs";
@@ -51,58 +52,60 @@ export function ProductDetailView({
         ]}
       />
 
-      <div className="mt-6 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-        <ProductGallery images={product.images} name={product.name} />
+      <ProductMediaProvider key={product.id}>
+        <div className="mt-6 grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+          <ProductGallery images={product.images} name={product.name} />
 
-        <div>
-          <Link
-            href={`/stores/${product.store.slug}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            <span className="relative flex size-7 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[11px] font-semibold ring-1 ring-border">
-              <MediaImage src={product.store.logo} alt="" sizes="28px" />
-              {product.store.logo ? null : product.store.name.slice(0, 1)}
-            </span>
-            {product.store.name}
-            {product.store.verified ? (
-              <BadgeCheck
-                className="size-4 text-primary"
-                aria-label="Verified store"
-              />
+          <div>
+            <Link
+              href={`/stores/${product.store.slug}`}
+              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              <span className="relative flex size-7 items-center justify-center overflow-hidden rounded-full bg-surface-muted text-[11px] font-semibold ring-1 ring-border">
+                <MediaImage src={product.store.logo} alt="" sizes="28px" />
+                {product.store.logo ? null : product.store.name.slice(0, 1)}
+              </span>
+              {product.store.name}
+              {product.store.verified ? (
+                <BadgeCheck
+                  className="size-4 text-primary"
+                  aria-label="Verified store"
+                />
+              ) : null}
+            </Link>
+
+            <h1 className="mt-3 text-3xl sm:text-4xl">{product.name}</h1>
+
+            <ProductRatingLink
+              productId={product.id}
+              average={product.rating}
+              count={product.reviewCount}
+              sold={product.sold}
+              badge={product.badge}
+            />
+
+            <ProductBuyBox key={product.id} product={product} />
+
+            {product.description ? (
+              <p className="mt-4 max-w-xl text-sm leading-6 whitespace-pre-line text-muted-foreground">
+                {product.description}
+              </p>
             ) : null}
-          </Link>
 
-          <h1 className="mt-3 text-3xl sm:text-4xl">{product.name}</h1>
+            <ProductFeatures features={product.features} />
 
-          <ProductRatingLink
-            productId={product.id}
-            average={product.rating}
-            count={product.reviewCount}
-            sold={product.sold}
-            badge={product.badge}
-          />
+            <ProductReportSection
+              productId={product.id}
+              productName={product.name}
+            />
 
-          <ProductBuyBox key={product.id} product={product} />
-
-          {product.description ? (
-            <p className="mt-4 max-w-xl text-sm leading-6 whitespace-pre-line text-muted-foreground">
-              {product.description}
-            </p>
-          ) : null}
-
-          <ProductFeatures features={product.features} />
-
-          <ProductReportSection
-            productId={product.id}
-            productName={product.name}
-          />
-
-          <ProductSpecs
-            specifications={product.specifications}
-            title={product.features.length > 0 ? "Details" : "Specifications"}
-          />
+            <ProductSpecs
+              specifications={product.specifications}
+              title={product.features.length > 0 ? "Details" : "Specifications"}
+            />
+          </div>
         </div>
-      </div>
+      </ProductMediaProvider>
 
       <ProductReviews product={product} />
 
