@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { MediaImage } from "@/components/common";
 import { suggestProducts } from "@/features/catalog/suggest";
+import { setSearchInteractionActive } from "@/components/search/search-interaction";
 import { formatPrice } from "@/lib/format";
 import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ type ProductSearchFieldProps = {
   shellClassName?: string;
   hideSubmitLabelOnMobile?: boolean;
   emptyMessage?: string;
+  /** Mobile menu drawer: suggestions above scroll trap, higher stacking. */
+  inDrawer?: boolean;
 };
 
 function useDebouncedValue(value: string, delay: number) {
@@ -73,6 +76,7 @@ export function ProductSearchField({
   shellClassName = "border-primary/35 bg-background",
   hideSubmitLabelOnMobile = false,
   emptyMessage = "No close matches. Search the full catalog instead.",
+  inDrawer = false,
 }: ProductSearchFieldProps) {
   const inputId = useId();
   const listId = useId();
@@ -113,6 +117,22 @@ export function ProductSearchField({
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [showPanel]);
 
+  useEffect(() => {
+    if (!showPanel) return;
+    setSearchInteractionActive(true);
+    return () => {
+      window.setTimeout(() => {
+        if (!rootRef.current?.contains(document.activeElement)) {
+          setSearchInteractionActive(false);
+        }
+      }, 0);
+    };
+  }, [showPanel]);
+
+  useEffect(() => {
+    return () => setSearchInteractionActive(false);
+  }, []);
+
   function onQueryChange(value: string) {
     setQuery(value);
     setActiveIndex(-1);
@@ -126,6 +146,14 @@ export function ProductSearchField({
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      if (!showPanel) return;
+      setOpen(false);
+      setActiveIndex(-1);
+      return;
+    }
+
     if (!showPanel) return;
 
     if (event.key === "ArrowDown") {
@@ -139,12 +167,6 @@ export function ProductSearchField({
       setActiveIndex((current) =>
         current <= 0 ? optionCount - 1 : current - 1,
       );
-      return;
-    }
-
-    if (event.key === "Escape") {
-      setOpen(false);
-      setActiveIndex(-1);
       return;
     }
 
@@ -163,7 +185,7 @@ export function ProductSearchField({
     <form
       ref={rootRef}
       action="/products"
-      className={cn("relative z-30", className)}
+      className={cn("relative", inDrawer ? "z-50" : "z-30", className)}
       role="search"
       onSubmit={() => {
         setOpen(false);
@@ -201,7 +223,15 @@ export function ProductSearchField({
           onChange={(event) => onQueryChange(event.target.value)}
           onInput={(event) => onQueryChange(event.currentTarget.value)}
           onFocus={() => {
+            setSearchInteractionActive(true);
             if (query.trim().length >= MIN_QUERY) setOpen(true);
+          }}
+          onBlur={() => {
+            window.setTimeout(() => {
+              if (!rootRef.current?.contains(document.activeElement)) {
+                setSearchInteractionActive(false);
+              }
+            }, 0);
           }}
           onKeyDown={onKeyDown}
         />
@@ -231,7 +261,12 @@ export function ProductSearchField({
       </div>
 
       {showPanel ? (
-        <div className="absolute top-[calc(100%+0.45rem)] right-0 left-0 overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+        <div
+          className={cn(
+            "absolute top-[calc(100%+0.45rem)] right-0 left-0 overflow-hidden rounded-2xl border border-border bg-card shadow-lg",
+            inDrawer && "z-50",
+          )}
+        >
           <ul
             id={listId}
             role="listbox"

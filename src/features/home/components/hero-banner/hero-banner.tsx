@@ -1,25 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { MediaImage } from "@/components/common";
+import {
+  isSearchInteractionActive,
+  subscribeSearchInteraction,
+} from "@/components/search/search-interaction";
 import { cn } from "@/lib/utils";
 
 import type { StoreHero } from "../../get-hero";
 
 const SLIDE_MS = 6500;
 
+function subscribeMobileViewport(listener: () => void) {
+  const media = window.matchMedia("(max-width: 1023px)");
+  media.addEventListener("change", listener);
+  return () => media.removeEventListener("change", listener);
+}
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 1023px)").matches;
+}
+
 export function HeroBanner({ slides }: { slides: StoreHero[] }) {
   const [index, setIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
+  const searchActive = useSyncExternalStore(
+    subscribeSearchInteraction,
+    isSearchInteractionActive,
+    () => false,
+  );
+  const mobileViewport = useSyncExternalStore(
+    subscribeMobileViewport,
+    isMobileViewport,
+    () => false,
+  );
+  const pauseAutoplay = mobileViewport && searchActive;
   const count = slides.length;
   const slide = slides[index] ?? slides[0];
   const multiple = count > 1;
 
   useEffect(() => {
-    if (!multiple) return;
+    if (!multiple || pauseAutoplay) return;
 
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (motion.matches) return;
@@ -29,7 +54,7 @@ export function HeroBanner({ slides }: { slides: StoreHero[] }) {
     }, SLIDE_MS);
 
     return () => window.clearInterval(id);
-  }, [count, cycle, multiple]);
+  }, [count, cycle, multiple, pauseAutoplay]);
 
   if (!slide) return null;
 
