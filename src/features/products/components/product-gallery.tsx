@@ -37,43 +37,13 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-      {hasMany ? (
-        <div
-          role="group"
-          aria-label={`${name} images`}
-          className="no-scrollbar order-2 flex gap-2.5 overflow-x-auto p-1 sm:order-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto lg:w-24"
-        >
-          {images.map((src, position) => {
-            const selected = position === index;
-
-            return (
-              <button
-                key={src}
-                type="button"
-                aria-pressed={selected}
-                aria-label={`Show image ${position + 1} of ${images.length}`}
-                onClick={() => showImage(src)}
-                className={cn(
-                  "relative aspect-square w-16 shrink-0 overflow-hidden rounded-2xl bg-surface-muted transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-full",
-                  selected
-                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                    : "opacity-60 ring-1 ring-border/60 hover:opacity-100",
-                )}
-              >
-                <MediaImage src={src} alt="" sizes="96px" />
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-
-      <div className="group relative order-1 aspect-square flex-1 overflow-hidden rounded-3xl bg-surface-muted ring-1 ring-border/60 sm:order-2">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="group relative aspect-square overflow-hidden rounded-3xl bg-surface-muted ring-1 ring-border/60">
         <MediaImage
           src={current}
           alt={name}
           priority
-          sizes="(max-width: 1024px) 100vw, 560px"
+          sizes="(max-width: 1024px) 100vw, 640px"
           className="transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
 
@@ -95,6 +65,36 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
           </>
         ) : null}
       </div>
+
+      {hasMany ? (
+        <div
+          role="group"
+          aria-label={`${name} images`}
+          className="grid grid-cols-5 gap-2 p-1 sm:gap-3"
+        >
+          {images.map((src, position) => {
+            const selected = position === index;
+
+            return (
+              <button
+                key={src}
+                type="button"
+                aria-pressed={selected}
+                aria-label={`Show image ${position + 1} of ${images.length}`}
+                onClick={() => showImage(src)}
+                className={cn(
+                  "relative aspect-square overflow-hidden rounded-2xl bg-surface-muted transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  selected
+                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                    : "opacity-60 ring-1 ring-border/60 hover:opacity-100",
+                )}
+              >
+                <MediaImage src={src} alt="" sizes="128px" />
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }
