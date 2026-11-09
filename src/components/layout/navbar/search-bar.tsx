@@ -7,9 +7,10 @@ import { ProductSearchField } from "@/components/search/product-search-field";
 
 type SearchBarProps = {
   className?: string;
+  inDrawer?: boolean;
 };
 
-function SearchBarWithQuery({ className }: SearchBarProps) {
+function SearchBarWithQuery({ className, inDrawer }: SearchBarProps) {
   const searchParams = useSearchParams();
   const hidden = {
     collection: searchParams.get("collection") ?? "",
@@ -29,11 +30,12 @@ function SearchBarWithQuery({ className }: SearchBarProps) {
       placeholder="Search products, brands, or stores"
       label="Search products and stores"
       hideSubmitLabelOnMobile
+      inDrawer={inDrawer}
     />
   );
 }
 
-export function SearchBar({ className }: SearchBarProps) {
+export function SearchBar({ className, inDrawer }: SearchBarProps) {
   return (
     <Suspense
       fallback={
@@ -42,10 +44,11 @@ export function SearchBar({ className }: SearchBarProps) {
           placeholder="Search products, brands, or stores"
           label="Search products and stores"
           hideSubmitLabelOnMobile
+          inDrawer={inDrawer}
         />
       }
     >
-      <SearchBarWithQuery className={className} />
+      <SearchBarWithQuery className={className} inDrawer={inDrawer} />
     </Suspense>
   );
 }

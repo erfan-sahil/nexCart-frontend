@@ -6,6 +6,7 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
@@ -38,6 +39,10 @@ import type { CategoryNavLink } from "./category-nav";
 import { DrawerSessionButton } from "@/features/auth/components/account-menu";
 import { useCartItemCount } from "@/features/cart";
 import { useWishlistCount } from "@/features/wishlist";
+import {
+  isSearchInteractionActive,
+  subscribeSearchInteraction,
+} from "@/components/search/search-interaction";
 import { cn } from "@/lib/utils";
 
 import { SearchBar } from "./search-bar";
@@ -131,6 +136,7 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const wasOpen = useRef(false);
+  const drawerOpenRef = useRef(false);
   const closeTimer = useRef<number | null>(null);
   const openFrame = useRef<number | null>(null);
   const categoriesId = useId();
@@ -138,6 +144,11 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
   const [present, setPresent] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [trackedPath, setTrackedPath] = useState(pathname);
+  const searchActive = useSyncExternalStore(
+    subscribeSearchInteraction,
+    isSearchInteractionActive,
+    () => false,
+  );
 
   if (trackedPath !== pathname) {
     setTrackedPath(pathname);
@@ -213,30 +224,41 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
     if (!open) return;
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") closeMenu();
+      if (event.key !== "Escape") return;
+      if (searchActive) return;
+      closeMenu();
     }
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, closeMenu]);
+  }, [open, closeMenu, searchActive]);
 
   useEffect(() => {
-    if (open) {
+    if (open && !drawerOpenRef.current) {
+      drawerOpenRef.current = true;
       wasOpen.current = true;
-      panelRef.current
-        ?.querySelector<HTMLElement>("[data-drawer-close]")
-        ?.focus();
+      if (!searchActive) {
+        panelRef.current
+          ?.querySelector<HTMLElement>("[data-drawer-close]")
+          ?.focus();
+      }
       return;
+    }
+
+    if (!open) {
+      drawerOpenRef.current = false;
     }
 
     if (wasOpen.current && !present) {
       wasOpen.current = false;
-      triggerRef.current?.focus();
+      if (!searchActive) {
+        triggerRef.current?.focus();
+      }
     }
-  }, [open, present]);
+  }, [open, present, searchActive]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || searchActive) return;
     const panel = panelRef.current;
     if (!panel) return;
 
@@ -262,7 +284,7 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
 
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+  }, [open, searchActive]);
 
   const drawer =
     present && typeof document !== "undefined"
@@ -306,17 +328,13 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
                 </button>
               </div>
 
-              <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4">
+              <div className="relative z-50 shrink-0 border-b border-border bg-background px-4 py-4">
                 <Reveal active={open} index={0}>
-                  <div
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") closeMenu();
-                    }}
-                  >
-                    <SearchBar />
-                  </div>
+                  <SearchBar inDrawer />
                 </Reveal>
+              </div>
 
+              <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4">
                 <Reveal active={open} index={1}>
                   <div className="overflow-hidden rounded-2xl border border-border">
                     <button
