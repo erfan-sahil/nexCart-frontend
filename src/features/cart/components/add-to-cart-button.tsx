@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ShoppingBag } from "lucide-react";
+import { Check, ShoppingBag } from "@/lib/icons";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";

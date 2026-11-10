@@ -31,8 +31,8 @@ import {
   Store,
   UserRound,
   UtensilsCrossed,
-  type LucideIcon,
-} from "lucide-react";
+  type AppIcon,
+} from "@/lib/icons";
 
 import { Logo, ThemeToggle } from "@/components/common";
 import type { CategoryNavLink } from "./category-nav";
@@ -49,7 +49,7 @@ import { SearchBar } from "./search-bar";
 
 const CLOSE_MS = 460;
 
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
+const CATEGORY_ICONS: Record<string, AppIcon> = {
   electronics: Cpu,
   fashion: Shirt,
   home: Home,

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Store, Truck } from "lucide-react";
+import { ShoppingBag, Store, Truck } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 

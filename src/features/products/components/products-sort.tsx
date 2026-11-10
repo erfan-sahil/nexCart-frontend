@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, SlidersHorizontal, Star } from "lucide-react";
+import { ChevronDown, SlidersHorizontal, Star } from "@/lib/icons";
 
 import {
   Popover,
@@ -107,7 +107,10 @@ export function ProductsSort({ query }: ProductsSortProps) {
                     onClick={() => setFilterOpen(false)}
                     className={optionClass(active)}
                   >
-                    <Star className="mr-1.5 size-3.5 fill-primary text-primary" />
+                    <Star
+                      weight="bold"
+                      className="mr-1.5 size-3.5 text-primary"
+                    />
                     {item.label}
                   </Link>
                 );

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { DoubleAltArrowRight } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,7 @@ export function SeeAllLink({
     >
       {label}
       <span className="flex size-8 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition duration-300 group-hover:translate-x-0.5 group-hover:bg-ink group-hover:text-[#fff4f2] dark:group-hover:bg-brand-active">
-        <ArrowRight className="size-4" />
+        <DoubleAltArrowRight weight="line-duotone" className="size-4" />
       </span>
     </Link>
   );

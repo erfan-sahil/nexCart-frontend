@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CreditCard, Truck } from "lucide-react";
+import { CreditCard, Truck, type AppIcon } from "@/lib/icons";
 import { useEffect, useId, useState, type ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -70,7 +70,7 @@ const paymentOptions: {
   id: PaymentMethod;
   label: string;
   detail: string;
-  icon: typeof CreditCard;
+  icon: AppIcon;
 }[] = [
   {
     id: "prepaid",

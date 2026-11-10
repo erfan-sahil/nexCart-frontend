@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "@/lib/icons";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { Forward2 } from "@/lib/icons";
 import { useSearchParams } from "next/navigation";
 import {
   Suspense,
@@ -237,7 +237,7 @@ function TrackOrderScreen() {
                 disabled={view.status === "loading"}
               >
                 {view.status === "loading" ? "Looking up…" : "Track order"}
-                <ArrowRight data-icon="inline-end" />
+                <Forward2 weight="broken" data-icon="inline-end" />
               </Button>
             </form>
           </div>

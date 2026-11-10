@@ -1,7 +1,7 @@
 "use client";
 
 import { Combobox } from "@base-ui/react/combobox";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "@/lib/icons";
 import { useId, useState } from "react";
 
 import { Input } from "@/components/ui/input";

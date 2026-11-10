@@ -7,7 +7,7 @@ import {
   Phone,
   ShoppingBag,
   Star,
-} from "lucide-react";
+} from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import type { StoreProfile } from "@/features/catalog";

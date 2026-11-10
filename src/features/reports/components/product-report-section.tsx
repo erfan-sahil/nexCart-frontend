@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Check, ChevronDown, Flag, Shield } from "lucide-react";
+import { Check, ChevronDown, Flag, Shield } from "@/lib/icons";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ function ReportProductTrigger({
   const inner = (
     <>
       <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-md bg-destructive/15">
-        <Flag className="size-3 text-destructive" strokeWidth={2} aria-hidden />
+        <Flag className="size-3 text-destructive" aria-hidden />
       </span>
       Report this product
     </>
@@ -304,11 +304,7 @@ export function ProductReportSection({
               />
               <div className="flex gap-4 pr-9">
                 <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-background shadow-sm ring-1 ring-destructive/20">
-                  <Flag
-                    className="size-5 text-destructive"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
+                  <Flag className="size-5 text-destructive" aria-hidden />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[11px] font-semibold tracking-[0.14em] text-destructive uppercase">

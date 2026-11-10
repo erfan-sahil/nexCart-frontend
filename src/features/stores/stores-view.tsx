@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/lib/icons";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { StoreCard } from "@/components/store";

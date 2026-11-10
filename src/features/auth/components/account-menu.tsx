@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogIn, LogOut, Package, UserRound } from "lucide-react";
+import { ChevronDown, LogIn, LogOut, Package, UserRound } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 

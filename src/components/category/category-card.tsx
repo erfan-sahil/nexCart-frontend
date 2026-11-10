@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRightUp } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 
@@ -24,7 +24,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           className="transition duration-700 ease-out group-hover:scale-105"
         />
         <span className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-full border border-primary bg-brand-soft text-primary transition-colors duration-300 group-hover:text-black dark:group-hover:text-white">
-          <ArrowUpRight className="size-3.5" />
+          <ArrowRightUp weight="broken" className="size-3.5" />
         </span>
       </div>
       <div className="px-0.5 pt-2.5">

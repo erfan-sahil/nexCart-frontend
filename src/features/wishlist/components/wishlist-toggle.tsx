@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { Heart } from "@/lib/icons";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ export function WishlistToggle({
         disabled={busy}
         onClick={toggle}
       >
-        <Heart className={cn("size-4", saved && "fill-primary")} />
+        <Heart weight={saved ? "bold" : "linear"} className="size-4" />
         {saved ? "Saved" : "Save"}
       </Button>
     );
@@ -95,7 +95,7 @@ export function WishlistToggle({
       disabled={busy}
       onClick={toggle}
     >
-      <Heart className={cn("size-4", saved && "fill-primary")} />
+      <Heart weight={saved ? "bold" : "linear"} className="size-4" />
     </button>
   );
 }

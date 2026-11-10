@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Mail, MapPin, Phone, RotateCcw, Truck } from "lucide-react";
+import { Mail, MapPin, Phone, RotateCcw, Truck } from "@/lib/icons";
 
 import type { StoreProfile } from "@/features/catalog";
 

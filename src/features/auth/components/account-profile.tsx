@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart, MapPin, Package, Pencil } from "lucide-react";
+import { Heart, MapPin, Package, Pencil } from "@/lib/icons";
 import { useEffect, useState } from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";

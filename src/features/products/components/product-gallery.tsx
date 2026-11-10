@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import { cn } from "@/lib/utils";

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, ImagePlus, X } from "lucide-react";
+import { FileText, ImagePlus, X } from "@/lib/icons";
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";

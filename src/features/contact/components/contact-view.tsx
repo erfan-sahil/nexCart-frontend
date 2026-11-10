@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Check, Mail, Clock3 } from "lucide-react";
+import { Check, Mail, Clock3, ForwardArrowsAction } from "@/lib/icons";
 import {
   useEffect,
   useId,
@@ -307,7 +307,7 @@ export function ContactView() {
                 disabled={sending}
               >
                 {sending ? "Sending…" : "Send message"}
-                <ArrowRight className="size-4" />
+                <ForwardArrowsAction weight="line-duotone" className="size-4" />
               </Button>
             </form>
           )}

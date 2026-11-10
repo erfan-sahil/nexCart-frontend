@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck, Star } from "lucide-react";
+import { BadgeCheck, Star } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import { formatCount } from "@/lib/format";
@@ -42,7 +42,7 @@ export function StoreCard({ store }: StoreCardProps) {
               ) : null}
             </p>
             <p className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Star className="size-3.5 fill-primary text-primary" />
+              <Star weight="bold" className="size-3.5 text-primary" />
               <span className="font-medium text-foreground">
                 {Number.isInteger(store.rating)
                   ? store.rating

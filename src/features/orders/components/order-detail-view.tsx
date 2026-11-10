@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, CreditCard, MapPin, Package, Truck } from "lucide-react";
+import {
+  CreditCard,
+  MapPin,
+  Package,
+  RoundArrowLeft,
+  Truck,
+} from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 
 import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
@@ -149,7 +155,7 @@ export function OrderDetailView({ orderId }: OrderDetailViewProps) {
           className="-ml-2 gap-1.5 text-muted-foreground hover:text-foreground"
           render={<Link href="/orders" />}
         >
-          <ArrowLeft className="size-4" />
+          <RoundArrowLeft weight="line-duotone" className="size-4" />
           All orders
         </Button>
         <OrderStatusBadge status={order.status} size="md" />

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Check, X } from "lucide-react";
+import { Check, X } from "@/lib/icons";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";

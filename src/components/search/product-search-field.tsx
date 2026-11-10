@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, X } from "@/lib/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 

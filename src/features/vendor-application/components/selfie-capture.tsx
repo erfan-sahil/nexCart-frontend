@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera } from "lucide-react";
+import { Camera } from "@/lib/icons";
 import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/lib/api/errors";

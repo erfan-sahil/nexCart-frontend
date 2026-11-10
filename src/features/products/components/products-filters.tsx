@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, SlidersHorizontal } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { CATEGORY_ICONS } from "@/constants/category-icons";

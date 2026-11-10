@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { AlertTriangle, MoreHorizontal, Pencil, Trash2 } from "@/lib/icons";
 
 import {
   AlertDialog,
@@ -96,7 +96,7 @@ export function ReviewCommentMenu({
             />
             <div className="flex items-center gap-3 pr-9">
               <AlertDialogMedia className="size-10 shrink-0 bg-background ring-destructive/20">
-                <Trash2 className="size-4 text-destructive" strokeWidth={2} />
+                <Trash2 className="size-4 text-destructive" />
               </AlertDialogMedia>
               <AlertDialogTitle className="min-w-0 flex-1 text-left leading-snug">
                 {title}

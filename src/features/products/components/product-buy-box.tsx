@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag } from "@/lib/icons";
 import { useCallback, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";

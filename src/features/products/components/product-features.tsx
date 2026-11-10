@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check } from "@/lib/icons";
 
 type ProductFeaturesProps = {
   features: string[];

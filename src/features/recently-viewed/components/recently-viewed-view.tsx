@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, ShoppingBag } from "lucide-react";
+import { Clock, ShoppingBag } from "@/lib/icons";
 import { useState } from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";

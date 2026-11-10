@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@/lib/icons";
 import { useState } from "react";
 
 import { MediaImage } from "@/components/common";

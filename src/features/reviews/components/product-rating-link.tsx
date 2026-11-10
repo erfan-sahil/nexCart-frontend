@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star } from "@/lib/icons";
 
 import { formatCount } from "@/lib/format";
 import { withNext } from "@/features/auth/lib/next-path";
@@ -38,7 +38,7 @@ export function ProductRatingLink({
       className="mt-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground"
     >
       <span className="inline-flex items-center gap-1.5">
-        <Star className="size-4 fill-primary text-primary" />
+        <Star weight="bold" className="size-4 text-primary" />
         <span className="font-semibold text-foreground">
           {ratingLabel(displayAverage)}
         </span>
