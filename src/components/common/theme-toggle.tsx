@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "@/lib/icons";
 
 import { useTheme } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ export function ThemeToggle({ showLabel = true }: ThemeToggleProps) {
       )}
     >
       <Sun className="size-5 dark:hidden" />
-      <Moon className="hidden size-5 dark:block" />
+      <Moon weight="bold-duotone" className="hidden size-5 dark:block" />
       {showLabel ? (
         <span className="mt-0.5 hidden text-[11px] font-medium lg:block">
           Theme

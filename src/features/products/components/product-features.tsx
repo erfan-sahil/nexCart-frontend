@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CheckCircle } from "@/lib/icons";
 
 type ProductFeaturesProps = {
   features: string[];
@@ -16,7 +16,8 @@ export function ProductFeatures({ features }: ProductFeaturesProps) {
             key={`${index}-${feature}`}
             className="flex items-start gap-2.5 border-b border-border bg-card px-3.5 py-2.5 text-sm last:border-b-0 sm:px-4"
           >
-            <Check
+            <CheckCircle
+              weight="line-duotone"
               className="mt-0.5 size-4 shrink-0 text-primary"
               aria-hidden
             />

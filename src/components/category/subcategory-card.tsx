@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-
 import { MediaImage } from "@/components/common";
+
+import { CategoryCardArrow } from "./category-card-arrow";
 
 import { formatCount } from "@/lib/format";
 import type { Subcategory } from "@/types";
@@ -34,6 +34,7 @@ export function SubcategoryCard({
             sizes="(max-width: 640px) 30vw, 160px"
             className="transition duration-500 group-hover:scale-105"
           />
+          <CategoryCardArrow size="sm" />
         </div>
         <p className="mt-2 w-full truncate px-0.5 text-xs font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
           {subcategory.name}
@@ -54,9 +55,7 @@ export function SubcategoryCard({
           sizes="128px"
           className="transition duration-700 ease-out group-hover:scale-105"
         />
-        <span className="absolute right-1.5 bottom-1.5 flex size-6 items-center justify-center rounded-full border border-primary bg-brand-soft text-primary transition-colors duration-300 group-hover:text-black dark:group-hover:text-white">
-          <ArrowUpRight className="size-3" />
-        </span>
+        <CategoryCardArrow size="sm" />
       </div>
       <div className="px-0.5 pt-2.5">
         {categoryName ? (

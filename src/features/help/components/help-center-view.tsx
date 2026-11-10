@@ -9,7 +9,7 @@ import {
   Search,
   Store,
   UserRound,
-} from "lucide-react";
+} from "@/lib/icons";
 import { useMemo, useState } from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";

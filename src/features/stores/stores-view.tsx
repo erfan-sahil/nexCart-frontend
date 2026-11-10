@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { RoundAltArrowLeft, RoundAltArrowRight } from "@/lib/icons";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { StoreCard } from "@/components/store";
@@ -92,11 +92,11 @@ function StoresPagination({
           aria-label="Previous page"
           className="inline-flex size-9 items-center justify-center rounded-full text-foreground hover:bg-surface-muted"
         >
-          <ChevronLeft className="size-4" />
+          <RoundAltArrowLeft weight="line-duotone" className="size-5" />
         </Link>
       ) : (
         <span className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground/50">
-          <ChevronLeft className="size-4" />
+          <RoundAltArrowLeft weight="line-duotone" className="size-5" />
         </span>
       )}
       <span className="text-sm text-muted-foreground">
@@ -109,11 +109,11 @@ function StoresPagination({
           aria-label="Next page"
           className="inline-flex size-9 items-center justify-center rounded-full text-foreground hover:bg-surface-muted"
         >
-          <ChevronRight className="size-4" />
+          <RoundAltArrowRight weight="line-duotone" className="size-5" />
         </Link>
       ) : (
         <span className="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground/50">
-          <ChevronRight className="size-4" />
+          <RoundAltArrowRight weight="line-duotone" className="size-5" />
         </span>
       )}
     </nav>

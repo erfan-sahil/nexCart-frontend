@@ -7,10 +7,10 @@ import {
   Smartphone,
   Sparkles,
   Shirt,
-  type LucideIcon,
-} from "lucide-react";
+  type AppIcon,
+} from "@/lib/icons";
 
-export const CATEGORY_ICONS: Record<string, LucideIcon> = {
+export const CATEGORY_ICONS: Record<string, AppIcon> = {
   electronics: Smartphone,
   fashion: Shirt,
   home: Home,

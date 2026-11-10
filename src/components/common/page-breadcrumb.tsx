@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { DoubleAltArrowRight } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -31,10 +31,12 @@ export function PageBreadcrumb({
               className="flex items-center gap-1.5"
             >
               {index > 0 ? (
-                <ChevronRight
+                <DoubleAltArrowRight
+                  weight="line-duotone"
+                  aria-hidden
                   className={cn(
-                    "size-3.5 shrink-0",
-                    invert ? "text-white/40" : "text-muted-foreground",
+                    "size-4 shrink-0",
+                    invert ? "text-white/60" : "text-muted-foreground",
                   )}
                 />
               ) : null}

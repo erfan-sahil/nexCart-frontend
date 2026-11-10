@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { Zap } from "@/lib/icons";
 
 import { Container, CountdownTimer, SeeAllLink } from "@/components/common";
 import { ProductGrid } from "@/components/product";
@@ -29,7 +29,7 @@ export function FlashDeals({
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">
             <p className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-              <Zap className="size-3.5 fill-primary" />
+              <Zap weight="bold" className="size-3.5" />
               Limited time
             </p>
             <div className="flex items-center justify-between gap-3">

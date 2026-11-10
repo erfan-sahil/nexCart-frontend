@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -17,12 +17,8 @@ export function StarRating({ value, className, size = "sm" }: StarRatingProps) {
       {Array.from({ length: 5 }, (_, index) => (
         <Star
           key={index}
-          className={cn(
-            icon,
-            index < filled
-              ? "fill-primary text-primary"
-              : "fill-transparent text-border",
-          )}
+          weight={index < filled ? "bold" : "linear"}
+          className={cn(icon, index < filled ? "text-primary" : "text-border")}
         />
       ))}
     </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart } from "@/lib/icons";
 
 import { useWishlistCount } from "../query";
 

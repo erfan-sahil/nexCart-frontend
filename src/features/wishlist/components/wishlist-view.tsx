@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag } from "@/lib/icons";
 import { useState } from "react";
 
 import { Container, PageBreadcrumb } from "@/components/common";
@@ -90,7 +90,7 @@ export function WishlistView() {
         <div className="flex flex-col gap-5 bg-brand-soft px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-7">
           <div className="flex items-center gap-4">
             <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-[#fff4f2]">
-              <Heart className="size-5 fill-current" />
+              <Heart weight="bold" className="size-5" />
             </span>
             <div>
               <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">

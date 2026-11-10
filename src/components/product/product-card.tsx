@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import { AddToCartButton } from "@/features/cart";
@@ -143,8 +143,9 @@ export function ProductCard({
         >
           <p className="inline-flex min-w-0 items-center gap-1">
             <Star
+              weight="bold"
               className={cn(
-                "shrink-0 fill-primary text-primary",
+                "shrink-0 text-primary",
                 compact ? "size-3" : "size-3.5",
               )}
             />

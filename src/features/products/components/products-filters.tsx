@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, Filter } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import { CATEGORY_ICONS } from "@/constants/category-icons";
@@ -177,7 +177,7 @@ export function ProductsMobileFilters({
     <details className="group rounded-2xl border border-border bg-card lg:hidden">
       <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
         <span className="inline-flex items-center gap-2">
-          <SlidersHorizontal className="size-4 text-primary" />
+          <Filter className="size-4 text-primary" />
           Departments
         </span>
         <span className="text-xs font-normal text-muted-foreground group-open:hidden">

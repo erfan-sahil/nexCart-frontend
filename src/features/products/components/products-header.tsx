@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X } from "@/lib/icons";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { formatCount } from "@/lib/format";

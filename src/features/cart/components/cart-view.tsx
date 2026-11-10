@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BadgeCheck, Trash2 } from "lucide-react";
+import { BadgeCheck, Trash2 } from "@/lib/icons";
 
 import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";

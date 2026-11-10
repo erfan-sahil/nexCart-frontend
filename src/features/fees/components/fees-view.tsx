@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Check, Smartphone } from "lucide-react";
+import { Building2, Check, Smartphone } from "@/lib/icons";
 
 import { Container, PageBreadcrumb } from "@/components/common";
 import { Button } from "@/components/ui/button";

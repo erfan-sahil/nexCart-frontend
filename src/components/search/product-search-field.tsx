@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, RoundedMagnifer, X } from "@/lib/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -253,7 +253,7 @@ export function ProductSearchField({
           type="submit"
           className="m-1 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-sm font-semibold text-[#fff4f2] transition-colors duration-500 hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active"
         >
-          <Search className="size-4" />
+          <RoundedMagnifer className="size-4" />
           <span className={cn(hideSubmitLabelOnMobile && "hidden sm:inline")}>
             Search
           </span>
@@ -360,7 +360,7 @@ export function ProductSearchField({
                 )}
                 onMouseEnter={() => setActiveIndex(items.length)}
               >
-                <Search className="size-4 shrink-0 text-primary" />
+                <RoundedMagnifer className="size-4 shrink-0 text-primary" />
                 <span className="truncate">
                   See all results for “{query.trim()}”
                 </span>

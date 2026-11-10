@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid } from "@/lib/icons";
 
 import { Container } from "@/components/common";
 import { cn } from "@/lib/utils";

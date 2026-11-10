@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck } from "@/lib/icons";
 
 import { Container, MediaImage, PageBreadcrumb } from "@/components/common";
 import { ProductGrid } from "@/components/product";
