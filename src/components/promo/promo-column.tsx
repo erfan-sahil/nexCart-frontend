@@ -68,7 +68,7 @@ export function PromoColumn({ promo, className }: PromoColumnProps) {
           </p>
         </div>
 
-        <span className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-[#fff4f2] transition-colors duration-300 group-hover:bg-brand-hover dark:group-hover:bg-brand-active">
+        <span className="inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-[#fff4f2] transition-colors duration-300 group-hover:bg-brand-active">
           {promo.ctaLabel}
         </span>
       </div>

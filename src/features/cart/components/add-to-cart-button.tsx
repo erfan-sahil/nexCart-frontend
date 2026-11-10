@@ -35,7 +35,7 @@ export function AddToCartButton({ product, className }: AddToCartButtonProps) {
     <button
       type="button"
       className={cn(
-        "inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active disabled:cursor-not-allowed disabled:opacity-40",
+        "inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[#fff4f2] transition-colors duration-300 hover:bg-brand-active hover:text-[#fff4f2] disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       aria-label={

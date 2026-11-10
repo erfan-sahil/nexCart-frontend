@@ -129,7 +129,7 @@ export function AccountProfile() {
           The account request failed. Try again in a moment.
         </p>
         <Button
-          className="auth-orange-button mt-6 px-6 hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active"
+          className="auth-orange-button mt-6 px-6 hover:bg-brand-active hover:text-[#fff4f2]"
           onClick={() => profile.refetch()}
         >
           Retry

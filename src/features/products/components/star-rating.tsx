@@ -8,6 +8,13 @@ type StarRatingProps = {
   size?: "sm" | "md";
 };
 
+/*
+ * Icons from @stashicon/icons set an inline `color`, which overrides Tailwind
+ * text-* classes, so the color must be passed through the `color` prop.
+ */
+const FILLED_COLOR = "var(--brand-hover)";
+const EMPTY_COLOR = "var(--border)";
+
 export function StarRating({ value, className, size = "sm" }: StarRatingProps) {
   const icon = size === "sm" ? "size-3.5" : "size-4";
   const filled = Math.round(value);
@@ -18,7 +25,8 @@ export function StarRating({ value, className, size = "sm" }: StarRatingProps) {
         <Star
           key={index}
           weight={index < filled ? "bold" : "linear"}
-          className={cn(icon, index < filled ? "text-primary" : "text-border")}
+          color={index < filled ? FILLED_COLOR : EMPTY_COLOR}
+          className={icon}
         />
       ))}
     </span>

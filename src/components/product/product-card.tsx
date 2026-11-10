@@ -144,10 +144,8 @@ export function ProductCard({
           <p className="inline-flex min-w-0 items-center gap-1">
             <Star
               weight="bold"
-              className={cn(
-                "shrink-0 text-primary",
-                compact ? "size-3" : "size-3.5",
-              )}
+              color="var(--brand-hover)"
+              className={cn("shrink-0", compact ? "size-3" : "size-3.5")}
             />
             <span className="font-semibold text-foreground">
               {ratingLabel(product.rating)}
