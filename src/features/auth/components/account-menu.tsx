@@ -142,6 +142,7 @@ function SignedInMenu({ user }: { user: AuthUser }) {
           {user.firstName}
         </span>
         <ChevronDown
+          aria-hidden
           className={cn(
             "hidden size-4 text-muted-foreground transition-transform lg:block",
             open && "rotate-180",

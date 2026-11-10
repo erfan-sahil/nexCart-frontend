@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, SlidersHorizontal, Star } from "@/lib/icons";
+import { ChevronDown, Filter, Star } from "@/lib/icons";
 
 import {
   Popover,
@@ -53,7 +53,7 @@ export function ProductsSort({ query }: ProductsSortProps) {
             filterCount > 0 && "border-primary bg-brand-soft text-primary",
           )}
         >
-          <SlidersHorizontal className="size-4" />
+          <Filter className="size-4" />
           Filters
           {filterCount > 0 ? (
             <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-[#fff4f2]">

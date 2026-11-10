@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "@/lib/icons";
+import { RoundAltArrowLeft, RoundAltArrowRight } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function ProductsPagination({
         disabled={page <= 1}
         label="Previous page"
       >
-        <ChevronLeft className="size-4" />
+        <RoundAltArrowLeft weight="line-duotone" className="size-5" />
       </PageLink>
       {pages.map((item, index) => {
         const previous = pages[index - 1];
@@ -59,7 +59,7 @@ export function ProductsPagination({
         disabled={page >= totalPages}
         label="Next page"
       >
-        <ChevronRight className="size-4" />
+        <RoundAltArrowRight weight="line-duotone" className="size-5" />
       </PageLink>
     </nav>
   );

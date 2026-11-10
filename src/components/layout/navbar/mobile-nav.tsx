@@ -15,16 +15,18 @@ import { usePathname } from "next/navigation";
 import {
   BookOpen,
   Car,
-  ChevronDown,
-  ChevronRight,
+  CloseCircle,
   Cpu,
   Dumbbell,
   Heart,
   HelpCircle,
   Home,
+  HamburgerMenu,
   LayoutGrid,
   MapPin,
   Package,
+  RoundAltArrowDown,
+  RoundAltArrowRight,
   Shirt,
   ShoppingBag,
   Sparkles,
@@ -75,25 +77,28 @@ const EASE = "cubic-bezier(0.22,1,0.36,1)";
 const iconWellClass =
   "inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-primary";
 
-function HamburgerIcon({ open }: { open: boolean }) {
+function MenuToggleIcon({ open }: { open: boolean }) {
+  const layer =
+    "absolute inset-0 size-6 transition-all duration-300 ease-out motion-reduce:transition-none";
+
   return (
-    <span className="relative block h-3.5 w-5" aria-hidden>
-      <span
+    <span className="relative block size-6" aria-hidden>
+      <HamburgerMenu
+        weight="line-duotone"
         className={cn(
-          "absolute left-0 h-0.5 w-5 origin-center rounded-full bg-current transition-all duration-300 ease-out motion-reduce:transition-none",
-          open ? "top-1.5 rotate-45" : "top-0",
+          layer,
+          open
+            ? "scale-50 -rotate-90 opacity-0"
+            : "scale-100 rotate-0 opacity-100",
         )}
       />
-      <span
+      <CloseCircle
+        weight="line-duotone"
         className={cn(
-          "absolute top-1.5 left-0 h-0.5 rounded-full bg-current transition-all duration-300 ease-out motion-reduce:transition-none",
-          open ? "w-0 opacity-0" : "w-5 opacity-100",
-        )}
-      />
-      <span
-        className={cn(
-          "absolute left-0 h-0.5 w-5 origin-center rounded-full bg-current transition-all duration-300 ease-out motion-reduce:transition-none",
-          open ? "top-1.5 -rotate-45" : "top-3",
+          layer,
+          open
+            ? "scale-100 rotate-0 opacity-100"
+            : "scale-50 rotate-90 opacity-0",
         )}
       />
     </span>
@@ -324,7 +329,7 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
                   onClick={closeMenu}
                   aria-label="Close menu"
                 >
-                  <HamburgerIcon open />
+                  <MenuToggleIcon open />
                 </button>
               </div>
 
@@ -348,9 +353,10 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
                         <LayoutGrid className="size-4" />
                       </span>
                       <span className="min-w-0 flex-1">Categories</span>
-                      <ChevronDown
+                      <RoundAltArrowDown
+                        weight="line-duotone"
                         className={cn(
-                          "size-4 shrink-0 text-muted-foreground transition-transform duration-300 motion-reduce:transition-none",
+                          "size-5 shrink-0 text-muted-foreground transition-transform duration-300 motion-reduce:transition-none",
                           categoriesOpen && "rotate-180",
                         )}
                         style={{ transitionTimingFunction: EASE }}
@@ -387,7 +393,10 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
                               <span className="min-w-0 flex-1">
                                 All categories
                               </span>
-                              <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                              <RoundAltArrowRight
+                                weight="line-duotone"
+                                className="size-5 shrink-0 text-muted-foreground"
+                              />
                             </Link>
                           </li>
                           {categories.map((item) => {
@@ -410,7 +419,10 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
                                   <span className="min-w-0 flex-1">
                                     {item.label}
                                   </span>
-                                  <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                                  <RoundAltArrowRight
+                                    weight="line-duotone"
+                                    className="size-5 shrink-0 text-muted-foreground"
+                                  />
                                 </Link>
                               </li>
                             );
@@ -479,7 +491,7 @@ export function MobileNav({ categories }: { categories: CategoryNavLink[] }) {
         aria-controls={panelId}
         aria-label={open ? "Close menu" : "Open menu"}
       >
-        <HamburgerIcon open={open} />
+        <MenuToggleIcon open={open} />
       </button>
       {drawer}
     </>

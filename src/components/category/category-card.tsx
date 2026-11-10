@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowRightUp } from "@/lib/icons";
-
 import { MediaImage } from "@/components/common";
+
+import { CategoryCardArrow } from "./category-card-arrow";
 
 import { formatCount } from "@/lib/format";
 import type { Category } from "@/types";
@@ -23,9 +23,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           sizes="(max-width: 640px) 42vw, (max-width: 1024px) 22vw, 12vw"
           className="transition duration-700 ease-out group-hover:scale-105"
         />
-        <span className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-full border border-primary bg-brand-soft text-primary transition-colors duration-300 group-hover:text-black dark:group-hover:text-white">
-          <ArrowRightUp weight="broken" className="size-3.5" />
-        </span>
+        <CategoryCardArrow />
       </div>
       <div className="px-0.5 pt-2.5">
         <p className="truncate font-display text-sm leading-none font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">

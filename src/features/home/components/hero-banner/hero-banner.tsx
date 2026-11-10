@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "@/lib/icons";
+import { DoubleAltArrowLeft, DoubleAltArrowRight } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import {
@@ -138,7 +138,10 @@ export function HeroBanner({ slides }: { slides: StoreHero[] }) {
                     onClick={() => goTo(index - 1)}
                     className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
-                    <ChevronLeft className="size-5" />
+                    <DoubleAltArrowLeft
+                      weight="line-duotone"
+                      className="size-5"
+                    />
                   </button>
                   <button
                     type="button"
@@ -146,7 +149,10 @@ export function HeroBanner({ slides }: { slides: StoreHero[] }) {
                     onClick={() => goTo(index + 1)}
                     className="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
-                    <ChevronRight className="size-5" />
+                    <DoubleAltArrowRight
+                      weight="line-duotone"
+                      className="size-5"
+                    />
                   </button>
                 </div>
                 <div className="flex items-center gap-2">

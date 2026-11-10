@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, ImageOff } from "@/lib/icons";
+import { ArrowLeft, ArrowRight, ImageOff } from "@/lib/icons";
 
 import { MediaImage } from "@/components/common";
 import { cn } from "@/lib/utils";
@@ -106,7 +106,7 @@ type GalleryArrowProps = {
 };
 
 function GalleryArrow({ direction, onClick, className }: GalleryArrowProps) {
-  const Icon = direction === "previous" ? ChevronLeft : ChevronRight;
+  const Icon = direction === "previous" ? ArrowLeft : ArrowRight;
 
   return (
     <button
@@ -118,7 +118,7 @@ function GalleryArrow({ direction, onClick, className }: GalleryArrowProps) {
         className,
       )}
     >
-      <Icon className="size-5" aria-hidden />
+      <Icon weight="line-duotone" className="size-5" aria-hidden />
     </button>
   );
 }
