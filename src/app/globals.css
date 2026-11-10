@@ -66,7 +66,7 @@
   --brand: #ff4d4d;
   --brand-foreground: #2a1218;
   --brand-hover: color-mix(in srgb, var(--brand) 78%, #2a1218);
-  --brand-active: #2a1218;
+  --brand-active: color-mix(in srgb, var(--brand) 70%, #000000);
   --brand-soft: color-mix(in srgb, var(--brand) 14%, #ffffff);
   --brand-muted: color-mix(in srgb, var(--brand) 24%, #ffffff);
 
@@ -221,22 +221,7 @@
   }
 
   .auth-orange-button:hover {
-    background-color: #2a1218;
-    color: #fff4f2;
-  }
-
-  .dark .auth-orange-button:hover {
     background-color: var(--brand-active);
-    color: #fff4f2;
-  }
-
-  .auth-dark-button {
-    background-color: #2a1218;
-    color: #fff4f2;
-  }
-
-  .auth-dark-button:hover {
-    background-color: #ff4d4d;
     color: #fff4f2;
   }
 
@@ -254,7 +239,8 @@
   }
 
   .auth-form-panel[data-tone="invert"] {
-    background-color: color-mix(in srgb, #ff4d4d 16%, #ffffff);
+    --auth-panel-bg: color-mix(in srgb, #ff4d4d 16%, #ffffff);
+    background-color: var(--auth-panel-bg);
     --input: color-mix(in srgb, #ff4d4d 70%, #ffffff);
   }
 
@@ -263,7 +249,8 @@
   }
 
   .dark .auth-form-panel[data-tone="invert"] {
-    background-color: #1a1014;
+    --auth-panel-bg: #1a1014;
+    background-color: var(--auth-panel-bg);
     --input: color-mix(in srgb, #fff4f2 16%, #2c1a1e);
   }
 
@@ -271,16 +258,6 @@
   .dark .auth-form-panel[data-tone="invert"] [data-slot="phone-field"] {
     background-color: #2c1a1e;
     border-color: color-mix(in srgb, #fff4f2 16%, #2c1a1e);
-  }
-
-  .dark .auth-form-panel[data-tone="invert"] .auth-dark-button {
-    background-color: #ff4d4d;
-    color: #fff4f2;
-  }
-
-  .dark .auth-form-panel[data-tone="invert"] .auth-dark-button:hover {
-    background-color: #d63d3d;
-    color: #fff4f2;
   }
 
   .auth-wave-rise {

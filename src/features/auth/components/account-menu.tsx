@@ -77,7 +77,7 @@ export function AccountMenu() {
     return (
       <Link
         href="/login"
-        className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-3.5 text-sm font-semibold text-[#fff4f2] transition-colors hover:bg-ink hover:text-[#fff4f2] dark:hover:bg-brand-active sm:h-10 sm:px-4"
+        className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-3.5 text-sm font-semibold text-[#fff4f2] transition-colors hover:bg-brand-active hover:text-[#fff4f2] sm:h-10 sm:px-4"
       >
         Sign in
       </Link>

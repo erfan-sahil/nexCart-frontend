@@ -12,7 +12,7 @@ export function AuthDivider({ label = "or", className }: AuthDividerProps) {
         <span className="w-full border-t border-border" />
       </div>
       <div className="relative flex justify-center">
-        <span className="bg-background px-3 text-xs text-muted-foreground">
+        <span className="bg-[var(--auth-panel-bg,var(--background))] px-3 text-xs text-muted-foreground">
           {label}
         </span>
       </div>
