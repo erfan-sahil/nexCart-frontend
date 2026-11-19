@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NexCart Frontend (Customer)
 
-## Getting Started
+Next.js storefront for browsing, cart, checkout, orders, wishlist, and vendor applications (“Sell on NexCart”).
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router)
+- **React 19** + TypeScript
+- **Tailwind CSS v4** + shadcn/ui
+- **TanStack Query** + axios
+- **Zustand**, React Hook Form
+
+## Prerequisites
+
+- Node.js **≥ 20** (recommended; matches monorepo apps)
+- [NexCart API](../../backend/nexCart-backend/README.md) running (default `http://localhost:4000`)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open **http://localhost:3000**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment (optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local` if you need overrides:
 
-## Learn More
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+# Optional: canonical site URL for metadata and links
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+If unset, the app defaults to `http://localhost:4000/api`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve production build |
+| `npm run lint` / `lint:fix` | ESLint |
+| `npm run format` / `format:check` | Prettier |
+| `npm run typecheck` | `tsc --noEmit` |
 
-## Deploy on Vercel
+## Main routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Area | Routes |
+|------|--------|
+| Home & catalog | `/`, `/products`, `/products/[slug]`, `/categories`, `/deals`, `/new-arrivals` |
+| Stores | `/stores`, `/stores/[slug]` |
+| Cart & checkout | `/cart`, `/checkout`, `/checkout/result` |
+| Account | `/login`, `/register`, `/account`, `/orders`, `/orders/[orderId]`, `/track-order` |
+| Lists | `/wishlist`, `/recently-viewed` |
+| Sell | `/sell`, `/sell/guide`, `/sell/fees` |
+| Trust & help | `/help`, `/contact`, `/returns`, `/privacy`, `/terms`, `/cookies` |
+| Moderation (signed-in) | `/reports` |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project layout
+
+```
+src/
+  app/              App Router pages and layouts
+  components/       Shared UI
+  features/         Domain modules (auth, cart, checkout, …)
+  lib/              API client, auth helpers, site config
+```
+
+Server components use `src/lib/api/server.ts` for API calls; client code uses `src/lib/api/client.ts`.
+
+## Related apps
+
+- **Admin:** [nexCart-admin](../nexCart-admin/README.md) — http://localhost:5174
+- **Vendor:** [nexCart-vendor](../nexCart-vendor/README.md) — http://localhost:5175
+
+## Add UI components
+
+```bash
+npx shadcn@latest add button
+```
